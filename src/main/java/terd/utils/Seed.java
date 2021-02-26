@@ -39,7 +39,7 @@ public class Seed {
      * @return the char at position atPos
      */
     public int getAnswer(int atPos) {
-        if (atPos > SEED_LENGTH) {
+        if (atPos > (SEED_LENGTH - 1)) {
             atPos = atPos % SEED_LENGTH;
         }
         return Integer.parseInt(String.valueOf(seed.charAt(atPos)), 16);
