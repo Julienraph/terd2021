@@ -1,10 +1,12 @@
 package terd.Player;
 
+import terd.utils.Seed;
+
 import java.awt.event.*;
 import java.util.Scanner;
 
 public class Player extends Props {
-    private int niveau;
+    private int niveauPlayer;
     private Seed seedGame;
     private Etage etageActuel;
     private Inventaire stuff;
@@ -15,9 +17,9 @@ public class Player extends Props {
 
     public Player(){
         // Initialisation à faire
-        this.niveau = 0;
-        this.seedGame  = null;
-        this.etageActuel = null;
+        this.niveauPlayer = 1 ;
+        this.seedGame  = new Seed();
+        this.etageActuel = new Etage(0,0,1,1,seedGame;
         this.stuff = null;
         this.posXetage = 0;
         this.posYetage = 0;
@@ -34,17 +36,25 @@ public class Player extends Props {
         System.out.println("Appuyez sur une touche");
         Scanner scanner = new Scanner(System.in);
         char boutonDeplacement = scanner.next().charAt(0);
+        int nextX = getX();
+        int nextY = getY();
         if (boutonDeplacement.equals("z")) {
-            addPosY(-speed);
+            nextY -= speed;
         }
         else if (boutonDeplacement.equals("s")){
-            addPosY(speed);
+            nextY += speed;
         }
         else if (boutonDeplacement.equals("q")){
-            addPosX(-speed);
+            nextX -= speed;
         }
         else if (boutonDeplacement.equals("d")){
-            addPosX(speed);
+            nextX += speed;
+        }
+
+        if(etageActuel.movePropsOnMap(posXetage,posYetage,getX(),getY(),nextX,nextY)){
+            setPosX(nextX);
+            setPosY(nextY);
+
         }
 
 
