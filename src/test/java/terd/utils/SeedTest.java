@@ -7,7 +7,7 @@ public class SeedTest extends TestCase {
     public void testGetAnswer() {
         Seed seed = new Seed();
         assertEquals(
-                seed.getSeed().charAt(0),
+                Integer.parseInt(String.valueOf(seed.getSeed().charAt(0)), 16),
                 seed.getAnswer(Seed.SEED_LENGTH * 2)
         );
     }

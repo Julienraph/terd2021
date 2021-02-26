@@ -38,11 +38,11 @@ public class Seed {
      * @param atPos Position at which to get the char
      * @return the char at position atPos
      */
-    public char getAnswer(int atPos) {
+    public int getAnswer(int atPos) {
         if (atPos > SEED_LENGTH) {
             atPos = atPos % SEED_LENGTH;
         }
-        return seed.charAt(atPos);
+        return Integer.parseInt(String.valueOf(seed.charAt(atPos)), 16);
     }
 
     /**
