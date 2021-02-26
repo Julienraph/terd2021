@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class Seed {
 
-    private static final Integer SEED_LENGTH = 16;
+    public static final Integer SEED_LENGTH = 16;
     private String seed;
 
     /**
