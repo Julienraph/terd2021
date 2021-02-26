@@ -4,12 +4,12 @@ public abstract class Props implements Position {
     private int posX;
     private int posY;
 
-    public void addPosX(int x){
-        posX += x;
+    public void setPosX(int x){
+        posX = x;
     }
 
-    public void addPosY(int y){
-        posY += y;
+    public void setPosY(int y){
+        posY = y;
     }
 
     @Override
