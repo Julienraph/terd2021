@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EtageTest extends TestCase {
     public void testmoveProps()
-    {
+    {//
         Player player = new Player();
         player.setNewMap(4,4);
         player.setPosition(7,9);
