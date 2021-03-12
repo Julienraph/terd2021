@@ -8,7 +8,6 @@ import java.util.Random;
 public class Map {
     private char[][] tableauMap;
     Seed seedMap;
-
     public Map(int x, int y, Seed seedMap) {
         int Colonne;
         this.seedMap = seedMap;
@@ -27,16 +26,16 @@ public class Map {
 
     private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
     {
-        int oracle = this.seedMap.getAnswer(ligne * 3 + colonne * 5) % 16;
-        if(oracle < 7) {
-            tableauMap[ligne][colonne] = ':';
-        } else if (oracle <= 11) {
-            tableauMap[ligne][colonne] = '.';
-        } else if (oracle < 14) {
-            tableauMap[ligne][colonne] = 'L';
-        } else {
-            tableauMap[ligne][colonne] = 'X';
-        }
+            int oracle = this.seedMap.getAnswer(ligne * 3 + colonne * 5) % 16;
+            if (oracle < 7) {
+                tableauMap[ligne][colonne] = ':';
+            } else if (oracle <= 11) {
+                tableauMap[ligne][colonne] = '.';
+            } else if (oracle < 14) {
+                tableauMap[ligne][colonne] = 'L';
+            } else {
+                tableauMap[ligne][colonne] = 'X';
+            }
     }
 
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
@@ -53,7 +52,7 @@ public class Map {
 
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
-        if (tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == ':') {
+        if (tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == ':' || tableauMap[ligne][colonne] == ' ') {
             return true; //
         } else { // =='X'
             return false;
@@ -74,5 +73,6 @@ public class Map {
         System.out.println(seed.getSeed());
 
     }
+
 }
 
