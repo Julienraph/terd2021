@@ -9,17 +9,17 @@ public class Etage {
     private int biome;
     private int niveau;
     private Seed seed;
-    private int tailleMapX;
-    private int tailleMapY;
-    private int tailleEtageX;
-    private int tailleEtageY;
+    private int hauteurMap;
+    private int largeurMap;
+    private int hauteurEtage;
+    private int largeurEtage;
 
-    public Etage(int tailleEtageX , int tailleEtageY, int tailleMapX, int tailleMapY, int biome, int niveau, Seed seed) {
-        this.tabMap = new Map[tailleEtageX][tailleEtageY];
-        this.tailleMapX = tailleMapX;
-        this.tailleMapY = tailleMapY;
-        this.tailleEtageX = tailleEtageX;
-        this.tailleEtageY = tailleEtageY;
+    public Etage(int hauteurEtage, int largeurEtage, int hauteurMap, int largeurMap, int biome, int niveau, Seed seed) {
+        this.tabMap = new Map[hauteurEtage][largeurEtage];
+        this.hauteurMap = hauteurMap;
+        this.largeurMap = largeurMap;
+        this.hauteurEtage = hauteurEtage;
+        this.largeurEtage = largeurEtage;
         this.biome = biome;
         this.niveau = niveau;
         this.seed = seed;
@@ -31,7 +31,7 @@ public class Etage {
         for(int i = 0; i < tabMap.length; i++) {
             for(int y = 0; y < tabMap[0].length; y++) {
                 Seed seed = new Seed();
-                tabMap[i][y] = new Map(tailleMapX, tailleMapY, seed);
+                tabMap[i][y] = new Map(hauteurMap, largeurMap, seed);
             }
         }
     }
@@ -78,60 +78,60 @@ public class Etage {
 
     public Boolean moveProps(Props props, int newPosX, int newPosY, char skin)
     {
-        int xMap = props.getPosXetage();
-        int yMap = props.getPosYetage();
+        int ligneEtage = props.getPosEtageY();
+        int colonneEtage = props.getPosEtageX();
         int posActuelX = props.getX();
         int posActuelY = props.getY();
-        if(newPosX < 0 && xMap > 0) {
-            if(tabMap[xMap - 1][yMap].isValide(tailleMapX - 1, newPosY)) {
-                tabMap[xMap][yMap].resetCase(posActuelX, posActuelY);
-                tabMap[xMap - 1][yMap].moveProps(posActuelX, posActuelY, tailleMapX - 1, newPosY, skin);
-                props.setNewMap(xMap - 1, yMap);
-                props.setPosition(tailleMapX - 1, newPosY);
+        if(newPosY < 0 && ligneEtage > 0) {
+            if(tabMap[ligneEtage - 1][colonneEtage].isValide(newPosX, hauteurMap - 1)) {
+                tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
+                tabMap[ligneEtage - 1][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, hauteurMap - 1, skin);
+                props.setNewMap(ligneEtage - 1, colonneEtage);
+                props.setPosition(newPosX, hauteurMap - 1);
                 return true;
             } else {
                 return false;
             }
         }
-        if(newPosX == tailleMapX && xMap < tailleEtageX - 1) {
-            if(tabMap[xMap + 1][yMap].isValide(0, newPosY)) {
-                tabMap[xMap][yMap].resetCase(posActuelX, posActuelY);
-                tabMap[xMap + 1][yMap].moveProps(posActuelX, posActuelY, 0, newPosY, skin);
-                props.setNewMap(xMap + 1, yMap);
-                props.setPosition(0, newPosY);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        if(newPosY < 0 && yMap > 0) {
-            if(tabMap[xMap][yMap - 1].isValide(newPosX, tailleMapY - 1)) {
-                tabMap[xMap][yMap].resetCase(posActuelX, posActuelY);
-                tabMap[xMap][yMap - 1].moveProps(posActuelX, posActuelY, newPosX, tailleMapY - 1, skin);
-                props.setNewMap(xMap, yMap - 1);
-                props.setPosition(newPosX, tailleMapY - 1);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        if(newPosY == tailleMapY && yMap < tailleEtageY - 1) {
-            if(tabMap[xMap][yMap + 1].isValide(newPosX, 0)) {
-                tabMap[xMap][yMap].resetCase(posActuelX, posActuelY);
-                tabMap[xMap][yMap + 1].moveProps(posActuelX, posActuelY, newPosX, 0, skin);
-                props.setNewMap(xMap, yMap + 1);
+        if(newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1) {
+            if(tabMap[ligneEtage + 1][colonneEtage].isValide(newPosX, 0)) {
+                tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
+                tabMap[ligneEtage + 1][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, 0, skin);
+                props.setNewMap(ligneEtage + 1, colonneEtage);
                 props.setPosition(newPosX, 0);
                 return true;
             } else {
                 return false;
             }
         }
-        if(newPosX < 0 || newPosY < 0 || newPosX == tailleMapX || newPosY == tailleMapY ) {
+        if(newPosX < 0 && colonneEtage > 0) {
+            if(tabMap[ligneEtage][colonneEtage - 1].isValide(largeurMap - 1, newPosY)) {
+                tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
+                tabMap[ligneEtage][colonneEtage - 1].moveProps(posActuelX, posActuelY, largeurMap - 1, newPosY, skin);
+                props.setNewMap(ligneEtage, colonneEtage - 1);
+                props.setPosition(largeurMap - 1, newPosY);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if(newPosX >= largeurMap && colonneEtage < largeurEtage - 1) {
+            if(tabMap[ligneEtage][colonneEtage + 1].isValide(0, newPosY)) {
+                tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
+                tabMap[ligneEtage][colonneEtage + 1].moveProps(posActuelX, posActuelY,0, newPosY, skin);
+                props.setNewMap(ligneEtage, colonneEtage + 1);
+                props.setPosition(0, newPosY);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if(newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
             return false;
         }
-        if(posActuelX < tailleMapX && posActuelY < tailleMapY) {
-            if(tabMap[xMap][yMap].isValide(newPosX, newPosY)) {
-                tabMap[xMap][yMap].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
+        if(posActuelY < hauteurMap && posActuelX < largeurMap) {
+            if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
+                tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
                 props.setPosition(newPosX, newPosY);
                 return true;
             } else {

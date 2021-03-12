@@ -3,14 +3,14 @@ package terd.Player;
 public abstract class Props implements Position {
     private int posX;
     private int posY;
-    private int posXetage;
-    private int posYetage;
+    private int posEtageY;
+    private int posEtageX;
 
-    public Props(int posX, int posY, int posXetage, int posYetage, char skin) {
+    public Props(int posX, int posY, int posEtageY, int posEtageX, char skin) {
         this.posX = posX;
         this.posY = posY;
-        this.posXetage = posXetage;
-        this.posYetage = posYetage;
+        this.posEtageY = posEtageY;
+        this.posEtageX = posEtageX;
         this.skin = skin;
     }
 
@@ -24,9 +24,9 @@ public abstract class Props implements Position {
         posY = y;
     }
 
-    public void setNewMap(int newPosX, int newPosY) {
-        this.posXetage = newPosX;
-        this.posYetage = newPosY;
+    public void setNewMap(int newPosY, int newPosX) {
+        this.posEtageY = newPosY;
+        this.posEtageX = newPosX;
     }
 
     public void setPosition(int newPosX, int newPosY) {
@@ -44,16 +44,16 @@ public abstract class Props implements Position {
         return posY;
     }
 
-    public int getPosXetage() {
-        return posXetage;
+    public int getPosEtageY() {
+        return posEtageY;
     }
 
     public char getSkin() {
         return skin;
     }
 
-    public int getPosYetage() {
-        return posYetage;
+    public int getPosEtageX() {
+        return posEtageX;
     }
 
 

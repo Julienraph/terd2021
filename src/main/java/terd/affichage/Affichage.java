@@ -12,7 +12,7 @@ public class Affichage {
     public void afficher(){
         boolean jouer;
         do {
-            player.getEtageActuel().afficher(player.getPosXetage(), player.getPosYetage());
+            player.getEtageActuel().afficher(player.getPosEtageY(), player.getPosEtageX());
             jouer = player.deplacement();
         } while (jouer);
     }

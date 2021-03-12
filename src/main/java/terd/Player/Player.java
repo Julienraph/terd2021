@@ -41,13 +41,13 @@ public class Player extends Props {
         char boutonDeplacement = scanner.next().charAt(0);
         int nextX = this.getX();
         int nextY = this.getY();
-        if (boutonDeplacement == 'q' || boutonDeplacement == 'Q') {
+        if (boutonDeplacement == 'z' || boutonDeplacement == 'Z') {
             nextY = nextY - this.getSpeed();
-        } else if (boutonDeplacement == ('d') || boutonDeplacement == ('D')) {
-            nextY = nextY + this.getSpeed();
-        } else if (boutonDeplacement == ('z') || boutonDeplacement == ('Z')) {
-            nextX = nextX - this.getSpeed();
         } else if (boutonDeplacement == ('s') || boutonDeplacement == ('S')) {
+            nextY = nextY + this.getSpeed();
+        } else if (boutonDeplacement == ('q') || boutonDeplacement == ('Q')) {
+            nextX = nextX - this.getSpeed();
+        } else if (boutonDeplacement == ('d') || boutonDeplacement == ('D')) {
             nextX = nextX + this.getSpeed();
         } else if (boutonDeplacement == ('x') || boutonDeplacement == ('X')) {
             jouer = false;

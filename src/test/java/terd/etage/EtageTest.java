@@ -10,12 +10,12 @@ public class EtageTest extends TestCase {
     {//
         Player player = new Player();
         player.setNewMap(4,4);
-        player.setPosition(7,9);
-        assertFalse(player.getEtageActuel().moveProps(player,8,10,'@')); // Test pour bord droit bas de l'etage, valide si retourne = false
+        player.setPosition(9,7);
+        assertFalse(player.getEtageActuel().moveProps(player,9,8,'@')); // Test pour bord droit bas de l'etage, valide si retourne = false
 
         player.setNewMap(0,4);
-        player.setPosition(0,9);
-        assertFalse(player.getEtageActuel().moveProps(player,0,10,'@')); // Test pour bord droit haut de l'etage, valide si retourne = false
+        player.setPosition(9,0);
+        assertFalse(player.getEtageActuel().moveProps(player,10,0,'@')); // Test pour bord droit haut de l'etage, valide si retourne = false
 
         player.setNewMap(0,0);
         player.setPosition(0,0);
@@ -23,7 +23,7 @@ public class EtageTest extends TestCase {
 
         player.setNewMap(4,0);
         player.setPosition(7,0);
-        assertFalse(player.getEtageActuel().moveProps(player,0,-1,'@')); // Test pour bord gauche bas de l'etage, valide si retourne = false
+        assertFalse(player.getEtageActuel().moveProps(player,-1,0,'@')); // Test pour bord gauche bas de l'etage, valide si retourne = false
 
         player.getEtageActuel().getMap(4,0).moveProps(5,5,5,5,'A');
         player.setPosition(4,5);
@@ -33,9 +33,9 @@ public class EtageTest extends TestCase {
         player.setPosition(5,6);
         assertTrue(player.getEtageActuel().moveProps(player,6,6,'@')); // true car je me déplace sur une cas '.' qui est valide
 
-        player.getEtageActuel().getMap(3,0).moveProps(7,9,7,9,'X');
-        player.setPosition(0,9);
-        assertFalse(player.getEtageActuel().moveProps(player,-1,9,'@')); // false car une colline a été placé une case au dessus sur la map supérieur
+        player.getEtageActuel().getMap(3,0).moveProps(9,7,9,7,'X');
+        player.setPosition(9,0);
+        assertFalse(player.getEtageActuel().moveProps(player,9,-1,'@')); // false car une colline a été placé une case au dessus sur la map supérieur
         //Affichage affichage = new Affichage(player);
         //affichage.afficher();*/
     }

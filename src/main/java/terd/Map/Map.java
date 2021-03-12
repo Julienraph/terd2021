@@ -27,7 +27,7 @@ public class Map {
 
     private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
     {
-       int oracle = this.seedMap.getAnswer(ligne * 3 + colonne * 5) % 16;
+        int oracle = this.seedMap.getAnswer(ligne * 3 + colonne * 5) % 16;
         if(oracle < 7) {
             tableauMap[ligne][colonne] = ':';
         } else if (oracle <= 11) {
@@ -42,18 +42,18 @@ public class Map {
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
     public void resetCase(int posActuelX, int posActuelY) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelX, posActuelY); //
+        whatToPutAt(posActuelY, posActuelX); //
     }
 
-    public void moveProps(int posActuelX, int posActuelY, int NewPosX, int NewPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void moveProps(int posActuelX, int posActuelY, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelX, posActuelY); //
-        tableauMap[NewPosX][NewPosY] = Props;
+        whatToPutAt(posActuelY, posActuelX); //
+        tableauMap[newPosY][newPosX] = Props;
     }
 
-    public boolean isValide(int posX, int posY)  // indique si la case ciblé est valide pour se déplacé ou non
+    public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
-        if (tableauMap[posX][posY] == 'L' || tableauMap[posX][posY] == '.' || tableauMap[posX][posY] == ':') {
+        if (tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == ':') {
             return true; //
         } else { // =='X'
             return false;
