@@ -41,7 +41,8 @@ public class Map {
     }
     private void creationMap(int sortie){
         this.width= seedMap.getAnswer(10)+17;
-        //this.width=32;
+        //this.width=18;
+        //this.height=19;
         this.height=(width/2)+10;
         System.out.print("Width = ");
         System.out.println(width);
@@ -138,18 +139,17 @@ public class Map {
             }
         }
     }
-        // coordonne est sur un mur, c'est donc une sortie
-        /////////////////////////////////////////////////
-        // coordonne est en dehors du mur c'est donc une entree
 public void creationCheminDepuisExte(Coordonne coordonne)
 {
     int CurseurLigne= coordonne.getY(); // x - >
     int CurseurColonne=coordonne.getX(); // y ^
-    if(CurseurLigne<decalage){
+    if(CurseurLigne<decalage || CurseurLigne>decalage){
+        //System.out.println("CurseurLigne<decalage");
     while(CurseurLigne<=decalage+2)
     {
+        //System.out.println("CurseurLigne<=decalage+2");
         tableauMap[CurseurColonne][CurseurLigne]='.';
-        if((CurseurColonne+1<tailleReelX)&&(tableauMap[CurseurColonne+1][CurseurLigne]==' '))
+        if((CurseurColonne+1<height)&&(tableauMap[CurseurColonne+1][CurseurLigne]==' '))
         {
             tableauMap[CurseurColonne+1][CurseurLigne]='#';
         }
@@ -158,30 +158,31 @@ public void creationCheminDepuisExte(Coordonne coordonne)
             tableauMap[CurseurColonne-1][CurseurLigne]='#';
         }
         CurseurLigne++;
-    }
-    while(CurseurLigne>=decalage+width-1)
+    }}
+    while(CurseurLigne>=decalage+width)
     {
+       // System.out.println("CurseurLigne>=decalage+width");
         tableauMap[CurseurColonne][CurseurLigne]='.';
-        if(tableauMap[CurseurColonne+1][CurseurLigne]==' ')
+        if((CurseurColonne+1<height)&&tableauMap[CurseurColonne+1][CurseurLigne]==' ')
         {
             tableauMap[CurseurColonne+1][CurseurLigne]='#';
         }
-        if(tableauMap[CurseurColonne-1][CurseurLigne]==' ')
+        if((CurseurColonne-1>0)&&tableauMap[CurseurColonne-1][CurseurLigne]==' ')
         {
             tableauMap[CurseurColonne-1][CurseurLigne]='#';
         }
         CurseurLigne--;
-    }}
+    }
     if(CurseurLigne!=coordonne.getY()) // on a donc déja bougé il faut fermer le haut du couloir
     {
-        if((CurseurColonne+1<tailleReelX) &&(CurseurColonne-1>0 )) {
+        if((CurseurColonne+1<height) &&(CurseurColonne-1>0 )) {
             tableauMap[CurseurColonne - 1][CurseurLigne - 1] = '#';
             tableauMap[CurseurColonne - 1][CurseurLigne] = '#';
         }
     }
     while(CurseurColonne<=decalage+2)
     {
-
+        //System.out.println("CurseurColonne<=decalage+2");
         tableauMap[CurseurColonne][CurseurLigne]='.';
 
         if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
@@ -194,8 +195,9 @@ public void creationCheminDepuisExte(Coordonne coordonne)
         }
         CurseurColonne++;
     }
-    while(CurseurColonne>=height+decalage-1)
+    while(CurseurColonne>=height+decalage-2)
     {
+       // System.out.println("CurseurColonne>=height+decalage-1");
         tableauMap[CurseurColonne][CurseurLigne]='.';
         if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
         {
@@ -207,7 +209,6 @@ public void creationCheminDepuisExte(Coordonne coordonne)
         }
         CurseurColonne--;
     }
-   // tableauMap[coordonne.getX()][coordonne.getY()]='I';
 }
     public void spawnPlayer(int x, int y, char skin) {
         tableauMap[x][y] = skin;
@@ -269,14 +270,9 @@ public void creationCheminDepuisExte(Coordonne coordonne)
     }
     public static void main(String[] args) {
         Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,1000);
-        map.creationCheminDepuisExte(new Coordonne(35,5));
+        Map map = new Map(40, 40, seed,0000);
+        map.creationCheminDepuisExte(new Coordonne(39,24));
         map.affichageMap();
-       // map.moveProps(0, 0, 1, 0, 'X');
-       // System.out.println(map.getTableauMap());
-       // System.out.println(map.isValide(1, 0));
-       // System.out.println(map.isValide(0, 1));
-       // System.out.println(seed.getSeed());
     }
 
 
