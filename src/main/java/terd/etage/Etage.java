@@ -61,8 +61,6 @@ public class Etage {
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
-                        System.out.println(largeur);
-                        System.out.println(hauteur);
                         Coordonne pos = new Coordonne(hauteur, largeur);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
@@ -74,7 +72,7 @@ public class Etage {
                     }
                     if (map.getGauche() != null) {
                         int hauteur = map.getGauche().getX();
-                        int largeur = largeurMap;
+                        int largeur = largeurMap - 1;
                         Coordonne pos = new Coordonne(hauteur, largeur);
                         tabMap[i][y - 1].creationCheminDepuisExte(pos);
                     }
@@ -102,25 +100,25 @@ public class Etage {
             }
 
             sb.append("       ");
-            if (i == 0) {
+            if (i == 13) {
                 sb.append("Carte de l'étage :");
             }
-            if(i < hauteurEtage && i > 0) {
+            if(i < 15 + hauteurEtage && i >= 15) {
                 sb.append("         ");
                 for (int k = 0; k < tabMap[0].length; k++) {
-                    if (x == i - 1 && y == k) {
+                    if (x == i - 15 && y == k) {
                         sb.append("[ @ ]");
                     } else {
-                        if(tabMap[i-1][k]!=null) {
-                            sb.append(String.format("[%d %d]", i - 1, k));
+                        if(tabMap[i-15][k]!=null) {
+                            sb.append(String.format("[%d %d]", i - 15, k));
                         }
                         else{
-                            sb.append(String.format("[X X]", i - 1, k));
+                            sb.append(String.format("[X X]", i - 15, k));
                         }
                     }
                 }
             }
-            if(i == hauteurEtage + 2) {
+            if(i == map.length - 5) {
                 sb.append("ZQSD pour se déplacer / X pour arrêter");
             }
             if(i < map.length - 1) {
