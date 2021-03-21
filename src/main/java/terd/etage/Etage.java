@@ -1,5 +1,6 @@
 package terd.etage;
 
+import terd.Map.Coordonne;
 import terd.Map.Map;
 import terd.Player.Props;
 import terd.utils.Seed;
@@ -32,59 +33,75 @@ public class Etage {
                 tabMap[i][y]=null;
             }
         }
-        this.generationMapChemin();
-        tabMap[0][0].spawnPlayer(0,0,'@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
+        this.generationMapVoisine();
+        generationPont();
+        tabMap[0][0].spawnPlayer(20,20,'@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
     }
 
-    public void generationMapChemin(){
-       // tabMap[0][0] = new Map(largeurMap,hauteurMap, seed);
-        int x=0;
-        int y=0;
-        int incre=20;
-        while ((x<hauteurEtage) && (y<largeurEtage))
-        {
-            tabMap[x][y] =  new Map(largeurMap,hauteurMap, seed);
-            if(seed.getAnswer(incre)<8)
-            {
-                y++;
-                System.out.print("y = ");
-                System.out.println(y);
-            }
-            else
-            {
-                x++;
-                System.out.print("x = ");
-                System.out.println(x);
-            }
-            incre++;
-        }
-    }
-   public void generationMapVoisine() {
+    public void generationMapVoisine() {
         for(int i = 0; i < tabMap.length; i++) {
             for(int y = 0; y < tabMap[0].length; y++) {
                 Seed seed = new Seed();
-                tabMap[i][y] = new Map(largeurMap,hauteurMap, seed);
+                if (i == 0 && y < tabMap[0].length - 1) {
+                    tabMap[i][y] = new Map(largeurMap,hauteurMap, seed, 10);
+                } else {
+                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 0);
+                }
+            }
+        }
+    }
+
+    public void generationPont() {
+        for(int i = 0; i < tabMap.length; i++) {
+            for(int y = 0; y < tabMap[0].length; y++) {
+                Map map = tabMap[i][y];
+                if(map != null) {
+                    if (map.getHaut() != null) {
+                        int hauteur = hauteurMap;
+                        int largeur = map.getHaut().getY();
+                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        tabMap[i - 1][y].creationCheminDepuisExte(pos);
+                    }
+                    if (map.getBas() != null) {
+                        int hauteur = 0;
+                        int largeur = map.getBas().getY();
+                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        tabMap[i + 1][y].creationCheminDepuisExte(pos);
+                    }
+                    if (map.getGauche() != null) {
+                        int hauteur = map.getGauche().getX();
+                        int largeur = largeurMap;
+                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        tabMap[i][y - 1].creationCheminDepuisExte(pos);
+                    }
+                    if (map.getDroite() != null) {
+                        int hauteur = map.getDroite().getX();
+                        int largeur = 0;
+                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        tabMap[i][y + 1].creationCheminDepuisExte(pos);
+                    }
+                }
             }
         }
     }
 
     public void afficher(int x, int y) {
         StringBuilder sb = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
         int i;
-        int max = Math.max(map.length, hauteurEtage);
-        for (i = 0; i < max; i++) {
+        System.out.println(String.format("max : %d", map.length));
+        for (i = 0; i < map.length; i++) {
             int j;
-            if(i < map.length) {
-                for (j = 0; j < map[0].length; j++) {
-                    sb.append(map[i][j]);
-                }
+            for (j = 0; j < map[0].length; j++) {
+                sb.append(map[i][j]);
             }
+
             sb.append("       ");
             if (i == 0) {
                 sb.append("Carte de l'étage :");
             }
-            if(i < max && i > 0) {
+            if(i < hauteurEtage && i > 0) {
                 sb.append("         ");
                 for (int k = 0; k < tabMap[0].length; k++) {
                     if (x == i - 1 && y == k) {
@@ -99,10 +116,11 @@ public class Etage {
                     }
                 }
             }
-            if(i < max - 1) {
-                sb.append("\n");
-            } else {
+            if(i == hauteurEtage + 2) {
                 sb.append("ZQSD pour se déplacer / X pour arrêter");
+            }
+            if(i < map.length - 1) {
+                sb.append("\n");
             }
         }
         System.out.println(sb.toString());
@@ -179,6 +197,8 @@ public class Etage {
             return false;
         }
         if(posActuelY < hauteurMap && posActuelX < largeurMap) {
+            System.out.println(newPosX);
+            System.out.println(newPosY);
             if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
                 tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
                 props.setPosition(newPosX, newPosY);

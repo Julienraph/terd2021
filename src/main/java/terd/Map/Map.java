@@ -44,10 +44,6 @@ public class Map {
         //this.width=18;
         //this.height=19;
         this.height=(width/2)+10;
-        System.out.print("Width = ");
-        System.out.println(width);
-        System.out.print("height = ");
-        System.out.println(height);
         //this.tableauMap=new char[height][width];
         for(int Ligne=decalage;Ligne<width+decalage;Ligne++)
         {
@@ -139,77 +135,78 @@ public class Map {
             }
         }
     }
-public void creationCheminDepuisExte(Coordonne coordonne)
-{
-    int CurseurLigne= coordonne.getY(); // x - >
-    int CurseurColonne=coordonne.getX(); // y ^
-    if(CurseurLigne<decalage || CurseurLigne>decalage){
-        //System.out.println("CurseurLigne<decalage");
-    while(CurseurLigne<=decalage+2)
-    {
-        //System.out.println("CurseurLigne<=decalage+2");
-        tableauMap[CurseurColonne][CurseurLigne]='.';
-        if((CurseurColonne+1<height)&&(tableauMap[CurseurColonne+1][CurseurLigne]==' '))
-        {
-            tableauMap[CurseurColonne+1][CurseurLigne]='#';
-        }
-        if((CurseurColonne-1>0)&&(tableauMap[CurseurColonne-1][CurseurLigne]==' '))
-        {
-            tableauMap[CurseurColonne-1][CurseurLigne]='#';
-        }
-        CurseurLigne++;
-    }}
-    while(CurseurLigne>=decalage+width)
-    {
-       // System.out.println("CurseurLigne>=decalage+width");
-        tableauMap[CurseurColonne][CurseurLigne]='.';
-        if((CurseurColonne+1<height)&&tableauMap[CurseurColonne+1][CurseurLigne]==' ')
-        {
-            tableauMap[CurseurColonne+1][CurseurLigne]='#';
-        }
-        if((CurseurColonne-1>0)&&tableauMap[CurseurColonne-1][CurseurLigne]==' ')
-        {
-            tableauMap[CurseurColonne-1][CurseurLigne]='#';
-        }
-        CurseurLigne--;
-    }
-    if(CurseurLigne!=coordonne.getY()) // on a donc déja bougé il faut fermer le haut du couloir
-    {
-        if((CurseurColonne+1<height) &&(CurseurColonne-1>0 )) {
-            tableauMap[CurseurColonne - 1][CurseurLigne - 1] = '#';
-            tableauMap[CurseurColonne - 1][CurseurLigne] = '#';
-        }
-    }
-    while(CurseurColonne<=decalage+2)
-    {
-        //System.out.println("CurseurColonne<=decalage+2");
-        tableauMap[CurseurColonne][CurseurLigne]='.';
 
-        if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
-        {
-            tableauMap[CurseurColonne][CurseurLigne+1]='#';
-        }
-        if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
-        {
-            tableauMap[CurseurColonne][CurseurLigne-1]='#';
-        }
-        CurseurColonne++;
-    }
-    while(CurseurColonne>=height+decalage-2)
+    public void creationCheminDepuisExte(Coordonne coordonne)
     {
-       // System.out.println("CurseurColonne>=height+decalage-1");
-        tableauMap[CurseurColonne][CurseurLigne]='.';
-        if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
+        int CurseurLigne= coordonne.getY(); // x - >
+        int CurseurColonne=coordonne.getX(); // y ^
+        if(CurseurLigne<decalage || CurseurLigne>decalage){
+            //System.out.println("CurseurLigne<decalage");
+            while(CurseurLigne<=decalage+2)
+            {
+                //System.out.println("CurseurLigne<=decalage+2");
+                tableauMap[CurseurColonne][CurseurLigne]='.';
+                if((CurseurColonne+1<height)&&(tableauMap[CurseurColonne+1][CurseurLigne]==' '))
+                {
+                    tableauMap[CurseurColonne+1][CurseurLigne]='#';
+                }
+                if((CurseurColonne-1>0)&&(tableauMap[CurseurColonne-1][CurseurLigne]==' '))
+                {
+                    tableauMap[CurseurColonne-1][CurseurLigne]='#';
+                }
+                CurseurLigne++;
+            }}
+        while(CurseurLigne>=decalage+width)
         {
-            tableauMap[CurseurColonne][CurseurLigne+1]='#';
+            // System.out.println("CurseurLigne>=decalage+width");
+            tableauMap[CurseurColonne][CurseurLigne]='.';
+            if((CurseurColonne+1<height)&&tableauMap[CurseurColonne+1][CurseurLigne]==' ')
+            {
+                tableauMap[CurseurColonne+1][CurseurLigne]='#';
+            }
+            if((CurseurColonne-1>0)&&tableauMap[CurseurColonne-1][CurseurLigne]==' ')
+            {
+                tableauMap[CurseurColonne-1][CurseurLigne]='#';
+            }
+            CurseurLigne--;
         }
-        if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
+        if(CurseurLigne!=coordonne.getY()) // on a donc déja bougé il faut fermer le haut du couloir
         {
-            tableauMap[CurseurColonne][CurseurLigne-1]='#';
+            if((CurseurColonne+1<height) &&(CurseurColonne-1>0 )) {
+                tableauMap[CurseurColonne - 1][CurseurLigne - 1] = '#';
+                tableauMap[CurseurColonne - 1][CurseurLigne] = '#';
+            }
         }
-        CurseurColonne--;
+        while(CurseurColonne<=decalage+2)
+        {
+            //System.out.println("CurseurColonne<=decalage+2");
+            tableauMap[CurseurColonne][CurseurLigne]='.';
+
+            if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
+            {
+                tableauMap[CurseurColonne][CurseurLigne+1]='#';
+            }
+            if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
+            {
+                tableauMap[CurseurColonne][CurseurLigne-1]='#';
+            }
+            CurseurColonne++;
+        }
+        while(CurseurColonne>=height+decalage-2)
+        {
+            // System.out.println("CurseurColonne>=height+decalage-1");
+            tableauMap[CurseurColonne][CurseurLigne]='.';
+            if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
+            {
+                tableauMap[CurseurColonne][CurseurLigne+1]='#';
+            }
+            if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
+            {
+                tableauMap[CurseurColonne][CurseurLigne-1]='#';
+            }
+            CurseurColonne--;
+        }
     }
-}
     public void spawnPlayer(int x, int y, char skin) {
         tableauMap[x][y] = skin;
     }
@@ -270,9 +267,12 @@ public void creationCheminDepuisExte(Coordonne coordonne)
     }
     public static void main(String[] args) {
         Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,0000);
+        Map map = new Map(40, 40, seed,10);
         map.creationCheminDepuisExte(new Coordonne(39,24));
+        System.out.println(map.getDroite().toString());
         map.affichageMap();
+        char[][] tab = new char[5][5];
+        System.out.println(tab[0][0] == '\u0000');
     }
 
 

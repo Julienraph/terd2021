@@ -15,11 +15,11 @@ public class Player extends Props {
 
 
     public Player(){
-        super(0,0,0,0,'@');
+        super(20,20,0,0,'@');
         this.niveauPlayer = 1 ;
         this.seedGame  = new Seed();
-        this.etageActuel = new Etage(5,8, 6,6, 1,1, seedGame);
-   //     this.stuff = null;
+        this.etageActuel = new Etage(5,8, 40,40, 1,1, seedGame);
+        //     this.stuff = null;
         this.speed = 1;
     }
 
