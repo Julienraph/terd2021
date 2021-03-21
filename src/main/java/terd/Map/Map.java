@@ -23,7 +23,7 @@ public class Map {
         for ( Ligne = 0; Ligne < y; Ligne++) {
             int Colonne;
             for (Colonne = 0; Colonne < x; Colonne++) {
-                tableauMap[Colonne][Ligne]=' ';
+                tableauMap[Colonne][Ligne]='-';
             }
         }
         this.creationMap(sortie);
@@ -40,9 +40,9 @@ public class Map {
         }
     }
     private void creationMap(int sortie){
-        this.width= seedMap.getAnswer(10)+17;
+        this.width=30;//this.width= seedMap.getAnswer(10)+17;
         //this.width=32;
-        this.height=(width/2)+10;
+        this.height=15;//this.height=(width/2)+10;
         System.out.print("Width = ");
         System.out.println(width);
         System.out.print("height = ");
@@ -107,35 +107,97 @@ public class Map {
             this.creationChemin(gauche);
         }
     }
-    private void creationChemin(Coordonne coordonneDepart){
+    private void creationChemin(Coordonne coordonneDepart) {
         int hauteur;
         int ligne;
         int x = coordonneDepart.getX();
         int y = coordonneDepart.getY();
-        if(x==decalage){
-            for(hauteur=decalage;hauteur>=0;hauteur--)
-            {
-                tableauMap[hauteur][y-1]='#';tableauMap[hauteur][y]='.';tableauMap[hauteur][y+1]='#';
+        // coordonne est sur un mur, c'est donc une sortie
+        if (x == decalage) {
+            for (hauteur = decalage; hauteur >= 0; hauteur--) {
+                tableauMap[hauteur][y - 1] = '#';
+                tableauMap[hauteur][y] = '.';
+                tableauMap[hauteur][y + 1] = '#';
+            }
+        } else if (x == height - 1 + decalage) {
+            for (hauteur = height - 1 + decalage; hauteur <= tailleReelX - 1; hauteur++) {
+                tableauMap[hauteur][y - 1] = '#';
+                tableauMap[hauteur][y] = '.';
+                tableauMap[hauteur][y + 1] = '#';
+            }
+        } else if (y == width - 1 + decalage) {
+            for (ligne = width - 1 + decalage; ligne <= tailleReelY - 1; ligne++) {
+                tableauMap[x - 1][ligne] = '#';
+                tableauMap[x][ligne] = '.';
+                tableauMap[x + 1][ligne] = '#';
+            }
+        } else if (y == decalage) {
+            for (ligne = decalage; ligne >= 0; ligne--) {
+                tableauMap[x - 1][ligne] = '#';
+                tableauMap[x][ligne] = '.';
+                tableauMap[x + 1][ligne] = '#';
             }
         }
-        else if(x==height-1+decalage)
+    }
+        // coordonne est sur un mur, c'est donc une sortie
+        /////////////////////////////////////////////////
+        // coordonne est en dehors du mur c'est donc une entree
+        private void creationCheminDepuisExte(Coordonne coordonneDepart){
+            int x = coordonneDepart.getX();
+            int y = coordonneDepart.getY();
+        if(x>height+decalage)
         {
-            for(hauteur=height-1+decalage;hauteur<=tailleReelX-1;hauteur++)
+            if(y==0)
             {
-                tableauMap[hauteur][y-1]='#';tableauMap[hauteur][y]='.';tableauMap[hauteur][y+1]='#';
+                tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';
+                while(y<decalage+2){y++;tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';}
+                tableauMap[x+1][y+1]='#';tableauMap[x+1][y]='#';tableauMap[x][y+1]='#';tableauMap[x][y]='.';
+                while(x>height+decalage-1){x--;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}
             }
-        }
-        else if(y==width-1+decalage){
-            for(ligne=width-1+decalage;ligne<=tailleReelY-1;ligne++)
+            else if(y == tailleReelY)
             {
-                tableauMap[x-1][ligne]='#';tableauMap[x][ligne]='.';tableauMap[x+1][ligne]='#';
+                tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';
+                while(y>width){y--;tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';}
+                tableauMap[x+1][y-1]='#';tableauMap[x+1][y]='#';tableauMap[x][y-1]='#';tableauMap[x][y]='.';
+                while(x>height+decalage-1){x--;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}
             }
-        }
-        else if(y==decalage){
-            for(ligne=decalage;ligne>=0;ligne--)
+            else{
+                System.out.println("jpp");
+                tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';
+                x--;
+                if(y<=decalage){
+                    System.out.println("jpp2");
+                   tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x-1][y-1]='#';tableauMap[x-1][y]='#'; // structure pour tourner
+                    while(y<decalage+2){y++;tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';}
+                }
+                if(y>width+decalage-1)
+                {
+                    System.out.println("jpp3");
+
+                }
+                else{
+                while(x>height+decalage-1){x--;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}}
+        }}
+        if(x<decalage)
+        {
+            if(y < decalage)
             {
-                tableauMap[x-1][ligne]='#';tableauMap[x][ligne]='.';tableauMap[x+1][ligne]='#';
+                tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';
+                while(y<decalage+2){y++;tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';}
+                tableauMap[x-1][y+1]='#';tableauMap[x+1][y]='#';tableauMap[x][y+1]='#';tableauMap[x][y]='.';
+                while(x<decalage){x++;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}
             }
+            else if(y > width+decalage)
+            {
+                tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';
+                while(y>width){y--;tableauMap[x][y]='.';tableauMap[x-1][y]='#';tableauMap[x+1][y]='#';}
+                tableauMap[x-1][y-1]='#';tableauMap[x+1][y]='#';tableauMap[x][y-1]='#';tableauMap[x][y]='.';
+                while(x<decalage){x++;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}
+            }
+            else{
+
+                tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';
+                while(x<decalage){x++;tableauMap[x][y]='.';tableauMap[x][y-1]='#';tableauMap[x][y+1]='#';}}
         }
     }
     public void creationChemin(Coordonne Depart,Coordonne arrive) {
@@ -161,25 +223,33 @@ public class Map {
             tableauMap[hauteurArrive][ligneArrive]='.';
         }
         else if(hauteurArrive<hauteurDepart){
-            tableauMap[hauteurDepart][0]='.';tableauMap[hauteurDepart-1][0]='#';tableauMap[hauteurDepart-1][2]='#'; // debut de
-            tableauMap[hauteurDepart][1]='.';tableauMap[hauteurDepart-1][1]='#';tableauMap[hauteurDepart][2]='#';   // couloir en bord de map
-            int hauteur;
-            for(hauteur=hauteurDepart+1;hauteur<hauteurArrive;hauteur++)
-            {
-                tableauMap[hauteur][0]='#';tableauMap[hauteur][1]='.';tableauMap[hauteur][2]='#';
-            }
-            tableauMap[hauteur][0]='#';tableauMap[hauteur][1]='.';
-            tableauMap[hauteur+1][0]='#';tableauMap[hauteur+1][1]='#';
-            int ligne;
-            for(ligne=2;ligne<ligneArrive;ligne++)
-            {
-                tableauMap[hauteur][ligne]='.';tableauMap[hauteur+1][ligne]='#';tableauMap[hauteur-1][ligne]='#';
-            }
-            tableauMap[hauteurArrive][ligneArrive]='.';
+                tableauMap[hauteurDepart][0] = '.';//tableauMap[hauteurDepart-1][0]='#';//tableauMap[hauteurDepart-1][2]='#'; // debut de
+                tableauMap[hauteurDepart][1] = '.';
+                tableauMap[hauteurDepart][2] = '#'; //tableauMap[hauteurDepart-1][1]='.';  // couloir en bord de map
+                tableauMap[hauteurDepart + 1][0] = '#';
+                tableauMap[hauteurDepart + 1][1] = '#';
+                tableauMap[hauteurDepart + 1][2] = '#';
+                int hauteur;
+                for (hauteur = hauteurDepart - 1; hauteur > hauteurArrive; hauteur--) {
+                    tableauMap[hauteur][0] = '#';
+                    tableauMap[hauteur][1] = '.';
+                    tableauMap[hauteur][2] = '#';
+                }
+                tableauMap[hauteur][0] = '#';
+                tableauMap[hauteur][1] = '.';
+                tableauMap[hauteur - 1][0] = '#';
+                tableauMap[hauteur - 1][1] = '#';
+                int ligne;
+                for (ligne = 2; ligne < ligneArrive; ligne++) {
+                    tableauMap[hauteur][ligne] = '.';
+                    tableauMap[hauteur + 1][ligne] = '#';
+                    tableauMap[hauteur - 1][ligne] = '#';
+                }
+                tableauMap[hauteurArrive][ligneArrive] = '.';
         }
         else if(hauteurArrive==hauteurDepart){
             System.out.println("Vrai");
-            creationChemin(Depart);
+            creationChemin(arrive);
         }
     }
 
@@ -234,8 +304,8 @@ public class Map {
     }
     public static void main(String[] args) {
         Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,1000);
-        map.creationChemin(new Coordonne(10,5),new Coordonne(20,5));
+        Map map = new Map(40, 40, seed,0);
+        map.creationCheminDepuisExte(new Coordonne(39,5));
         map.affichageMap();
        // map.moveProps(0, 0, 1, 0, 'X');
        // System.out.println(map.getTableauMap());
