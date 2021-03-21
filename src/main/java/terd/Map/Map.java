@@ -47,7 +47,7 @@ public class Map {
         //this.tableauMap=new char[height][width];
         for(int Ligne=decalage;Ligne<width+decalage;Ligne++)
         {
-            tableauMap[0+decalage][Ligne]='#';
+            tableauMap[decalage][Ligne]='#';
             tableauMap[height-1+decalage][Ligne]='#';
         }
         for(int Colonne=5;Colonne<height+5;Colonne++)

@@ -39,11 +39,13 @@ public class Etage {
     }
 
     public void generationMapVoisine() {
-        for(int i = 0; i < tabMap.length; i++) {
-            for(int y = 0; y < tabMap[0].length; y++) {
+        for (int i = 0; i < tabMap.length; i++) {
+            for (int y = 0; y < tabMap[0].length; y++) {
                 Seed seed = new Seed();
                 if (i == 0 && y < tabMap[0].length - 1) {
-                    tabMap[i][y] = new Map(largeurMap,hauteurMap, seed, 10);
+                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 10);
+                } else if (i == 1 && y < tabMap[0].length - 1) {
+                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 1010);
                 } else {
                     tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 0);
                 }
@@ -57,8 +59,10 @@ public class Etage {
                 Map map = tabMap[i][y];
                 if(map != null) {
                     if (map.getHaut() != null) {
-                        int hauteur = hauteurMap;
+                        int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
+                        System.out.println(largeur);
+                        System.out.println(hauteur);
                         Coordonne pos = new Coordonne(hauteur, largeur);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
