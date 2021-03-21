@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class Seed {
 
-    public static final Integer SEED_LENGTH = 16;
+    public static final Integer SEED_LENGTH = 32;
     private String seed;
 
     /**
@@ -52,5 +52,12 @@ public class Seed {
      */
     public String getSeed() {
         return seed;
+    }
+
+    @Override
+    public String toString() {
+        return "Seed{" +
+                "seed='" + seed + '\'' +
+                '}';
     }
 }

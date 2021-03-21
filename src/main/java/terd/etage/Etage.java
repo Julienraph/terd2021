@@ -31,7 +31,7 @@ public class Etage {
         for(int i = 0; i < tabMap.length; i++) {
             for(int y = 0; y < tabMap[0].length; y++) {
                 Seed seed = new Seed();
-                tabMap[i][y] = new Map(hauteurMap, largeurMap, seed);
+                tabMap[i][y] = new Map(hauteurMap, largeurMap, seed, 0);
             }
         }
     }

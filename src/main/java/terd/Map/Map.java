@@ -2,14 +2,13 @@ package terd.Map;
 
 import terd.utils.Seed;
 
-import java.util.Random;
-
 
 public class Map {
-    private char[][] tableauMap;
     Seed seedMap;
+    private char[][] tableauMap;
+    private final int nextMapDirection;
 
-    public Map(int x, int y, Seed seedMap) {
+    public Map(int x, int y, Seed seedMap, int nextMapDirection) {
         int Colonne;
         this.seedMap = seedMap;
         tableauMap = new char[x][y];
@@ -19,6 +18,26 @@ public class Map {
                 whatToPutAt(Ligne, Colonne);
             }
         }
+        this.nextMapDirection = nextMapDirection;
+    }
+
+    public static void main(String[] args) {
+        Seed seed = new Seed();
+        Map map = new Map(3, 3, seed, 0);
+        map.moveProps(0, 0, 1, 0, 'X');
+        System.out.println(map.isValide(1, 0));
+        System.out.println(map.isValide(0, 1));
+        System.out.println(seed.getSeed());
+
+    }
+
+    /**
+     * Get the next map direction int.
+     *
+     * @return int
+     */
+    public int getNextMapDirection() {
+        return nextMapDirection;
     }
 
     public void spawnPlayer(int x, int y, char skin) {
@@ -28,7 +47,7 @@ public class Map {
     private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
     {
         int oracle = this.seedMap.getAnswer(ligne * 3 + colonne * 5) % 16;
-        if(oracle < 7) {
+        if (oracle < 7) {
             tableauMap[ligne][colonne] = ':';
         } else if (oracle <= 11) {
             tableauMap[ligne][colonne] = '.';
@@ -64,15 +83,13 @@ public class Map {
         return tableauMap;
     }
 
-
-    public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(3, 3, seed);
-        map.moveProps(0, 0, 1, 0, 'X');
-        System.out.println(map.isValide(1, 0));
-        System.out.println(map.isValide(0, 1));
-        System.out.println(seed.getSeed());
-
+    @Override
+    public String toString() {
+//        return "Map{" +
+//                "tableauMap=" + Arrays.deepToString(tableauMap) +
+//                ", seedMap=" + seedMap +
+//                '}';
+        return "Map";
     }
 }
 
