@@ -13,6 +13,7 @@ public class Map {
     private Coordonne bas;
     private Coordonne droite;
     private Coordonne gauche;
+
     public Map(int x, int y, Seed seedMap,int sortie) {
         this.seedMap = seedMap;
         this.tailleReelX=x;
@@ -22,7 +23,6 @@ public class Map {
         tableauMap = new char[x][y];
         this.sortie=sortie;
         this.creationMap();
-
     }
 
     private void creationMap(){
@@ -30,7 +30,6 @@ public class Map {
         int sortieBasY = width/2 - seedMap.getAnswer(13)/2 +decalage;
         int sortieGaucheX = width/2 - seedMap.getAnswer(14)/2 +decalage;
         int sortieDroiteX = width/2 - seedMap.getAnswer(15)/2 +decalage;
-
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Remplissage de la salle si on est à l'intérieur
@@ -84,7 +83,7 @@ public class Map {
     private boolean isInside(int ligne, int colonne, int decalage) {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
-    
+
     public void creationCheminDepuisExte(Coordonne coordonne)
     {
         int curseurColonne = coordonne.getY();
@@ -114,7 +113,7 @@ public class Map {
             }
             curseurColonne += direction;
         }
-       return curseurColonne;
+        return curseurColonne;
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
@@ -198,12 +197,7 @@ public class Map {
         map.creationCheminDepuisExte(new Coordonne(8,0));
         System.out.println(map.getDroite().toString());
         map.affichageMap();
-        char[][] tab = new char[5][5];
-        System.out.println(tab[0][0] == '\u0000');
-        System.out.println(map.height/2 - seed.getAnswer(15)/2 +5);
-        System.out.println(Math.signum(0));
     }
 
 
 }
-

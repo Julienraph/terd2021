@@ -89,31 +89,27 @@ public class Etage {
 
     public void afficher(int x, int y) {
         StringBuilder sb = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
-        int i;
-        System.out.println(String.format("max : %d", map.length));
-        for (i = 0; i < map.length; i++) {
-            int j;
-            for (j = 0; j < map[0].length; j++) {
+        int positionCarte = 10;
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
                 sb.append(map[i][j]);
             }
-
             sb.append("       ");
-            if (i == 13) {
+            if (i == positionCarte - 2) {
                 sb.append("Carte de l'étage :");
             }
-            if(i < 15 + hauteurEtage && i >= 15) {
+            if(i < positionCarte + hauteurEtage && i >= positionCarte) {
                 sb.append("         ");
                 for (int k = 0; k < tabMap[0].length; k++) {
-                    if (x == i - 15 && y == k) {
+                    if (x == i - positionCarte && y == k) {
                         sb.append("[ @ ]");
                     } else {
-                        if(tabMap[i-15][k]!=null) {
-                            sb.append(String.format("[%d %d]", i - 15, k));
+                        if(tabMap[i-positionCarte][k]!=null) {
+                            sb.append(String.format("[%d %d]", i - positionCarte, k));
                         }
                         else{
-                            sb.append(String.format("[X X]", i - 15, k));
+                            sb.append(String.format("[X X]", i - positionCarte, k));
                         }
                     }
                 }
@@ -142,13 +138,20 @@ public class Etage {
         int colonneEtage = props.getPosEtageX();
         int posActuelX = props.getX();
         int posActuelY = props.getY();
-        if((newPosY < 0 && ligneEtage > 0)) {
-            if((tabMap[ligneEtage-1][colonneEtage]!=null)) {
-                if (tabMap[ligneEtage - 1][colonneEtage].isValide(newPosX, hauteurMap - 1)) {
+        boolean isVertical = (newPosY < 0 && ligneEtage > 0) || (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1);
+        boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
+        //Si le joueur sort de la map
+        if(isHorizontal || isVertical) {
+            int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0;
+            int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0;
+            int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1);
+            int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
+            if((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal]!=null)) {
+                if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
                     tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage - 1][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, hauteurMap - 1, skin);
-                    props.setNewMap(ligneEtage - 1, colonneEtage);
-                    props.setPosition(newPosX, hauteurMap - 1);
+                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(posActuelX, posActuelY, spawnColonne, spawnLigne, skin);
+                    props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
+                    props.setPosition(spawnColonne, spawnLigne);
                     return true;
                 } else {
                     return false;
@@ -156,51 +159,11 @@ public class Etage {
             }
             else {return false;}
         }
-        if( (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1) ) {
-            if((tabMap[ligneEtage+1][colonneEtage]!=null)) {
-                if (tabMap[ligneEtage + 1][colonneEtage].isValide(newPosX, 0)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage + 1][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, 0, skin);
-                    props.setNewMap(ligneEtage + 1, colonneEtage);
-                    props.setPosition(newPosX, 0);
-                    return true;
-                } else {
-                    return false;
-                }
-            }else{return false;}
-        }
-        if((newPosX < 0 && colonneEtage > 0)) {
-            if((tabMap[ligneEtage][colonneEtage-1]!=null)) {
-                if (tabMap[ligneEtage][colonneEtage - 1].isValide(largeurMap - 1, newPosY)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage][colonneEtage - 1].moveProps(posActuelX, posActuelY, largeurMap - 1, newPosY, skin);
-                    props.setNewMap(ligneEtage, colonneEtage - 1);
-                    props.setPosition(largeurMap - 1, newPosY);
-                    return true;
-                } else {
-                    return false;
-                }
-            }else{return false;}
-        }
-        if((newPosX >= largeurMap && colonneEtage < largeurEtage - 1)) {
-            if((tabMap[ligneEtage][colonneEtage+1]!=null)) {
-                if (tabMap[ligneEtage][colonneEtage + 1].isValide(0, newPosY)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage][colonneEtage + 1].moveProps(posActuelX, posActuelY, 0, newPosY, skin);
-                    props.setNewMap(ligneEtage, colonneEtage + 1);
-                    props.setPosition(0, newPosY);
-                    return true;
-                } else {
-                    return false;
-                }
-            }else{return false;}
-        }
         if(newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
             return false;
         }
+        //Si le joueur se déplace à l'intérieur de la map
         if(posActuelY < hauteurMap && posActuelX < largeurMap) {
-            System.out.println(newPosX);
-            System.out.println(newPosY);
             if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
                 tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
                 props.setPosition(newPosX, newPosY);
@@ -211,4 +174,5 @@ public class Etage {
         }
         return false;
     }
+
 }
