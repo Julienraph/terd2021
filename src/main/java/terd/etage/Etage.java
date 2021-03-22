@@ -26,15 +26,8 @@ public class Etage {
         this.biome = biome;
         this.niveau = niveau;
         this.seed = seed;
-        for(int i=0;i<hauteurEtage;i++)
-        {
-            for(int y=0;y<largeurEtage;y++)
-            {
-                tabMap[i][y]=null;
-            }
-        }
         this.generationMapVoisine();
-        generationPont();
+        this.generationPont();
         tabMap[0][0].spawnPlayer(20,20,'@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
     }
 
@@ -87,19 +80,60 @@ public class Etage {
         }
     }
 
+    public Boolean moveProps(Props props, int newPosX, int newPosY, char skin)
+    {
+        int ligneEtage = props.getPosEtageY();
+        int colonneEtage = props.getPosEtageX();
+        int posActuelX = props.getX();
+        int posActuelY = props.getY();
+        boolean isVertical = (newPosY < 0 && ligneEtage > 0) || (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1);
+        boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
+        //Si le joueur essaye de sortir de la map
+        if(isHorizontal || isVertical) {
+            int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0;
+            int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0;
+            int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1);
+            int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
+            if((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal]!=null)) {
+                if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
+                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
+                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(posActuelX, posActuelY, spawnColonne, spawnLigne, skin);
+                    props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
+                    props.setPosition(spawnColonne, spawnLigne);
+                    return true;
+                }
+            }
+        }
+        if(newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
+            return false;
+        }
+        //Si le joueur se déplace à l'intérieur de la salle
+        if(posActuelY < hauteurMap && posActuelX < largeurMap) {
+            if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
+                tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
+                props.setPosition(newPosX, newPosY);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public void afficher(int x, int y) {
         StringBuilder sb = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
         int positionCarte = 10;
+        int positionEcritCarte = positionCarte - 2;
+        int positionTuto = map.length - 5;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 sb.append(map[i][j]);
             }
             sb.append("       ");
-            if (i == positionCarte - 2) {
+            if (i == positionEcritCarte) {
                 sb.append("Carte de l'étage :");
             }
-            if(i < positionCarte + hauteurEtage && i >= positionCarte) {
+            if(i >= positionCarte && i < positionCarte + hauteurEtage) {
                 sb.append("         ");
                 for (int k = 0; k < tabMap[0].length; k++) {
                     if (x == i - positionCarte && y == k) {
@@ -114,7 +148,7 @@ public class Etage {
                     }
                 }
             }
-            if(i == map.length - 5) {
+            if(i == positionTuto) {
                 sb.append("ZQSD pour se déplacer / X pour arrêter");
             }
             if(i < map.length - 1) {
@@ -130,49 +164,6 @@ public class Etage {
 
     public Map getMap(int x, int y) {
         return tabMap[x][y];
-    }
-
-    public Boolean moveProps(Props props, int newPosX, int newPosY, char skin)
-    {
-        int ligneEtage = props.getPosEtageY();
-        int colonneEtage = props.getPosEtageX();
-        int posActuelX = props.getX();
-        int posActuelY = props.getY();
-        boolean isVertical = (newPosY < 0 && ligneEtage > 0) || (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1);
-        boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
-        //Si le joueur sort de la map
-        if(isHorizontal || isVertical) {
-            int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0;
-            int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0;
-            int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1);
-            int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
-            if((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal]!=null)) {
-                if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(posActuelX, posActuelY, spawnColonne, spawnLigne, skin);
-                    props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
-                    props.setPosition(spawnColonne, spawnLigne);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-            else {return false;}
-        }
-        if(newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
-            return false;
-        }
-        //Si le joueur se déplace à l'intérieur de la map
-        if(posActuelY < hauteurMap && posActuelX < largeurMap) {
-            if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
-                tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
-                props.setPosition(newPosX, newPosY);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return false;
     }
 
 }
