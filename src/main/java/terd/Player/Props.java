@@ -14,6 +14,14 @@ public abstract class Props implements Position {
         this.skin = skin;
     }
 
+    public Props(char skin) {
+        this.posX = 0;
+        this.posY = 0;
+        this.posEtageY = 0;
+        this.posEtageX = 0;
+        this.skin = skin;
+    }
+
     private char skin;
 
     public void setPosX(int x){
@@ -50,6 +58,10 @@ public abstract class Props implements Position {
 
     public char getSkin() {
         return skin;
+    }
+
+    public void setSkin(char skin) {
+        this.skin = skin;
     }
 
     public int getPosEtageX() {
