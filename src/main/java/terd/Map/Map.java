@@ -8,220 +8,155 @@ public class Map {
     private  int height;
     private int tailleReelX; // colonne // hauteur
     private int tailleReelY; // ligne // largeur
-    private final int decalage=5;
+    private final int decalage = 2 ;
     private Coordonne haut;
     private Coordonne bas;
     private Coordonne droite;
     private Coordonne gauche;
+    private Coordonne spawnPos;
+
     public Map(int x, int y, Seed seedMap,int sortie) {
         this.seedMap = seedMap;
-        this.tailleReelX=x;
-        this.tailleReelY=y;
-        tableauMap = new char[x][y];
+        this.width = seedMap.getAnswer(10)+y;
+        this.height = seedMap.getAnswer(8)+x;
+        this.tailleReelX = 15+x+decalage+1;
+        this.tailleReelY = 15+y+decalage+1;
+        tableauMap = new char[tailleReelX][tailleReelY];
         this.sortie=sortie;
-        int Ligne;
-        for ( Ligne = 0; Ligne < y; Ligne++) {
-            int Colonne;
-            for (Colonne = 0; Colonne < x; Colonne++) {
-                tableauMap[Colonne][Ligne]=' ';
+        this.creationMap();
+        this.spawnPos = new Coordonne(decalage+1,decalage+1);
+    }
+
+    private void creationMap(){
+        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%(width - decalage - 2)) + decalage + 1;
+        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %(width - decalage - 2)) + decalage + 1;
+        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        for(int ligne = 0; ligne < tailleReelX; ligne++) {
+            for(int colonne = 0; colonne < tailleReelY; colonne++) {
+                //Remplissage de la salle si on est à l'intérieur
+                if(isInside(ligne, colonne, decalage)) {
+                    whatToPutAt(ligne, colonne);
+                }
+                //Création mur vertical
+                if((ligne >= decalage && ligne <= height + decalage) && (colonne == decalage || colonne == width + decalage)) {
+                    tableauMap[ligne][colonne] = '#';
+                }
+                //Création mur horizontal
+                if((colonne >= decalage && colonne <= width + decalage) && (ligne == decalage || ligne == height + decalage)) {
+                    tableauMap[ligne][colonne] = '#';
+                }
+                //Création pont du haut si y a une sortie
+                if(sortie >= 1000 && ligne <= decalage && colonne == sortieHautY) {
+                    tableauMap[ligne][colonne-1] = '#';
+                    tableauMap[ligne][colonne] = '.';
+                    tableauMap[ligne][colonne+1] = '#';
+                    this.haut=new Coordonne(decalage,sortieHautY);
+                }
+                //Création pont du bas si y a une sortie
+                if(sortie % 1000 >= 100 && ligne >= height + decalage && colonne == sortieBasY) {
+                    tableauMap[ligne][colonne-1] = '#';
+                    tableauMap[ligne][colonne] = '.';
+                    tableauMap[ligne][colonne+1] = '#';
+                    this.bas=new Coordonne(height+decalage,sortieBasY);
+                }
+                //Création pont de droite si y a une sortie
+                if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
+                    tableauMap[ligne-1][colonne] = '#';
+                    tableauMap[ligne][colonne] = '.';
+                    tableauMap[ligne+1][colonne] = '#';
+                    this.droite=new Coordonne(sortieDroiteX,width + decalage);
+                }
+                //Création pont de gauche si y a une sortie
+                if(sortie % 10 >= 1 && ligne == sortieGaucheX && colonne <= decalage) {
+                    tableauMap[ligne-1][colonne] = '#';
+                    tableauMap[ligne][colonne] = '.';
+                    tableauMap[ligne+1][colonne] = '#';
+                    this.gauche=new Coordonne(sortieGaucheX,decalage);
+                }
+                //Remplissage de vide si rien n'a été remplie
+                if(tableauMap[ligne][colonne] == '\u0000') {
+                    tableauMap[ligne][colonne] = ' ';
+                }
             }
-        }
-        this.creationMap(sortie);
-    }
-    public Map(int x, int y, Seed seedMap) {
-        int Colonne;
-        this.seedMap = seedMap;
-        tableauMap = new char[x][y];
-        for (Colonne = 0; Colonne < y; Colonne++) {
-            int Ligne;
-            for (Ligne = 0; Ligne < x; Ligne++) {
-                whatToPutAt(Ligne, Colonne);
-            }
-        }
-    }
-    private void creationMap(int sortie){
-        this.width= seedMap.getAnswer(10)+17;
-        //this.width=18;
-        //this.height=19;
-        this.height=(width/2)+10;
-        //this.tableauMap=new char[height][width];
-        for(int Ligne=decalage;Ligne<width+decalage;Ligne++)
-        {
-            tableauMap[decalage][Ligne]='#';
-            tableauMap[height-1+decalage][Ligne]='#';
-        }
-        for(int Colonne=5;Colonne<height+5;Colonne++)
-        {
-            tableauMap[Colonne][0+decalage]='#';
-            tableauMap[Colonne][width-1+decalage]='#';
-        }
-        this.remplissageInterieur();
-        this.posezLaSortie(sortie);
-    }
-    private void remplissageInterieur()
-    {
-        int Colonne;
-        for ( Colonne = 1+decalage; Colonne < height-1+decalage; Colonne++) {
-            int Ligne;
-            for (Ligne = 1+decalage; Ligne < width-1+decalage; Ligne++) {
-                whatToPutAt(Colonne,Ligne);
-            }
-        }
-    }
-    private void posezLaSortie(int sortie)
-    {
-        if(sortie>=1000) //haut
-        {
-            int posW=width/2 - seedMap.getAnswer(12)/2 +decalage;
-            tableauMap[0+decalage][posW]='=';
-            sortie-=1000;
-            this.haut=new Coordonne(0+decalage,posW);
-            this.creationChemin(haut);
-        }
-        if(sortie>=100) //bas
-        {
-            int posW=width/2 - seedMap.getAnswer(13)/2 +decalage;
-            tableauMap[height-1+decalage][posW]='=';
-            sortie-=100;
-            this.bas=new Coordonne(height-1+decalage,posW);
-            this.creationChemin(bas);
-        }
-        if(sortie>=10) //droite
-        {
-            int posH=height/2 - seedMap.getAnswer(14)/2 +decalage;
-            tableauMap[posH][width-1+decalage]='=';
-            sortie-=10;
-            this.droite=new Coordonne(posH,width-1+decalage);
-            this.creationChemin(droite);
-        }
-        if(sortie>=1) //gauche
-        {
-            int posH=height/2 - seedMap.getAnswer(15)/2 +decalage;
-            tableauMap[posH][0+decalage]='=';
-            sortie-=1;
-            this.gauche=new Coordonne(posH,0+decalage);
-            this.creationChemin(gauche);
         }
     }
-    private void creationChemin(Coordonne coordonneDepart) {
-        int hauteur;
-        int ligne;
-        int x = coordonneDepart.getX();
-        int y = coordonneDepart.getY();
-        // coordonne est sur un mur, c'est donc une sortie
-        if (x == decalage) {
-            for (hauteur = decalage; hauteur >= 0; hauteur--) {
-                tableauMap[hauteur][y - 1] = '#';
-                tableauMap[hauteur][y] = '.';
-                tableauMap[hauteur][y + 1] = '#';
-            }
-        } else if (x == height - 1 + decalage) {
-            for (hauteur = height - 1 + decalage; hauteur <= tailleReelX - 1; hauteur++) {
-                tableauMap[hauteur][y - 1] = '#';
-                tableauMap[hauteur][y] = '.';
-                tableauMap[hauteur][y + 1] = '#';
-            }
-        } else if (y == width - 1 + decalage) {
-            for (ligne = width - 1 + decalage; ligne <= tailleReelY - 1; ligne++) {
-                tableauMap[x - 1][ligne] = '#';
-                tableauMap[x][ligne] = '.';
-                tableauMap[x + 1][ligne] = '#';
-            }
-        } else if (y == decalage) {
-            for (ligne = decalage; ligne >= 0; ligne--) {
-                tableauMap[x - 1][ligne] = '#';
-                tableauMap[x][ligne] = '.';
-                tableauMap[x + 1][ligne] = '#';
-            }
-        }
+
+    private boolean isInside(int ligne, int colonne, int decalage) {
+        return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
 
     public void creationCheminDepuisExte(Coordonne coordonne)
     {
-        int CurseurLigne= coordonne.getY(); // x - >
-        int CurseurColonne=coordonne.getX(); // y ^
-        if(CurseurLigne<decalage || CurseurLigne>decalage){
-            //System.out.println("CurseurLigne<decalage");
-            while(CurseurLigne<=decalage+2)
-            {
-                //System.out.println("CurseurLigne<=decalage+2");
-                tableauMap[CurseurColonne][CurseurLigne]='.';
-                if((CurseurColonne+1<height)&&(tableauMap[CurseurColonne+1][CurseurLigne]==' '))
-                {
-                    tableauMap[CurseurColonne+1][CurseurLigne]='#';
-                }
-                if((CurseurColonne-1>0)&&(tableauMap[CurseurColonne-1][CurseurLigne]==' '))
-                {
-                    tableauMap[CurseurColonne-1][CurseurLigne]='#';
-                }
-                CurseurLigne++;
-            }}
-        while(CurseurLigne>=decalage+width)
-        {
-            // System.out.println("CurseurLigne>=decalage+width");
-            tableauMap[CurseurColonne][CurseurLigne]='.';
-            if((CurseurColonne+1<height)&&tableauMap[CurseurColonne+1][CurseurLigne]==' ')
-            {
-                tableauMap[CurseurColonne+1][CurseurLigne]='#';
-            }
-            if((CurseurColonne-1>0)&&tableauMap[CurseurColonne-1][CurseurLigne]==' ')
-            {
-                tableauMap[CurseurColonne-1][CurseurLigne]='#';
-            }
-            CurseurLigne--;
-        }
-        if(CurseurLigne!=coordonne.getY()) // on a donc déja bougé il faut fermer le haut du couloir
-        {
-            if((CurseurColonne+1<height) &&(CurseurColonne-1>0 )) {
-                tableauMap[CurseurColonne - 1][CurseurLigne - 1] = '#';
-                tableauMap[CurseurColonne - 1][CurseurLigne] = '#';
-            }
-        }
-        while(CurseurColonne<=decalage+2)
-        {
-            //System.out.println("CurseurColonne<=decalage+2");
-            tableauMap[CurseurColonne][CurseurLigne]='.';
+        int curseurColonne = coordonne.getY();
+        int curseurLigne = coordonne.getX();
+        int directionColonne = (int)Math.signum(decalage + 3 - coordonne.getY());
+        int directionLigne = (int)Math.signum(decalage + 3 - coordonne.getX());
+        if(curseurLigne == tailleReelX - 1 || curseurLigne == 0) {
+            curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
+            alignementLigne(curseurLigne, curseurColonne, directionLigne);
+        } else {
+            curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
+            alignementColonne(curseurLigne, curseurColonne, directionColonne);
 
-            if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
-            {
-                tableauMap[CurseurColonne][CurseurLigne+1]='#';
-            }
-            if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
-            {
-                tableauMap[CurseurColonne][CurseurLigne-1]='#';
-            }
-            CurseurColonne++;
-        }
-        while(CurseurColonne>=height+decalage-2)
-        {
-            // System.out.println("CurseurColonne>=height+decalage-1");
-            tableauMap[CurseurColonne][CurseurLigne]='.';
-            if(tableauMap[CurseurColonne][CurseurLigne+1]==' ')
-            {
-                tableauMap[CurseurColonne][CurseurLigne+1]='#';
-            }
-            if(tableauMap[CurseurColonne][CurseurLigne-1]==' ')
-            {
-                tableauMap[CurseurColonne][CurseurLigne-1]='#';
-            }
-            CurseurColonne--;
         }
     }
-    public void spawnPlayer(int x, int y, char skin) {
-        tableauMap[x][y] = skin;
+
+    private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
+        while((curseurColonne >= 0 && curseurColonne <= decalage + 2) || (curseurColonne >= width + decalage - 2 && curseurColonne < tailleReelY))
+        {
+            tableauMap[curseurLigne][curseurColonne]='.';
+            if((curseurLigne < height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
+            {
+                tableauMap[curseurLigne +1][curseurColonne]='#';
+            }
+            if((curseurLigne >= 1)&&(tableauMap[curseurLigne -1][curseurColonne]==' '))
+            {
+                tableauMap[curseurLigne -1][curseurColonne]='#';
+            }
+            curseurColonne += direction;
+        }
+        curseurColonne = (curseurColonne < 0) ? (curseurColonne + 1) : curseurColonne;
+        curseurColonne = (curseurColonne == tailleReelY) ? (curseurColonne - 1) : curseurColonne;
+        return curseurColonne;
+    }
+
+    private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
+        while((curseurLigne >= 0 && curseurLigne <=decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
+        {
+            tableauMap[curseurLigne][curseurColonne]='.';
+            if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
+            {
+                tableauMap[curseurLigne][curseurColonne+1]='#';
+            }
+            if((curseurColonne >= 1) && tableauMap[curseurLigne][curseurColonne-1]==' ')
+            {
+                tableauMap[curseurLigne ][curseurColonne-1]='#';
+            }
+            curseurLigne += direction;
+
+        }
+        curseurLigne = (curseurLigne < 0) ? (curseurLigne + 1) : curseurLigne;
+        curseurLigne = (curseurLigne == tailleReelX) ? (curseurLigne - 1) : curseurLigne;
+        return curseurLigne;
+    }
+
+    public Coordonne spawnPlayer(char skin) {
+        tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
+        return(spawnPos);
     }
     private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
     {
         tableauMap[ligne][colonne] = '.';
     }
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
-    public void resetCase(int posActuelX, int posActuelY) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelY, posActuelX); //
+        whatToPutAt(ligne, colonne); //
     }
-    public void moveProps(int posActuelX, int posActuelY, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelY, posActuelX); //
+        whatToPutAt(ligne, colonne); //
         tableauMap[newPosY][newPosX] = Props;
     }
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
@@ -268,13 +203,10 @@ public class Map {
     public static void main(String[] args) {
         Seed seed = new Seed();
         Map map = new Map(40, 40, seed,10);
-        map.creationCheminDepuisExte(new Coordonne(39,24));
-        System.out.println(map.getDroite().toString());
+      //  map.creationCheminDepuisExte(new Coordonne(8,0));
+    //    System.out.println(map.getDroite().toString());
         map.affichageMap();
-        char[][] tab = new char[5][5];
-        System.out.println(tab[0][0] == '\u0000');
     }
 
 
 }
-

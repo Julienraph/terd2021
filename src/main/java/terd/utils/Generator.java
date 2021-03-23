@@ -39,7 +39,7 @@ public class Generator {
 
         Location caseLocation = new Location(x, y);
         Seed seed = new Seed();
-        Map map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed);
+        Map map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, 1);
         maps.put(caseLocation, map);
 
         for (int i = 0; i < length; i++) {
@@ -87,7 +87,7 @@ public class Generator {
             }
 
             seed = new Seed();
-            map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed);
+            map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, 1);
             maps.put(caseLocation, map);
         }
 
