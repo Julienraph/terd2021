@@ -8,28 +8,30 @@ public class Map {
     private  int height;
     private int tailleReelX; // colonne // hauteur
     private int tailleReelY; // ligne // largeur
-    private final int decalage = 5 ;
+    private final int decalage = 2 ;
     private Coordonne haut;
     private Coordonne bas;
     private Coordonne droite;
     private Coordonne gauche;
+    private Coordonne spawnPos;
 
     public Map(int x, int y, Seed seedMap,int sortie) {
         this.seedMap = seedMap;
-        this.tailleReelX=x;
-        this.tailleReelY=y;
-        this.width = seedMap.getAnswer(10)+17;
-        this.height = (width/2)+10;
-        tableauMap = new char[x][y];
+        this.width = seedMap.getAnswer(10)+y;
+        this.height = seedMap.getAnswer(8)+x;
+        this.tailleReelX = 15+x+decalage+1;
+        this.tailleReelY = 15+y+decalage+1;
+        tableauMap = new char[tailleReelX][tailleReelY];
         this.sortie=sortie;
         this.creationMap();
+        this.spawnPos = new Coordonne(decalage+1,decalage+1);
     }
 
     private void creationMap(){
-        int sortieHautY = width/2 - seedMap.getAnswer(12)/2 +decalage;
-        int sortieBasY = width/2 - seedMap.getAnswer(13)/2 +decalage;
-        int sortieGaucheX = width/2 - seedMap.getAnswer(14)/2 +decalage;
-        int sortieDroiteX = width/2 - seedMap.getAnswer(15)/2 +decalage;
+        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%(width - decalage - 2)) + decalage + 1;
+        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %(width - decalage - 2)) + decalage + 1;
+        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Remplissage de la salle si on est à l'intérieur
@@ -56,7 +58,7 @@ public class Map {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.bas=new Coordonne(height-1+decalage,sortieBasY);
+                    this.bas=new Coordonne(height+decalage,sortieBasY);
                 }
                 //Création pont de droite si y a une sortie
                 if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
@@ -96,14 +98,15 @@ public class Map {
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             alignementColonne(curseurLigne, curseurColonne, directionColonne);
+
         }
     }
 
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
-        while(curseurColonne <= decalage + 2 || curseurColonne >= width + decalage - 2)
+        while((curseurColonne >= 0 && curseurColonne <= decalage + 2) || (curseurColonne >= width + decalage - 2 && curseurColonne < tailleReelY))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
-            if((curseurLigne <= height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
+            if((curseurLigne < height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
             {
                 tableauMap[curseurLigne +1][curseurColonne]='#';
             }
@@ -113,11 +116,13 @@ public class Map {
             }
             curseurColonne += direction;
         }
+        curseurColonne = (curseurColonne < 0) ? (curseurColonne + 1) : curseurColonne;
+        curseurColonne = (curseurColonne == tailleReelY) ? (curseurColonne - 1) : curseurColonne;
         return curseurColonne;
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
-        while(curseurLigne <=decalage + 2 || curseurLigne >= height + decalage - 2)
+        while((curseurLigne >= 0 && curseurLigne <=decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
@@ -129,25 +134,29 @@ public class Map {
                 tableauMap[curseurLigne ][curseurColonne-1]='#';
             }
             curseurLigne += direction;
+
         }
+        curseurLigne = (curseurLigne < 0) ? (curseurLigne + 1) : curseurLigne;
+        curseurLigne = (curseurLigne == tailleReelX) ? (curseurLigne - 1) : curseurLigne;
         return curseurLigne;
     }
 
-    public void spawnPlayer(int x, int y, char skin) {
-        tableauMap[x][y] = skin;
+    public Coordonne spawnPlayer(char skin) {
+        tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
+        return(spawnPos);
     }
     private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
     {
         tableauMap[ligne][colonne] = '.';
     }
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
-    public void resetCase(int posActuelX, int posActuelY) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelY, posActuelX); //
+        whatToPutAt(ligne, colonne); //
     }
-    public void moveProps(int posActuelX, int posActuelY, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(posActuelY, posActuelX); //
+        whatToPutAt(ligne, colonne); //
         tableauMap[newPosY][newPosX] = Props;
     }
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
@@ -194,8 +203,8 @@ public class Map {
     public static void main(String[] args) {
         Seed seed = new Seed();
         Map map = new Map(40, 40, seed,10);
-        map.creationCheminDepuisExte(new Coordonne(8,0));
-        System.out.println(map.getDroite().toString());
+      //  map.creationCheminDepuisExte(new Coordonne(8,0));
+    //    System.out.println(map.getDroite().toString());
         map.affichageMap();
     }
 

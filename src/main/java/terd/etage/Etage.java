@@ -16,11 +16,15 @@ public class Etage {
     private int largeurMap;
     private int hauteurEtage;
     private int largeurEtage;
+    private int coefHauteurMap;
+    private int coefLargeurMap;
 
-    public Etage(int hauteurEtage, int largeurEtage, int hauteurMap, int largeurMap, int biome, int niveau, Seed seed) {
+    public Etage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, int biome, int niveau, Seed seed) {
         this.tabMap = new Map[hauteurEtage][largeurEtage];
-        this.hauteurMap = hauteurMap;
-        this.largeurMap = largeurMap;
+        this.coefHauteurMap = coefHauteurMap;
+        this.coefLargeurMap = coefLargeurMap;
+        this.hauteurMap =  15+coefHauteurMap+2+1;
+        this.largeurMap = 15+coefLargeurMap+2+1;
         this.hauteurEtage = hauteurEtage;
         this.largeurEtage = largeurEtage;
         this.biome = biome;
@@ -28,7 +32,7 @@ public class Etage {
         this.seed = seed;
         this.generationMapVoisine();
         this.generationPont();
-        tabMap[0][0].spawnPlayer(20,20,'@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
+        tabMap[0][0].spawnPlayer('@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
     }
 
     public void generationMapVoisine() {
@@ -36,11 +40,11 @@ public class Etage {
             for (int y = 0; y < tabMap[0].length; y++) {
                 Seed seed = new Seed();
                 if (i == 0 && y < tabMap[0].length - 1) {
-                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 10);
+                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 10);
                 } else if (i == 1 && y < tabMap[0].length - 1) {
-                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 1010);
+                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 1010);
                 } else {
-                    tabMap[i][y] = new Map(largeurMap, hauteurMap, seed, 0);
+                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 0);
                 }
             }
         }
@@ -97,7 +101,7 @@ public class Etage {
             if((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal]!=null)) {
                 if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
                     tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(posActuelX, posActuelY, spawnColonne, spawnLigne, skin);
+                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, spawnColonne, spawnLigne, skin);
                     props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
                     props.setPosition(spawnColonne, spawnLigne);
                     return true;
