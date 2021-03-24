@@ -122,7 +122,7 @@ public class Map {
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurLigne >= 0 && curseurLigne <=decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
+        while((curseurLigne >= 0 && curseurLigne < decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
