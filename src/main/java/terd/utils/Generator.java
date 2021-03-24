@@ -3,6 +3,7 @@ package terd.utils;
 import terd.Map.Map;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Generator {
 
@@ -79,7 +80,8 @@ public class Generator {
             nextMapDir += Direction.UP.getValue();
         }
 
-        System.out.println("dir int: " + nextMapDir);
+        System.out.println("Int: " + nextMapDir);
+        System.out.println("Direction: " + (Direction.getByValue(nextMapDir) != null ? Direction.getByValue(nextMapDir).toString() : "?" ));
 
         return nextMapDir;
     }
@@ -92,12 +94,6 @@ public class Generator {
             if (dir >= 12) {
                 // up
                 caseLocation.setY(caseLocation.getY() + 1);
-//                if (caseLocation.getY() > mapHeight) {
-//                    // Hors de la map!!!
-//                    dir = 8;
-//                } else {
-//                    foundLoc = true;
-//                }
                 if (!isInside(caseLocation.getX(), caseLocation.getY())) {
                     dir = 8;
                 } else {
@@ -106,12 +102,6 @@ public class Generator {
             } else if (dir >= 8) {
                 // down
                 caseLocation.setY(caseLocation.getY() - 1);
-//                if (caseLocation.getY() < 0) {
-//                    // Hors de la map!!!
-//                    dir = 12;
-//                } else {
-//                    foundLoc = true;
-//                }
                 if (!isInside(caseLocation.getX(), caseLocation.getY())) {
                     dir = 12;
                 } else {
@@ -120,12 +110,6 @@ public class Generator {
             } else if (dir >= 4) {
                 // left
                 caseLocation.setX(caseLocation.getX() - 1);
-//                if (caseLocation.getX() < 0) {
-//                    // Hors de la map!!!
-//                    dir = 0;
-//                } else {
-//                    foundLoc = true;
-//                }
                 if (!isInside(caseLocation.getX(), caseLocation.getY())) {
                     dir = 0;
                 } else {
@@ -134,12 +118,6 @@ public class Generator {
             } else {
                 // right
                 caseLocation.setX(caseLocation.getX() + 1);
-//                if (caseLocation.getX() > mapWidth) {
-//                    // Hors de la map!!!
-//                    dir = 4;
-//                } else {
-//                    foundLoc = true;
-//                }
                 if (!isInside(caseLocation.getX(), caseLocation.getY())) {
                     dir = 4;
                 } else {
@@ -151,19 +129,51 @@ public class Generator {
         // OK, a new location has been found, let's check there is not already a map at this position.
         if (maps[caseLocation.getY()][caseLocation.getX()] != null) {
             // Oh, crap! We can handle this, calm down!
-
+            Location newLoc = new Location(orginalLoc.getX(), orginalLoc.getY());
+            if (isPossibleLocation(newLoc, Direction.UP)) {
+                newLoc.setY(newLoc.getY() - 1);
+                caseLocation = newLoc;
+            } else if (isPossibleLocation(newLoc, Direction.DOWN)) {
+                newLoc.setY(newLoc.getY() + 1);
+                caseLocation = newLoc;
+            } else if (isPossibleLocation(newLoc, Direction.LEFT)) {
+                newLoc.setX(newLoc.getX() - 1);
+                caseLocation = newLoc;
+            } else if (isPossibleLocation(newLoc, Direction.RIGHT)) {
+                newLoc.setX(newLoc.getX() + 1);
+                caseLocation = newLoc;
+            }
         }
-
 
         return caseLocation;
     }
 
+    public boolean isPossibleLocation(Location location, Direction direction) {
+        Location nvLoc = new Location(location.getX(), location.getY());
+
+        switch (direction) {
+            case UP:
+                nvLoc.setY(nvLoc.getY() - 1);
+                break;
+            case DOWN:
+                nvLoc.setY(nvLoc.getY() + 1);
+                break;
+            case LEFT:
+                nvLoc.setX(nvLoc.getX() - 1);
+                break;
+            case RIGHT:
+                nvLoc.setX(nvLoc.getX() + 1);
+                break;
+        }
+
+        if (!isInside(location.getX(), location.getY())) {
+            return false;
+        }
+        return maps[location.getY()][location.getX()] == null;
+    }
+
     public boolean isInside(int x, int y) {
-        System.out.println("x: " + x + ", y: " + y);
-        System.out.println((mapHeight > y && y < 0) &&
-                (mapWidth > x && x < 0));
-        return (mapHeight > y && y < 0) &&
-                (mapWidth > x && x < 0);
+        return !(x >= mapWidth || x < 0 || y >= mapHeight || y < 0);
     }
 
     public Map[][] getFloor() {

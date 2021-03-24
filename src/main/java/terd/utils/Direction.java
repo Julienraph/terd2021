@@ -16,4 +16,13 @@ public enum Direction {
     public int getValue() {
         return value;
     }
+
+    public static Direction getByValue(int value) {
+        for (Direction d : values()) {
+            if (d.getValue() == value) {
+                return d;
+            }
+        }
+        return null;
+    }
 }
