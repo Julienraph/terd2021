@@ -26,18 +26,35 @@ public class Map {
         this.creationMap();
         this.spawnPos = new Coordonne(decalage+1,decalage+1);
     }
+    private void RemplissageMap()
+    {
+        DecisionCase decisionCase=new DecisionCase(seedMap);
+        int i;
+        int j;
+        for(i=decalage+1;i<height+decalage;i++)
+        {
+            for(j=decalage+1;j<width+decalage;j++)
+            {
+                char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1]);
+              //  System.out.println(Lacase);
+                tableauMap[i][j]=Lacase;
+            }
+        }
+    }
+
 
     private void creationMap(){
         int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%(width - decalage - 2)) + decalage + 1;
         int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %(width - decalage - 2)) + decalage + 1;
         int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
         int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        RemplissageMap();
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Remplissage de la salle si on est à l'intérieur
-                if(isInside(ligne, colonne, decalage)) {
+                /*if(isInside(ligne, colonne, decalage)) {
                     whatToPutAt(ligne, colonne);
-                }
+                }*/
                 //Création mur vertical
                 if((ligne >= decalage && ligne <= height + decalage) && (colonne == decalage || colonne == width + decalage)) {
                     tableauMap[ligne][colonne] = '#';
@@ -76,7 +93,7 @@ public class Map {
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
-                    tableauMap[ligne][colonne] = ' ';
+                    tableauMap[ligne][colonne] = '-';
                 }
             }
         }
@@ -173,6 +190,7 @@ public class Map {
     public void affichageMap(){
         ////affichage test//
         int i;
+        //tableauMap[decalage+1][decalage+1]='A';
         for ( i = 0; i < tailleReelX; i++) {
             int Ligne;
             for (Ligne = 0; Ligne < tailleReelY; Ligne++) {
@@ -201,8 +219,10 @@ public class Map {
         return gauche;
     }
     public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,10);
+        //Seed seed = new Seed();
+        //Seed seed = new Seed("f45146c80362fff50de78a7");
+        Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
+        Map map = new Map(10, 40, seed,10);
       //  map.creationCheminDepuisExte(new Coordonne(8,0));
     //    System.out.println(map.getDroite().toString());
         map.affichageMap();
