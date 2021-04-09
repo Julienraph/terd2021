@@ -6,11 +6,8 @@ import terd.Map.Map;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.utils.Generator;
+import terd.utils.MapColor;
 import terd.utils.Seed;
-
-import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Etage {
     private Map[][] tabMap;
@@ -44,9 +41,9 @@ public class Etage {
         ligne = spawnLigne;
         colonne = spawnColonne;
         tabMap[ligne][colonne].spawnPlayer(player.getSkin());
-        player.setPosX(this.getMap(ligne,colonne).spawnPlayer(player.getSkin()).getY());
-        player.setPosY(this.getMap(ligne,colonne).spawnPlayer(player.getSkin()).getX());
-        player.setNewMap(ligne,colonne);
+        player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getY());
+        player.setPosY(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getX());
+        player.setNewMap(ligne, colonne);
         player.setEtageActuel(this);
     }
 
@@ -60,10 +57,10 @@ public class Etage {
 
     //Connecte les sorties avec la carte suivante
     public void generationPont() {
-        for(int i = 0; i < tabMap.length; i++) {
-            for(int y = 0; y < tabMap[0].length; y++) {
+        for (int i = 0; i < tabMap.length; i++) {
+            for (int y = 0; y < tabMap[0].length; y++) {
                 Map map = tabMap[i][y];
-                if(map != null) {
+                if (map != null) {
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
@@ -93,6 +90,7 @@ public class Etage {
         }
     }
 
+
     public void affichage() {
         //     System.out.println(length);
         StringBuilder sb = new StringBuilder();
@@ -118,12 +116,12 @@ public class Etage {
         boolean isVertical = (newPosY < 0 && ligneEtage > 0) || (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1);
         boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
         //Si le joueur essaye de sortir de la map
-        if(isHorizontal || isVertical) {
+        if (isHorizontal || isVertical) {
             int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0;
             int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0;
             int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1);
             int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
-            if((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal]!=null)) {
+            if ((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal] != null)) {
                 if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
                     tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
                     tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, spawnColonne, spawnLigne, skin);
@@ -133,12 +131,12 @@ public class Etage {
                 }
             }
         }
-        if(newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
+        if (newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
             return false;
         }
         //Si le joueur se déplace à l'intérieur de la salle
-        if(posActuelY < hauteurMap && posActuelX < largeurMap) {
-            if(tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
+        if (posActuelY < hauteurMap && posActuelX < largeurMap) {
+            if (tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
                 tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
                 props.setPosition(newPosX, newPosY);
                 return true;
@@ -158,37 +156,40 @@ public class Etage {
         int positionTP = map.length - 3;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
-                sb.append(map[i][j]);
+                if (MapColor.getMapColorForSymbol(map[i][j]) == null) {
+                    throw new EnumConstantNotPresentException(MapColor.class, String.valueOf(map[i][j]));
+                }
+                sb.append(MapColor.getMapColorForSymbol(map[i][j]).getColoredString());
+                //sb.append(map[i][j]);
             }
             sb.append("       ");
             if (i == positionEcritCarte) {
                 sb.append("Carte de l'étage :");
             }
-            if(i >= positionCarte && i < positionCarte + hauteurEtage) {
+            if (i >= positionCarte && i < positionCarte + hauteurEtage) {
                 sb.append("         ");
                 for (int k = 0; k < tabMap[0].length; k++) {
                     if (x == i - positionCarte && y == k) {
                         sb.append("[ @ ]");
                     } else {
-                        if(tabMap[i-positionCarte][k]!=null) {
+                        if (tabMap[i - positionCarte][k] != null) {
                             sb.append(String.format("[%d %d]", i - positionCarte, k));
-                        }
-                        else{
+                        } else {
                             sb.append(String.format("[X X]", i - positionCarte, k));
                         }
                     }
                 }
             }
-            if(i == positionTuto) {
+            if (i == positionTuto) {
                 sb.append("- ZQSD pour se déplacer / X pour arrêter le jeu");
             }
-            if(i == positionAfficherCarte) {
+            if (i == positionAfficherCarte) {
                 sb.append("- M pour afficher la carte");
             }
-            if(i == positionTP) {
+            if (i == positionTP) {
                 sb.append("- T pour se téléporter");
             }
-            if(i < map.length - 1) {
+            if (i < map.length - 1) {
                 sb.append("\n");
             }
 
@@ -208,7 +209,7 @@ public class Etage {
         int nbVerticalMap = hauteurEtage;
         int hauteurMap = map.length;
         int largeurMap = map[0].length;
-        String delimitation = new String(new char[nbHorizontalMap*largeurMap]).replace('\0', '-');
+        String delimitation = new String(new char[nbHorizontalMap * largeurMap]).replace('\0', '-');
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < hauteurMap * nbVerticalMap; i++) {
             boolean deleteLigne = true;

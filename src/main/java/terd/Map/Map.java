@@ -84,6 +84,16 @@ public class Map {
         }
     }
 
+    public static void main(String[] args) {
+        Seed seed = new Seed();
+        Map map = new Map(3, 3, seed, 0);
+        map.moveProps(0, 0, 1, 0, 'X');
+        System.out.println(map.isValide(1, 0));
+        System.out.println(map.isValide(0, 1));
+        System.out.println(seed.getSeed());
+
+    }
+
     private boolean isInside(int ligne, int colonne, int decalage) {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
@@ -202,20 +212,13 @@ public class Map {
         return gauche;
     }
 
+
     public int getTailleReelX() {
         return tailleReelX;
     }
 
     public int getTailleReelY() {
         return tailleReelY;
-    }
-
-    public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,10,0);
-        //  map.creationCheminDepuisExte(new Coordonne(8,0));
-        //    System.out.println(map.getDroite().toString());
-        map.affichageMap();
     }
 
 
