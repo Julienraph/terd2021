@@ -82,28 +82,28 @@ public class Map {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.haut=new Coordonne(decalage,sortieHautY);
+                    this.haut=new Coordonne(decalage+1,sortieHautY);
                 }
                 //Création pont du bas si y a une sortie
                 if(sortie % 1000 >= 100 && ligne >= height + decalage && colonne == sortieBasY) {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.bas=new Coordonne(height+decalage,sortieBasY);
+                    this.bas=new Coordonne(height+decalage-1,sortieBasY);
                 }
                 //Création pont de droite si y a une sortie
                 if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.droite=new Coordonne(sortieDroiteX,width + decalage);
+                    this.droite=new Coordonne(sortieDroiteX,width + decalage-1);
                 }
                 //Création pont de gauche si y a une sortie
                 if(sortie % 10 >= 1 && ligne == sortieGaucheX && colonne <= decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.gauche=new Coordonne(sortieGaucheX,decalage);
+                    this.gauche=new Coordonne(sortieGaucheX,decalage+1);
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
