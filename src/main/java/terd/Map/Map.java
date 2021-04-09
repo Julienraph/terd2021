@@ -81,7 +81,6 @@ public class Map {
                 }
             }
         }
-        this.nextMapDirection = nextMapDirection;
     }
 
     public static void main(String[] args) {
@@ -92,15 +91,6 @@ public class Map {
         System.out.println(map.isValide(0, 1));
         System.out.println(seed.getSeed());
 
-    }
-
-    /**
-     * Get the next map direction int.
-     *
-     * @return int
-     */
-    public int getNextMapDirection() {
-        return nextMapDirection;
     }
 
     private boolean isInside(int ligne, int colonne, int decalage) {
@@ -221,13 +211,14 @@ public class Map {
     public Coordonne getGauche() {
         return gauche;
     }
-    public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,10);
-      //  map.creationCheminDepuisExte(new Coordonne(8,0));
-    //    System.out.println(map.getDroite().toString());
-        map.affichageMap();
-    }
+
+//    public static void main(String[] args) {
+//        Seed seed = new Seed();
+//        Map map = new Map(40, 40, seed,10);
+//      //  map.creationCheminDepuisExte(new Coordonne(8,0));
+//    //    System.out.println(map.getDroite().toString());
+//        map.affichageMap();
+//    }
 
 
 }
