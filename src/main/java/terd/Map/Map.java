@@ -15,6 +15,7 @@ public class Map {
     private Coordonne gauche;
     private Coordonne spawnPos;
 
+
     private char cache;
 
 
@@ -57,10 +58,12 @@ public class Map {
 
 
     private void creationMap(){
-        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%(width - decalage - 2)) + decalage + 1;
-        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %(width - decalage - 2)) + decalage + 1;
-        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
-        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        int moduloWidth = (width - decalage - 2) == 0 ? (width - decalage - 2 + 1) : (width - decalage - 2);
+        int moduloHeight = (height - decalage - 2) == 0 ? (height - decalage - 2 + 1) : (height - decalage - 2);
+        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%moduloWidth) + decalage + 1;
+        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %moduloWidth) + decalage + 1;
+        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %moduloHeight) + decalage + 1;
+        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %moduloHeight) + decalage + 1;
         RemplissageMap();
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
@@ -112,6 +115,17 @@ public class Map {
         }
     }
 
+
+    public static void main(String[] args) {
+        Seed seed = new Seed();
+        Map map = new Map(3, 3, seed, 0);
+        map.moveProps(0, 0, 1, 0, 'X');
+        System.out.println(map.isValide(1, 0));
+        System.out.println(map.isValide(0, 1));
+        System.out.println(seed.getSeed());
+
+    }
+
     private boolean isInside(int ligne, int colonne, int decalage) {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
@@ -128,12 +142,11 @@ public class Map {
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             alignementColonne(curseurLigne, curseurColonne, directionColonne);
-
         }
     }
 
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurColonne >= 0 && curseurColonne <= decalage + 2) || (curseurColonne >= width + decalage - 2 && curseurColonne < tailleReelY))
+        while((curseurColonne >= 0 && curseurColonne <= decalage + 1) || (curseurColonne >= width + decalage - 1 && curseurColonne < tailleReelY))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurLigne < height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
@@ -152,7 +165,8 @@ public class Map {
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurLigne >= 0 && curseurLigne <=decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
+
+        while((curseurLigne >= 0 && curseurLigne < decalage + 1) || (curseurLigne >= height + decalage - 1 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
@@ -237,15 +251,15 @@ public class Map {
     public Coordonne getGauche() {
         return gauche;
     }
-    public static void main(String[] args) {
-        //Seed seed = new Seed();
-       Seed seed=new Seed("0a354af1a000000000000784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
-        //Seed seed = new Seed("f45146c80362fff50de78a7");
-       // Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
-       // Map map = new Map(5, 5, seed,10);
-      //  map.creationCheminDepuisExte(new Coordonne(8,0));
-    //    System.out.println(map.getDroite().toString());
-     //   map.affichageMap();
+
+
+
+    public int getTailleReelX() {
+        return tailleReelX;
+    }
+
+    public int getTailleReelY() {
+        return tailleReelY;
     }
 
 
