@@ -1,5 +1,6 @@
 package terd.Map;
 import terd.utils.Seed;
+
 public class Map {
     private char[][] tableauMap;
     private Seed seedMap;
@@ -99,6 +100,26 @@ public class Map {
                 }
             }
         }
+        this.nextMapDirection = nextMapDirection;
+    }
+
+    public static void main(String[] args) {
+        Seed seed = new Seed();
+        Map map = new Map(3, 3, seed, 0);
+        map.moveProps(0, 0, 1, 0, 'X');
+        System.out.println(map.isValide(1, 0));
+        System.out.println(map.isValide(0, 1));
+        System.out.println(seed.getSeed());
+
+    }
+
+    /**
+     * Get the next map direction int.
+     *
+     * @return int
+     */
+    public int getNextMapDirection() {
+        return nextMapDirection;
     }
 
     private boolean isInside(int ligne, int colonne, int decalage) {
@@ -141,7 +162,7 @@ public class Map {
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurLigne >= 0 && curseurLigne <=decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
+        while((curseurLigne >= 0 && curseurLigne < decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
