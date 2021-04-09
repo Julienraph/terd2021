@@ -15,6 +15,8 @@ public class Map {
     private Coordonne gauche;
     private Coordonne spawnPos;
 
+    private char cache;
+
     public Map(int x, int y, Seed seedMap,int sortie) {
         this.seedMap = seedMap;
         this.width = seedMap.getAnswer(10)+y;
@@ -173,8 +175,11 @@ public class Map {
     }
     public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
+        tableauMap[colonne][ligne]=cache;
         whatToPutAt(ligne, colonne); //
+        cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
+
     }
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
@@ -219,10 +224,10 @@ public class Map {
         return gauche;
     }
     public static void main(String[] args) {
-        //Seed seed = new Seed();
+        Seed seed = new Seed();
         //Seed seed = new Seed("f45146c80362fff50de78a7");
-        Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
-        Map map = new Map(10, 40, seed,10);
+       // Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
+        Map map = new Map(1, 20, seed,10);
       //  map.creationCheminDepuisExte(new Coordonne(8,0));
     //    System.out.println(map.getDroite().toString());
         map.affichageMap();
