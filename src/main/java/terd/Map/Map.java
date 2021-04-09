@@ -17,10 +17,32 @@ public class Map {
 
     private char cache;
 
+
+    private final int biome;
+    DecisionCase decisionCase;
+
     public Map(int x, int y, Seed seedMap,int sortie) {
+        this.cache='.';
         this.seedMap = seedMap;
-        this.width = seedMap.getAnswer(10)+y;
-        this.height = seedMap.getAnswer(8)+x;
+        this.biome= seedMap.getAnswer(0)%2;
+        if(biome==0){
+            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X');
+        }
+        else{
+            this.decisionCase=new DecisionCase(seedMap,'.',',','L','X');
+        }
+        int tmp=seedMap.getAnswer(10);
+        if(tmp<4)
+        {
+            tmp=5;
+        }
+        this.width = tmp+y;
+        tmp=seedMap.getAnswer(8);
+        if(tmp<4)
+        {
+            tmp=5;
+        }
+        this.height = tmp+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;
         tableauMap = new char[tailleReelX][tailleReelY];
@@ -30,7 +52,6 @@ public class Map {
     }
     private void RemplissageMap()
     {
-        DecisionCase decisionCase=new DecisionCase(seedMap);
         int i;
         int j;
         for(i=decalage+1;i<height+decalage;i++)
@@ -161,6 +182,7 @@ public class Map {
     }
 
     public Coordonne spawnPlayer(char skin) {
+
         tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
         return(spawnPos);
     }
@@ -169,24 +191,23 @@ public class Map {
         tableauMap[ligne][colonne] = '.';
     }
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
+    //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
     public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(ligne, colonne); //
+       tableauMap[colonne][ligne]=cache; //
     }
     public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        tableauMap[colonne][ligne]=cache;
-        whatToPutAt(ligne, colonne); //
+        resetCase(ligne, colonne); //
         cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
-
     }
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
         if (tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == ',') {
             return true; //
         }
-        else if (tableauMap[ligne][colonne] == 'X' || tableauMap[ligne][colonne] == '-')
+        else if (tableauMap[ligne][colonne] == 'X' || tableauMap[ligne][colonne] == '-' || tableauMap[ligne][colonne] == '#')
         { // =='X'
             return false;
         }
@@ -228,10 +249,10 @@ public class Map {
     }
     public static void main(String[] args) {
         //Seed seed = new Seed();
-        Seed seed=new Seed("da354af7afa61784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
+       Seed seed=new Seed("0a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         //Seed seed = new Seed("f45146c80362fff50de78a7");
        // Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
-        Map map = new Map(0, 15, seed,10);
+        Map map = new Map(seed.getAnswer(5), seed.getAnswer(6), seed,10);
       //  map.creationCheminDepuisExte(new Coordonne(8,0));
     //    System.out.println(map.getDroite().toString());
         map.affichageMap();
