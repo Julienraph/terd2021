@@ -21,15 +21,10 @@ public class Etage {
     private int largeurMap;
     private int hauteurEtage;
     private int largeurEtage;
-    private int coefHauteurMap;
-    private int coefLargeurMap;
     public int spawnLigne;
     public int spawnColonne;
 
     public Etage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, int biome, int niveau, Seed seed) {
-        this.tabMap = new Map[hauteurEtage][largeurEtage];
-        this.coefHauteurMap = coefHauteurMap;
-        this.coefLargeurMap = coefLargeurMap;
         this.hauteurEtage = hauteurEtage;
         this.largeurEtage = largeurEtage;
         this.biome = biome;
@@ -69,21 +64,15 @@ public class Etage {
             for(int y = 0; y < tabMap[0].length; y++) {
                 Map map = tabMap[i][y];
                 if(map != null) {
-                    System.out.println(String.format("Width : %d Height : %d", tabMap[i][y].getTailleReelY(), tabMap[i][y].getTailleReelX()));
-                    System.out.println(String.format("Pont X : %d Y : %d", i, y));
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
-                        System.out.println(String.format("colonne : %d", y));
-                        System.out.println(String.format("ligne : %d", i));
                         Coordonne pos = new Coordonne(hauteur, largeur);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
                     if (map.getBas() != null) {
                         int hauteur = 0;
                         int largeur = map.getBas().getY();
-                        System.out.println(String.format("colonne : %d", y));
-                        System.out.println(String.format("ligne : %d", i));
                         Coordonne pos = new Coordonne(hauteur, largeur);
                         tabMap[i + 1][y].creationCheminDepuisExte(pos);
                     }

@@ -17,8 +17,8 @@ public class Map {
 
     public Map(int x, int y, Seed seedMap,int sortie, int seedpos) {
         this.seedMap = seedMap;
-        this.width = seedMap.getAnswer(10+seedpos)+y;
-        this.height = seedMap.getAnswer(8+seedpos)+x;
+        this.width = (seedMap.getAnswer(10+seedpos))+y;
+        this.height = (seedMap.getAnswer(8+seedpos))%10+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;
         tableauMap = new char[tailleReelX][tailleReelY];
