@@ -109,14 +109,14 @@ public class Map {
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
-                    tableauMap[ligne][colonne] = '-';
+                    tableauMap[ligne][colonne] = ' ';
                 }
             }
         }
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Seed seed = new Seed();
         Map map = new Map(3, 3, seed, 0);
         map.moveProps(0, 0, 1, 0, 'X');
@@ -124,7 +124,7 @@ public class Map {
         System.out.println(map.isValide(0, 1));
         System.out.println(seed.getSeed());
 
-    }
+    }*/
 
     private boolean isInside(int ligne, int colonne, int decalage) {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
@@ -195,17 +195,17 @@ public class Map {
         tableauMap[ligne][colonne] = '.';
     }
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
-    //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
     public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-       tableauMap[colonne][ligne]=cache; //
+        tableauMap[ligne][colonne]=cache;
     }
     public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        resetCase(ligne, colonne); //
+        resetCase(colonne, ligne); //
         cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
     }
+
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
         if (tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == ',') {
