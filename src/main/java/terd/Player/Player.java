@@ -1,5 +1,6 @@
 package terd.Player;
 
+import terd.Map.Coordonne;
 import terd.etage.Etage;
 import terd.utils.Seed;
 
@@ -15,11 +16,14 @@ public class Player extends Props {
 
 
     public Player(){
-        super(0,0,0,0,'@');
+        super(20,20,0,0,'@');
         this.niveauPlayer = 1 ;
         this.seedGame  = new Seed();
-        this.etageActuel = new Etage(5,5, 8,10, 1,1, seedGame);
-   //     this.stuff = null;
+        this.etageActuel = new Etage(3,4, 4,15, 1,1, seedGame);
+        Coordonne spawn = etageActuel.getMap(0,0).spawnPlayer(this.getSkin());
+        this.setPosY(spawn.getX());
+        this.setPosX(spawn.getY());
+        //     this.stuff = null;
         this.speed = 1;
     }
 
