@@ -6,14 +6,15 @@ public class DecisionCase {
     private char caseDeBase;   private int borneMax=9;        private final int borneMaxDebut=9;
     private char caseCommune;  private int chanceCommune=9;  private final int chanceDebutCommune=9;
     private char caseRare;     private int chanceRare=13;    private final int chanceDebutRare=13;
-    private char caseExceptionnel; private int chanceExceptionnel=15;
+    private char caseExceptionnel; private int chanceExceptionnel=14;
     private Seed seed;
     private int increment=0;
 
     // biome
-    private int CaseRareRepetition;
-    private int CaseCommuneRepetition;
-
+    private int CaseRareRepetitionDessus;
+    private int CaseCommuneRepetitionDessus;
+    private int CaseRareRepetitionLigne;
+    private int CaseCommuneRepetitionLigne;
     public DecisionCase(Seed seed)
     {
         this.seed=seed;
@@ -21,8 +22,10 @@ public class DecisionCase {
         this.caseCommune=',';
         this.caseRare='L';
         this.caseExceptionnel='X';
-        this.CaseRareRepetition=0;
-        this.CaseCommuneRepetition=0;
+        this.CaseRareRepetitionDessus=0;
+        this.CaseCommuneRepetitionDessus=0;
+        this.CaseRareRepetitionLigne=0;
+        this.CaseCommuneRepetitionLigne=0;
     }
     private void resetProba(){
         borneMax=borneMaxDebut;
@@ -34,10 +37,8 @@ public class DecisionCase {
     {
         int decision=seed.getAnswer(this.increment);
         this.increment++;
-        if(increment>20)
-        {
-            resetProba();
-        }
+        System.out.println(increment);
+
        // System.out.print(decision);
         //System.out.print("=");
         changementProba(dessus,derriere);
@@ -73,45 +74,73 @@ public class DecisionCase {
     private void changementProba(char dessus,char derriere)
     {
         //chanceCommune  chanceRare  chanceExceptionnel
-        if(dessus==caseCommune) // /
+        if(dessus==caseCommune) // ,
         {
-            if(CaseCommuneRepetition<3)
+            if(CaseCommuneRepetitionDessus<3)
             {
-                chanceCommune-=4;  // Biome de 3 de haut MAX
+                chanceCommune-=4;
+                chanceRare++;
+                // Biome de 3 de haut MAX
             }
             else
             {
-                CaseCommuneRepetition=0;
+                resetProba();
+                CaseCommuneRepetitionDessus=0;
                 chanceCommune++;
             }
-            CaseCommuneRepetition++;
+            CaseCommuneRepetitionDessus++;
 
         }
         if(derriere==caseCommune)
         {
-            chanceCommune--;
-        }
-//////////////////////////
-        if(dessus==caseRare)  // L
-        {
-            if(CaseRareRepetition<3)
+            if(CaseCommuneRepetitionLigne<4)
             {
-                chanceRare-=4;
-                borneMax-=4;// Biome de 3 de haut MAX
+                chanceCommune-=2;  // Biome de 3 de haut MAX
+                chanceRare++;
             }
             else
             {
-                CaseRareRepetition=0;
-                borneMax=borneMaxDebut;
+                resetProba();
+                CaseCommuneRepetitionLigne=0;
+                chanceCommune++;
+            }
+            CaseCommuneRepetitionLigne++;
+        }
+////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////
+        if(dessus==caseRare)  // L
+        {
+            if(CaseRareRepetitionDessus<3)
+            {
+
+                chanceRare-=3;
+               // Biome de 3 de haut MAX
+            }
+            else
+            {
+                resetProba();
+                CaseRareRepetitionDessus=0;
                 chanceRare++;
             }
-            CaseRareRepetition++;
+            CaseRareRepetitionDessus++;
         }
         if(derriere==caseRare)
         {
-            chanceRare--;
+            if(CaseRareRepetitionLigne<4)
+            {
+                chanceRare-=2;
+            }
+            else
+            {
+                resetProba();
+                CaseRareRepetitionLigne=0;
+                borneMax=borneMaxDebut;
+                chanceRare++;
+            }
+            CaseRareRepetitionLigne++;
         }
-//////////////////////////
+////////////////////////////////////////////////////
+// /////////////////////////////////////////////////
         if(dessus==caseExceptionnel) // X
         {
             chanceCommune--;
@@ -124,15 +153,12 @@ public class DecisionCase {
 //////////////////////////
         if(dessus==caseDeBase)  // .
         {
+
             borneMax--;
         }
         if(derriere==caseDeBase)
         {
-            borneMax++;
+            resetProba();
         }
     }
-
-
-
-
 }
