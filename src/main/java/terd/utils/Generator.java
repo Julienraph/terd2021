@@ -2,7 +2,9 @@ package terd.utils;
 
 import terd.Map.Map;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Generator {
 
@@ -13,94 +15,171 @@ public class Generator {
     private final int mapWidth;
     private final int mapHeight;
     private final int length;
-    private final HashMap<Location, Map> maps = new HashMap<>();
+    private final Map[][] maps;
 
     public Generator(Seed seed, int mapWidth, int mapHeight) {
         this.seed = seed;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
 
+        this.maps = new Map[mapHeight][mapWidth];
+
         length = seed.getAnswer(SEED_START) + MINIMUM_PATH_LENGTH;
         generate();
+    }
+
+    public static void main(String[] args) {
+        Generator generator = new Generator(new Seed(), 10, 10);
+        System.out.println(Arrays.deepToString(generator.getFloor()));
     }
 
     private void generate() {
         int seedPos = SEED_START + 1;
         int x = seed.getAnswer(seedPos);
-        if (x > mapWidth) {
-            x = x % mapWidth;
+        if (x > mapWidth - 1) {
+            x = x % (mapWidth - 1);
         }
 
         seedPos++;
         int y = seed.getAnswer(seedPos);
-        if (y > mapHeight) {
-            y = y % mapHeight;
+        if (y > mapHeight - 1) {
+            y = y % (mapHeight - 1);
         }
 
         Location caseLocation = new Location(x, y);
-        Seed seed = new Seed();
-        Map map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, 1);
-        maps.put(caseLocation, map);
+        int nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
+        Map map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, nextMapDir);
+        maps[caseLocation.getY()][caseLocation.getX()] = map;
 
         for (int i = 0; i < length; i++) {
             seedPos++;
-            boolean foundLoc = false;
-            int dir = seed.getAnswer(seedPos);
-            while (!foundLoc) {
-                if (dir >= 12) {
-                    // up
-                    caseLocation.setY(caseLocation.getY() + 1);
-                    if (caseLocation.getY() > mapHeight) {
-                        // Hors de la map!!!
-                        dir = 8;
-                    } else {
-                        foundLoc = true;
-                    }
-                } else if (dir >= 8) {
-                    // down
-                    caseLocation.setY(caseLocation.getY() - 1);
-                    if (caseLocation.getY() < 0) {
-                        // Hors de la map!!!
-                        dir = 12;
-                    } else {
-                        foundLoc = true;
-                    }
-                } else if (dir >= 4) {
-                    // left
-                    caseLocation.setX(caseLocation.getX() - 1);
-                    if (caseLocation.getX() < 0) {
-                        // Hors de la map!!!
-                        dir = 0;
-                    } else {
-                        foundLoc = true;
-                    }
-                } else {
-                    // right
-                    caseLocation.setX(caseLocation.getX() + 1);
-                    if (caseLocation.getX() > mapWidth) {
-                        // Hors de la map!!!
-                        dir = 4;
-                    } else {
-                        foundLoc = true;
-                    }
-                }
+            caseLocation = getNextMapLocation(seedPos, caseLocation);
+            if (caseLocation == null) {
+                // There is no other map location possible, abort.
+                break;
             }
 
-            seed = new Seed();
-            map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, 1);
-            maps.put(caseLocation, map);
+            nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
+
+            map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, nextMapDir);
+            maps[caseLocation.getY()][caseLocation.getX()] = map;
         }
 
     }
 
+    private int getNextMapDirectionInt(int seedPos, Location caseLocation) {
+        // Compute the position of next map.
+        Location nextCaseLocation = getNextMapLocation(seedPos + 1, caseLocation);
+
+        if (nextCaseLocation == null) {
+            return 0;
+        }
+
+        int nextMapDir = 0;
+        if (caseLocation.getX() + 1 == nextCaseLocation.getX()) {
+            nextMapDir += Direction.RIGHT.getValue();
+        }
+        if (caseLocation.getX() - 1 == nextCaseLocation.getX()) {
+            nextMapDir += Direction.LEFT.getValue();
+        }
+        if (caseLocation.getY() + 1 == nextCaseLocation.getY()) {
+            nextMapDir += Direction.DOWN.getValue();
+        }
+        if (caseLocation.getY() - 1 == nextCaseLocation.getY()) {
+            nextMapDir += Direction.UP.getValue();
+        }
+
+        return nextMapDir;
+    }
+
+    //                       seed position to look at  previous location of the case
+    private Location getNextMapLocation(int atSeedPos, Location orginalLoc) {
+        Location caseLocation = new Location(orginalLoc.getX(), orginalLoc.getY()); // remove side effect, I don't want to modify originalLoc.
+
+        List<Location> available = new ArrayList<>();
+
+        if (isPossibleLocation(caseLocation, Direction.UP)) {
+            available.add(new Location(caseLocation.getX(), caseLocation.getY() - 1));
+        }
+        if (isPossibleLocation(caseLocation, Direction.DOWN)) {
+            available.add(new Location(caseLocation.getX(), caseLocation.getY() + 1));
+        }
+
+        if (isPossibleLocation(caseLocation, Direction.LEFT)) {
+            available.add(new Location(caseLocation.getX() - 1, caseLocation.getY()));
+        }
+        if (isPossibleLocation(caseLocation, Direction.RIGHT)) {
+            available.add(new Location(caseLocation.getX() + 1, caseLocation.getY()));
+        }
+
+        if (available.size() == 0) {
+            return null;
+        }
+
+        if (available.size() == 1) {
+            return available.get(0);
+        }
+
+        int answer = seed.getAnswer(atSeedPos);
+        if (available.size() == 2) {
+            if (answer > 7) {
+                return available.get(1);
+            } else {
+                return available.get(0);
+            }
+        }
+
+        if (available.size() == 3) {
+            if (answer > 9) {
+                return available.get(2);
+            } else if (answer > 4) {
+                return available.get(1);
+            } else {
+                return available.get(0);
+            }
+        }
+
+        if (answer > 6) {
+            return available.get(3);
+        } else if (answer > 4) {
+            return available.get(2);
+        } else if (answer > 2) {
+            return available.get(1);
+        } else {
+            return available.get(0);
+        }
+    }
+
+    public boolean isPossibleLocation(Location location, Direction direction) {
+        Location nvLoc = new Location(location.getX(), location.getY());
+
+        switch (direction) {
+            case UP:
+                nvLoc.setY(nvLoc.getY() - 1);
+                break;
+            case DOWN:
+                nvLoc.setY(nvLoc.getY() + 1);
+                break;
+            case LEFT:
+                nvLoc.setX(nvLoc.getX() - 1);
+                break;
+            case RIGHT:
+                nvLoc.setX(nvLoc.getX() + 1);
+                break;
+        }
+
+        if (!isInside(nvLoc.getX(), nvLoc.getY())) {
+            return false;
+        }
+        return maps[nvLoc.getY()][nvLoc.getX()] == null;
+    }
+
+    public boolean isInside(int x, int y) {
+        return !(x >= mapWidth || x < 0 || y >= mapHeight || y < 0);
+    }
 
     public Map[][] getFloor() {
-        Map[][] mapsArray = new Map[mapHeight][mapWidth];
-        for (java.util.Map.Entry<Location, Map> entry : maps.entrySet()) {
-            Location loc = entry.getKey();
-            mapsArray[loc.getY()][loc.getX()] = entry.getValue();
-        }
-        return mapsArray;
+        return maps;
     }
 
 }
