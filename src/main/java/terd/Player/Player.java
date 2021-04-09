@@ -15,15 +15,9 @@ public class Player extends Props {
     private int speed;
 
 
-    public Player(){
-        super(20,20,0,0,'@');
+    public Player(char skin){
+        super(skin);
         this.niveauPlayer = 1 ;
-        this.seedGame  = new Seed();
-        this.etageActuel = new Etage(3,4, 4,15, 1,1, seedGame);
-        Coordonne spawn = etageActuel.getMap(0,0).spawnPlayer(this.getSkin());
-        this.setPosY(spawn.getX());
-        this.setPosX(spawn.getY());
-        //     this.stuff = null;
         this.speed = 1;
     }
 
@@ -39,27 +33,7 @@ public class Player extends Props {
         return speed;
     }
 
-    public boolean deplacement(){
-        Scanner scanner = new Scanner(System.in);
-        boolean jouer = true;
-        char boutonDeplacement = scanner.next().charAt(0);
-        int nextX = this.getX();
-        int nextY = this.getY();
-        if (boutonDeplacement == 'z' || boutonDeplacement == 'Z') {
-            nextY = nextY - this.getSpeed();
-        } else if (boutonDeplacement == ('s') || boutonDeplacement == ('S')) {
-            nextY = nextY + this.getSpeed();
-        } else if (boutonDeplacement == ('q') || boutonDeplacement == ('Q')) {
-            nextX = nextX - this.getSpeed();
-        } else if (boutonDeplacement == ('d') || boutonDeplacement == ('D')) {
-            nextX = nextX + this.getSpeed();
-        } else if (boutonDeplacement == ('x') || boutonDeplacement == ('X')) {
-            jouer = false;
-        }
-        this.getEtageActuel().moveProps(this, nextX, nextY, this.getSkin());
-        return jouer;
-
+    public void setEtageActuel(Etage etageActuel) {
+        this.etageActuel = etageActuel;
     }
-
-
 }

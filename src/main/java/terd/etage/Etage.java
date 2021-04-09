@@ -2,10 +2,13 @@ package terd.etage;
 
 import terd.Map.Coordonne;
 import terd.Map.Map;
+import terd.Player.Player;
 import terd.Player.Props;
 import terd.utils.Seed;
 
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Etage {
     private Map[][] tabMap;
@@ -32,7 +35,6 @@ public class Etage {
         this.seed = seed;
         this.generationMapVoisine();
         this.generationPont();
-        tabMap[0][0].spawnPlayer('@'); //TODO pouvoir choisir le spawn à partir de je ne sais quelle classe
     }
 
     public void generationMapVoisine() {
@@ -50,6 +52,23 @@ public class Etage {
         }
     }
 
+    public void spawnPlayer(Player player, int ligne, int colonne) {
+        tabMap[ligne][colonne].spawnPlayer(player.getSkin());
+        player.setPosX(this.getMap(ligne,colonne).spawnPlayer(player.getSkin()).getY());
+        player.setPosY(this.getMap(ligne,colonne).spawnPlayer(player.getSkin()).getX());
+        player.setNewMap(ligne,colonne);
+        player.setEtageActuel(this);
+    }
+
+    public int getHauteurEtage() {
+        return hauteurEtage;
+    }
+
+    public int getLargeurEtage() {
+        return largeurEtage;
+    }
+
+    //Connecte les sorties avec la carte suivante
     public void generationPont() {
         for(int i = 0; i < tabMap.length; i++) {
             for(int y = 0; y < tabMap[0].length; y++) {
@@ -123,12 +142,14 @@ public class Etage {
     }
 
 
-    public void afficher(int x, int y) {
+    public void afficherMap(int x, int y) {
         StringBuilder sb = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
         int positionCarte = 10;
         int positionEcritCarte = positionCarte - 2;
         int positionTuto = map.length - 5;
+        int positionAfficherCarte = map.length - 4;
+        int positionTP = map.length - 3;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 sb.append(map[i][j]);
@@ -153,13 +174,42 @@ public class Etage {
                 }
             }
             if(i == positionTuto) {
-                sb.append("ZQSD pour se déplacer / X pour arrêter");
+                sb.append("- ZQSD pour se déplacer / X pour arrêter le jeu");
+            }
+            if(i == positionAfficherCarte) {
+                sb.append("- M pour afficher la carte");
+            }
+            if(i == positionTP) {
+                sb.append("- T pour se téléporter");
             }
             if(i < map.length - 1) {
                 sb.append("\n");
             }
+
         }
         System.out.println(sb.toString());
+    }
+
+
+    public void afficherCarte(int x, int y) {
+        char[][] map = tabMap[x][y].getTableauMap();
+        int nbHorizontalMap = largeurEtage;
+        int nbVerticalMap = hauteurEtage;
+        int hauteurMap = map.length;
+        int largeurMap = map[0].length;
+        String delimitation = new String(new char[nbHorizontalMap*largeurMap]).replace('\0', '-');
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < hauteurMap * nbVerticalMap; i++) {
+            for (int j = 0; j < largeurMap * nbHorizontalMap; j++) {
+                map = ((i % hauteurMap == 0) || (j % largeurMap == 0)) ? tabMap[x+i/hauteurMap][y+j/largeurMap].getTableauMap() : map;
+                sb.append(map[i%hauteurMap][j%largeurMap]);
+            }
+            sb.append("\n");
+        }
+        System.out.println("\n\n");
+        System.out.println(delimitation);
+        System.out.println(sb.toString());
+        System.out.println(delimitation);
     }
 
     public Map[][] getEtage() {
