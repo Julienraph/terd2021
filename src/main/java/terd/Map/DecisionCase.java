@@ -5,8 +5,9 @@ import terd.utils.Seed;
 public class DecisionCase {
     private char caseDeBase;   private int borneMax=9;        private final int borneMaxDebut=9;
     private char caseCommune;  private int chanceCommune=9;  private final int chanceDebutCommune=9;
+    //private char caseMoinsCommune; private int chanceMoinsCommune=11; private final int chanceDebutMoinsCommune=11;
     private char caseRare;     private int chanceRare=13;    private final int chanceDebutRare=13;
-    private char caseExceptionnel; private int chanceExceptionnel=14;
+    private char caseExceptionnel; private int chanceExceptionnel=15;
     private Seed seed;
     private int increment=0;
 
@@ -15,13 +16,14 @@ public class DecisionCase {
     private int CaseCommuneRepetitionDessus;
     private int CaseRareRepetitionLigne;
     private int CaseCommuneRepetitionLigne;
-    public DecisionCase(Seed seed)
+    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel)
     {
         this.seed=seed;
-        this.caseDeBase='.';
-        this.caseCommune=',';
-        this.caseRare='L';
-        this.caseExceptionnel='X';
+        this.caseDeBase=base;
+        this.caseCommune=commune;
+        this.caseRare=rare;
+        this.caseExceptionnel=exceptionnel;
+        //this.caseMoinsCommune='T';
         this.CaseRareRepetitionDessus=0;
         this.CaseCommuneRepetitionDessus=0;
         this.CaseRareRepetitionLigne=0;
@@ -31,13 +33,14 @@ public class DecisionCase {
         borneMax=borneMaxDebut;
         chanceCommune=chanceDebutCommune;
         chanceRare=chanceDebutRare;
+        chanceExceptionnel=15;
     }
 
     public char DonneMoiUneCase(char dessus,char derriere)
     {
         int decision=seed.getAnswer(this.increment);
         this.increment++;
-        System.out.println(increment);
+        //System.out.println(increment);
 
        // System.out.print(decision);
         //System.out.print("=");
@@ -46,6 +49,9 @@ public class DecisionCase {
         if(decision>=chanceExceptionnel){
             return caseExceptionnel;
         }
+       /*if(decision>=chanceMoinsCommune){
+            return caseMoinsCommune;
+        }*/
         if(decision>=chanceRare){
             return caseRare;
         }
