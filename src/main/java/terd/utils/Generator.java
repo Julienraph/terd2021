@@ -2,8 +2,9 @@ package terd.utils;
 
 import terd.Map.Map;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
 
 public class Generator {
 
@@ -35,14 +36,14 @@ public class Generator {
     private void generate() {
         int seedPos = SEED_START + 1;
         int x = seed.getAnswer(seedPos);
-        if (x > mapWidth) {
-            x = x % mapWidth;
+        if (x > mapWidth - 1) {
+            x = x % (mapWidth - 1);
         }
 
         seedPos++;
         int y = seed.getAnswer(seedPos);
-        if (y > mapHeight) {
-            y = y % mapHeight;
+        if (y > mapHeight - 1) {
+            y = y % (mapHeight - 1);
         }
 
         Location caseLocation = new Location(x, y);
@@ -52,7 +53,12 @@ public class Generator {
 
         for (int i = 0; i < length; i++) {
             seedPos++;
-            caseLocation = this.getNextMapLocation(seedPos, caseLocation);
+            caseLocation = getNextMapLocation(seedPos, caseLocation);
+            if (caseLocation == null) {
+                // There is no other map location possible, abort.
+                break;
+            }
+
             nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
 
             map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, nextMapDir);
@@ -63,8 +69,11 @@ public class Generator {
 
     private int getNextMapDirectionInt(int seedPos, Location caseLocation) {
         // Compute the position of next map.
-        Location nextCaseLocation = this.getNextMapLocation(seedPos + 1, caseLocation);
-        System.out.println("next loc: " + nextCaseLocation);
+        Location nextCaseLocation = getNextMapLocation(seedPos + 1, caseLocation);
+
+        if (nextCaseLocation == null) {
+            return 0;
+        }
 
         int nextMapDir = 0;
         if (caseLocation.getX() + 1 == nextCaseLocation.getX()) {
@@ -80,72 +89,65 @@ public class Generator {
             nextMapDir += Direction.UP.getValue();
         }
 
-        System.out.println("Int: " + nextMapDir);
-        System.out.println("Direction: " + (Direction.getByValue(nextMapDir) != null ? Direction.getByValue(nextMapDir).toString() : "?" ));
-
         return nextMapDir;
     }
 
+    //                       seed position to look at  previous location of the case
     private Location getNextMapLocation(int atSeedPos, Location orginalLoc) {
         Location caseLocation = new Location(orginalLoc.getX(), orginalLoc.getY()); // remove side effect, I don't want to modify originalLoc.
-        boolean foundLoc = false;
-        int dir = this.seed.getAnswer(atSeedPos);
-        while (!foundLoc) {
-            if (dir >= 12) {
-                // up
-                caseLocation.setY(caseLocation.getY() + 1);
-                if (!isInside(caseLocation.getX(), caseLocation.getY())) {
-                    dir = 8;
-                } else {
-                    foundLoc = true;
-                }
-            } else if (dir >= 8) {
-                // down
-                caseLocation.setY(caseLocation.getY() - 1);
-                if (!isInside(caseLocation.getX(), caseLocation.getY())) {
-                    dir = 12;
-                } else {
-                    foundLoc = true;
-                }
-            } else if (dir >= 4) {
-                // left
-                caseLocation.setX(caseLocation.getX() - 1);
-                if (!isInside(caseLocation.getX(), caseLocation.getY())) {
-                    dir = 0;
-                } else {
-                    foundLoc = true;
-                }
+
+        List<Location> available = new ArrayList<>();
+
+        if (isPossibleLocation(caseLocation, Direction.UP)) {
+            available.add(new Location(caseLocation.getX(), caseLocation.getY() - 1));
+        }
+        if (isPossibleLocation(caseLocation, Direction.DOWN)) {
+            available.add(new Location(caseLocation.getX(), caseLocation.getY() + 1));
+        }
+
+        if (isPossibleLocation(caseLocation, Direction.LEFT)) {
+            available.add(new Location(caseLocation.getX() - 1, caseLocation.getY()));
+        }
+        if (isPossibleLocation(caseLocation, Direction.RIGHT)) {
+            available.add(new Location(caseLocation.getX() + 1, caseLocation.getY()));
+        }
+
+        if (available.size() == 0) {
+            return null;
+        }
+
+        if (available.size() == 1) {
+            return available.get(0);
+        }
+
+        int answer = seed.getAnswer(atSeedPos);
+        if (available.size() == 2) {
+            if (answer > 7) {
+                return available.get(1);
             } else {
-                // right
-                caseLocation.setX(caseLocation.getX() + 1);
-                if (!isInside(caseLocation.getX(), caseLocation.getY())) {
-                    dir = 4;
-                } else {
-                    foundLoc = true;
-                }
+                return available.get(0);
             }
         }
 
-        // OK, a new location has been found, let's check there is not already a map at this position.
-        if (maps[caseLocation.getY()][caseLocation.getX()] != null) {
-            // Oh, crap! We can handle this, calm down!
-            Location newLoc = new Location(orginalLoc.getX(), orginalLoc.getY());
-            if (isPossibleLocation(newLoc, Direction.UP)) {
-                newLoc.setY(newLoc.getY() - 1);
-                caseLocation = newLoc;
-            } else if (isPossibleLocation(newLoc, Direction.DOWN)) {
-                newLoc.setY(newLoc.getY() + 1);
-                caseLocation = newLoc;
-            } else if (isPossibleLocation(newLoc, Direction.LEFT)) {
-                newLoc.setX(newLoc.getX() - 1);
-                caseLocation = newLoc;
-            } else if (isPossibleLocation(newLoc, Direction.RIGHT)) {
-                newLoc.setX(newLoc.getX() + 1);
-                caseLocation = newLoc;
+        if (available.size() == 3) {
+            if (answer > 9) {
+                return available.get(2);
+            } else if (answer > 4) {
+                return available.get(1);
+            } else {
+                return available.get(0);
             }
         }
 
-        return caseLocation;
+        if (answer > 6) {
+            return available.get(3);
+        } else if (answer > 4) {
+            return available.get(2);
+        } else if (answer > 2) {
+            return available.get(1);
+        } else {
+            return available.get(0);
+        }
     }
 
     public boolean isPossibleLocation(Location location, Direction direction) {
@@ -166,10 +168,10 @@ public class Generator {
                 break;
         }
 
-        if (!isInside(location.getX(), location.getY())) {
+        if (!isInside(nvLoc.getX(), nvLoc.getY())) {
             return false;
         }
-        return maps[location.getY()][location.getX()] == null;
+        return maps[nvLoc.getY()][nvLoc.getX()] == null;
     }
 
     public boolean isInside(int x, int y) {
