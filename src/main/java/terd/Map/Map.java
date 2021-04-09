@@ -1,6 +1,5 @@
 package terd.Map;
 import terd.utils.Seed;
-
 public class Map {
     private char[][] tableauMap;
     private Seed seedMap;
@@ -16,10 +15,10 @@ public class Map {
     private Coordonne gauche;
     private Coordonne spawnPos;
 
-    public Map(int x, int y, Seed seedMap,int sortie) {
+    public Map(int x, int y, Seed seedMap,int sortie, int seedpos) {
         this.seedMap = seedMap;
-        this.width = seedMap.getAnswer(10)+y;
-        this.height = seedMap.getAnswer(8)+x;
+        this.width = seedMap.getAnswer(10+seedpos)+y;
+        this.height = seedMap.getAnswer(8+seedpos)+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;
         tableauMap = new char[tailleReelX][tailleReelY];
@@ -29,10 +28,12 @@ public class Map {
     }
 
     private void creationMap(){
-        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%(width - decalage - 2)) + decalage + 1;
-        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %(width - decalage - 2)) + decalage + 1;
-        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
-        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %(height - decalage - 2)) + decalage + 1;
+        int moduloWidth = (width - decalage - 2) == 0 ? (width - decalage - 2 + 1) : (width - decalage - 2);
+        int moduloHeight = (height - decalage - 2) == 0 ? (height - decalage - 2 + 1) : (height - decalage - 2);
+        int sortieHautY = ((width/2 - seedMap.getAnswer(12)/2 +decalage)%moduloWidth) + decalage + 1;
+        int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %moduloWidth) + decalage + 1;
+        int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %moduloHeight) + decalage + 1;
+        int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %moduloHeight) + decalage + 1;
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Remplissage de la salle si on est à l'intérieur
@@ -81,26 +82,6 @@ public class Map {
                 }
             }
         }
-        this.nextMapDirection = nextMapDirection;
-    }
-
-    public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(3, 3, seed, 0);
-        map.moveProps(0, 0, 1, 0, 'X');
-        System.out.println(map.isValide(1, 0));
-        System.out.println(map.isValide(0, 1));
-        System.out.println(seed.getSeed());
-
-    }
-
-    /**
-     * Get the next map direction int.
-     *
-     * @return int
-     */
-    public int getNextMapDirection() {
-        return nextMapDirection;
     }
 
     private boolean isInside(int ligne, int colonne, int decalage) {
@@ -119,12 +100,11 @@ public class Map {
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             alignementColonne(curseurLigne, curseurColonne, directionColonne);
-
         }
     }
 
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurColonne >= 0 && curseurColonne <= decalage + 2) || (curseurColonne >= width + decalage - 2 && curseurColonne < tailleReelY))
+        while((curseurColonne >= 0 && curseurColonne <= decalage + 1) || (curseurColonne >= width + decalage - 1 && curseurColonne < tailleReelY))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurLigne < height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
@@ -143,7 +123,7 @@ public class Map {
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurLigne >= 0 && curseurLigne < decalage + 2) || (curseurLigne >= height + decalage - 2 && curseurLigne < tailleReelX))
+        while((curseurLigne >= 0 && curseurLigne < decalage + 1) || (curseurLigne >= height + decalage - 1 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
@@ -221,11 +201,20 @@ public class Map {
     public Coordonne getGauche() {
         return gauche;
     }
+
+    public int getTailleReelX() {
+        return tailleReelX;
+    }
+
+    public int getTailleReelY() {
+        return tailleReelY;
+    }
+
     public static void main(String[] args) {
         Seed seed = new Seed();
-        Map map = new Map(40, 40, seed,10);
-      //  map.creationCheminDepuisExte(new Coordonne(8,0));
-    //    System.out.println(map.getDroite().toString());
+        Map map = new Map(40, 40, seed,10,0);
+        //  map.creationCheminDepuisExte(new Coordonne(8,0));
+        //    System.out.println(map.getDroite().toString());
         map.affichageMap();
     }
 

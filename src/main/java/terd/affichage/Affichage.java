@@ -17,7 +17,7 @@ public class Affichage {
 
     public static void main(String[] args) {
         Seed seed = new Seed();
-        Affichage affichage = new Affichage(3,4, 4,15, '@', seed);
+        Affichage affichage = new Affichage(10,4, 10,7, '@', seed);
         affichage.gameController.afficher();
     }
 }

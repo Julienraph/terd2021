@@ -14,23 +14,45 @@ public class Generator {
     private final Seed seed;
     private final int mapWidth;
     private final int mapHeight;
+    private final int minLargeur;
+    private final int minHauteur;
+    public int tailleReelX;
+    public int tailleReelY;
+    public int spawnLigne;
+    public int spawnColonne;
     private final int length;
     private final Map[][] maps;
 
-    public Generator(Seed seed, int mapWidth, int mapHeight) {
+    public Generator(Seed seed, int mapWidth, int mapHeight, int minLargeur, int minHauteur) {
         this.seed = seed;
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-
+        this.minHauteur = minHauteur;
+        this.minLargeur = minLargeur;
         this.maps = new Map[mapHeight][mapWidth];
-
         length = seed.getAnswer(SEED_START) + MINIMUM_PATH_LENGTH;
         generate();
     }
 
     public static void main(String[] args) {
-        Generator generator = new Generator(new Seed(), 10, 10);
-        System.out.println(Arrays.deepToString(generator.getFloor()));
+        Generator generator = new Generator(new Seed(), 3, 4, 5,5);
+        generator.affichage();
+    }
+
+    public void affichage() {
+        //     System.out.println(length);
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < mapHeight; i++) {
+            for(int j = 0; j < mapWidth; j++) {
+                if (maps[i][j] != null) {
+                    sb.append(String.format("[%d]", maps[i][j].getSortie()));
+                } else {
+                    sb.append("[X X]");
+                }
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
     }
 
     private void generate() {
@@ -48,8 +70,10 @@ public class Generator {
 
         Location caseLocation = new Location(x, y);
         int nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
-        Map map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, nextMapDir);
+        Map map = new Map(minHauteur, minLargeur, seed, nextMapDir,seedPos);
         maps[caseLocation.getY()][caseLocation.getX()] = map;
+        spawnLigne = caseLocation.getY();
+        spawnColonne = caseLocation.getX();
 
         for (int i = 0; i < length; i++) {
             seedPos++;
@@ -61,11 +85,15 @@ public class Generator {
 
             nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
 
-            map = new Map(seed.getAnswer(seedPos + 1), seed.getAnswer(seedPos + 2), seed, nextMapDir);
+            map = new Map(minHauteur, minLargeur, seed, nextMapDir, seedPos);
+            this.tailleReelX = map.getTailleReelX();
+            this.tailleReelY = map.getTailleReelY();
             maps[caseLocation.getY()][caseLocation.getX()] = map;
         }
 
     }
+
+
 
     private int getNextMapDirectionInt(int seedPos, Location caseLocation) {
         // Compute the position of next map.
@@ -176,6 +204,10 @@ public class Generator {
 
     public boolean isInside(int x, int y) {
         return !(x >= mapWidth || x < 0 || y >= mapHeight || y < 0);
+    }
+
+    public Map[][] getMaps() {
+        return maps;
     }
 
     public Map[][] getFloor() {
