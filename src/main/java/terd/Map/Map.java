@@ -21,7 +21,7 @@ public class Map {
     private final int biome;
     DecisionCase decisionCase;
 
-    public Map(int x, int y, Seed seedMap,int sortie) {
+    public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
         this.cache='.';
         this.seedMap = seedMap;
         this.biome= seedMap.getAnswer(0)%2;
@@ -31,20 +31,8 @@ public class Map {
         else{
             this.decisionCase=new DecisionCase(seedMap,'.',',','L','X');
         }
-       /* int tmp=seedMap.getAnswer(10);
-        if(tmp<4)
-        {
-            tmp=5;
-        }
-        this.width = tmp+y;
-        tmp=seedMap.getAnswer(8);
-        if(tmp<4)
-        {
-            tmp=5;
-        }
-        this.height = tmp+x;*/
-        this.width = (seedMap.getAnswer(10+1))+y;
-        this.height = (seedMap.getAnswer(8+1))%10+x;
+        this.width = (seedMap.getAnswer(10+seedpos))+y;
+        this.height = (seedMap.getAnswer(8+seedpos))%10+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;
         tableauMap = new char[tailleReelX][tailleReelY];
@@ -254,10 +242,10 @@ public class Map {
        Seed seed=new Seed("0a354af1a000000000000784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         //Seed seed = new Seed("f45146c80362fff50de78a7");
        // Seed seed=new Seed("bbd416a5e50a092415cf1de7ac3cacc3439037f6b556d671d8de273f");
-        Map map = new Map(5, 5, seed,10);
+       // Map map = new Map(5, 5, seed,10);
       //  map.creationCheminDepuisExte(new Coordonne(8,0));
     //    System.out.println(map.getDroite().toString());
-        map.affichageMap();
+     //   map.affichageMap();
     }
 
 
