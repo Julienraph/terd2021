@@ -15,8 +15,23 @@ public class Map {
     private Coordonne gauche;
     private Coordonne spawnPos;
 
-    public Map(int x, int y, Seed seedMap,int sortie, int seedpos) {
+
+    private char cache;
+
+
+    private final int biome;
+    DecisionCase decisionCase;
+
+    public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
+        this.cache='.';
         this.seedMap = seedMap;
+        this.biome= seedMap.getAnswer(0)%2;
+        if(biome==0){
+            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X');
+        }
+        else{
+            this.decisionCase=new DecisionCase(seedMap,'.',',','L','X');
+        }
         this.width = (seedMap.getAnswer(10+seedpos))+y;
         this.height = (seedMap.getAnswer(8+seedpos))%10+x;
         this.tailleReelX = 15+x+decalage+1;
@@ -26,6 +41,21 @@ public class Map {
         this.creationMap();
         this.spawnPos = new Coordonne(decalage+1,decalage+1);
     }
+    private void RemplissageMap()
+    {
+        int i;
+        int j;
+        for(i=decalage+1;i<height+decalage;i++)
+        {
+            for(j=decalage+1;j<width+decalage;j++)
+            {
+                char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1]);
+              //  System.out.println(Lacase);
+                tableauMap[i][j]=Lacase;
+            }
+        }
+    }
+
 
     private void creationMap(){
         int moduloWidth = (width - decalage - 2) == 0 ? (width - decalage - 2 + 1) : (width - decalage - 2);
@@ -34,12 +64,13 @@ public class Map {
         int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %moduloWidth) + decalage + 1;
         int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %moduloHeight) + decalage + 1;
         int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %moduloHeight) + decalage + 1;
+        RemplissageMap();
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Remplissage de la salle si on est à l'intérieur
-                if(isInside(ligne, colonne, decalage)) {
+                /*if(isInside(ligne, colonne, decalage)) {
                     whatToPutAt(ligne, colonne);
-                }
+                }*/
                 //Création mur vertical
                 if((ligne >= decalage && ligne <= height + decalage) && (colonne == decalage || colonne == width + decalage)) {
                     tableauMap[ligne][colonne] = '#';
@@ -78,11 +109,12 @@ public class Map {
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
-                    tableauMap[ligne][colonne] = ' ';
+                    tableauMap[ligne][colonne] = '-';
                 }
             }
         }
     }
+
 
     public static void main(String[] args) {
         Seed seed = new Seed();
@@ -133,6 +165,7 @@ public class Map {
     }
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
+
         while((curseurLigne >= 0 && curseurLigne < decalage + 1) || (curseurLigne >= height + decalage - 1 && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
@@ -153,6 +186,7 @@ public class Map {
     }
 
     public Coordonne spawnPlayer(char skin) {
+
         tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
         return(spawnPos);
     }
@@ -161,22 +195,27 @@ public class Map {
         tableauMap[ligne][colonne] = '.';
     }
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
+    //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
     public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(ligne, colonne); //
+       tableauMap[colonne][ligne]=cache; //
     }
     public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        whatToPutAt(ligne, colonne); //
+        resetCase(ligne, colonne); //
+        cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
     }
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
     {
-        if (tableauMap[ligne][colonne] == '.') {
+        if (tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == ',') {
             return true; //
-        } else { // =='X'
+        }
+        else if (tableauMap[ligne][colonne] == 'X' || tableauMap[ligne][colonne] == '-' || tableauMap[ligne][colonne] == '#')
+        { // =='X'
             return false;
         }
+        else{return false;}
     }
     public char[][] getTableauMap() {
         return tableauMap;
@@ -184,6 +223,7 @@ public class Map {
     public void affichageMap(){
         ////affichage test//
         int i;
+        //tableauMap[decalage+1][decalage+1]='A';
         for ( i = 0; i < tailleReelX; i++) {
             int Ligne;
             for (Ligne = 0; Ligne < tailleReelY; Ligne++) {
@@ -211,6 +251,7 @@ public class Map {
     public Coordonne getGauche() {
         return gauche;
     }
+
 
 
     public int getTailleReelX() {
