@@ -35,7 +35,7 @@ public class Generator {
     }
 
     public static void main(String[] args) {
-        Generator generator = new Generator(new Seed(), 3, 4, 5,5);
+        Generator generator = new Generator(new Seed(), 4, 10, 10,5);
         generator.affichage();
     }
 
@@ -85,15 +85,17 @@ public class Generator {
 
             nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
 
-            map = new Map(minHauteur, minLargeur, seed, nextMapDir, seedPos);
+            if(i == length - 1) {
+                map = new Map(minHauteur, minLargeur, seed, 0, seedPos);
+            } else {
+                map = new Map(minHauteur, minLargeur, seed, nextMapDir, seedPos);
+            }
             this.tailleReelX = map.getTailleReelX();
             this.tailleReelY = map.getTailleReelY();
             maps[caseLocation.getY()][caseLocation.getX()] = map;
         }
 
     }
-
-
 
     private int getNextMapDirectionInt(int seedPos, Location caseLocation) {
         // Compute the position of next map.
@@ -102,7 +104,6 @@ public class Generator {
         if (nextCaseLocation == null) {
             return 0;
         }
-
         int nextMapDir = 0;
         if (caseLocation.getX() + 1 == nextCaseLocation.getX()) {
             nextMapDir += Direction.RIGHT.getValue();

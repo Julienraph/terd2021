@@ -30,8 +30,6 @@ public class Etage {
         this.tabMap = new Map[hauteurEtage][largeurEtage];
         this.coefHauteurMap = coefHauteurMap;
         this.coefLargeurMap = coefLargeurMap;
-        this.hauteurMap =  15+coefHauteurMap+2+1;
-        this.largeurMap = 15+coefLargeurMap+2+1;
         this.hauteurEtage = hauteurEtage;
         this.largeurEtage = largeurEtage;
         this.biome = biome;
