@@ -1,9 +1,11 @@
 package terd.etage;
 
+
 import terd.Map.Coordonne;
 import terd.Map.Map;
 import terd.Player.Player;
 import terd.Player.Props;
+import terd.utils.Generator;
 import terd.utils.MapColor;
 import terd.utils.Seed;
 
@@ -16,40 +18,28 @@ public class Etage {
     private int largeurMap;
     private int hauteurEtage;
     private int largeurEtage;
-    private int coefHauteurMap;
-    private int coefLargeurMap;
+    public int spawnLigne;
+    public int spawnColonne;
 
     public Etage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, int biome, int niveau, Seed seed) {
-        this.tabMap = new Map[hauteurEtage][largeurEtage];
-        this.coefHauteurMap = coefHauteurMap;
-        this.coefLargeurMap = coefLargeurMap;
-        this.hauteurMap = 15 + coefHauteurMap + 2 + 1;
-        this.largeurMap = 15 + coefLargeurMap + 2 + 1;
         this.hauteurEtage = hauteurEtage;
         this.largeurEtage = largeurEtage;
         this.biome = biome;
         this.niveau = niveau;
         this.seed = seed;
-        this.generationMapVoisine();
+        Generator generator = new Generator(seed, largeurEtage, hauteurEtage, coefLargeurMap, coefHauteurMap);
+        tabMap = generator.getMaps();
+        this.hauteurMap = generator.tailleReelX;
+        this.largeurMap = generator.tailleReelY;
+        this.spawnColonne = generator.spawnColonne;
+        this.spawnLigne = generator.spawnLigne;
+        affichage();
         this.generationPont();
     }
 
-    public void generationMapVoisine() {
-        for (int i = 0; i < tabMap.length; i++) {
-            for (int y = 0; y < tabMap[0].length; y++) {
-                Seed seed = new Seed();
-                if (i == 0 && y < tabMap[0].length - 1) {
-                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 10);
-                } else if (i == 1 && y < tabMap[0].length - 1) {
-                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 1010);
-                } else {
-                    tabMap[i][y] = new Map(coefHauteurMap, coefLargeurMap, seed, 0);
-                }
-            }
-        }
-    }
-
     public void spawnPlayer(Player player, int ligne, int colonne) {
+        ligne = spawnLigne;
+        colonne = spawnColonne;
         tabMap[ligne][colonne].spawnPlayer(player.getSkin());
         player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getY());
         player.setPosY(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getX());
@@ -100,7 +90,25 @@ public class Etage {
         }
     }
 
-    public Boolean moveProps(Props props, int newPosX, int newPosY, char skin) {
+
+    public void affichage() {
+        //     System.out.println(length);
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < hauteurEtage; i++) {
+            for(int j = 0; j < largeurEtage; j++) {
+                if (tabMap[i][j] != null) {
+                    sb.append(String.format("[%d]", tabMap[i][j].getSortie()));
+                } else {
+                    sb.append("[X X]");
+                }
+            }
+            sb.append("\n");
+        }
+        System.out.println(sb.toString());
+    }
+
+    public Boolean moveProps(Props props, int newPosX, int newPosY, char skin)
+    {
         int ligneEtage = props.getPosEtageY();
         int colonneEtage = props.getPosEtageX();
         int posActuelX = props.getX();
@@ -191,7 +199,12 @@ public class Etage {
 
 
     public void afficherCarte(int x, int y) {
-        char[][] map = tabMap[x][y].getTableauMap();
+        char[][] map;
+        if(tabMap[x][y] == null) {
+            map = new char[hauteurMap][largeurMap];
+        } else {
+            map = tabMap[x][y].getTableauMap();
+        }
         int nbHorizontalMap = largeurEtage;
         int nbVerticalMap = hauteurEtage;
         int hauteurMap = map.length;
@@ -199,11 +212,21 @@ public class Etage {
         String delimitation = new String(new char[nbHorizontalMap * largeurMap]).replace('\0', '-');
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < hauteurMap * nbVerticalMap; i++) {
+            boolean deleteLigne = true;
+            StringBuilder sb2 = new StringBuilder();
             for (int j = 0; j < largeurMap * nbHorizontalMap; j++) {
-                map = ((i % hauteurMap == 0) || (j % largeurMap == 0)) ? tabMap[x + i / hauteurMap][y + j / largeurMap].getTableauMap() : map;
-                sb.append(map[i % hauteurMap][j % largeurMap]);
+                if(tabMap[x+i/hauteurMap][y+j/largeurMap] != null) {
+                    map = ((i % hauteurMap == 0) || (j % largeurMap == 0)) ? tabMap[x + i / hauteurMap][y + j / largeurMap].getTableauMap() : map;
+                    sb2.append(map[i % hauteurMap][j % largeurMap]);
+                    deleteLigne = false;
+                } else {
+                    sb2.append(' ');
+                }
             }
-            sb.append("\n");
+            if(!deleteLigne) {
+                sb.append(sb2.toString());
+                sb.append("\n");
+            }
         }
         System.out.println("\n\n");
         System.out.println(delimitation);
