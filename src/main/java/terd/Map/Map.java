@@ -14,8 +14,6 @@ public class Map {
     private Coordonne droite;
     private Coordonne gauche;
     private Coordonne spawnPos;
-
-
     private char cache;
 
 
@@ -138,10 +136,20 @@ public class Map {
         int directionLigne = (int)Math.signum(decalage + 3 - coordonne.getX());
         if(curseurLigne == tailleReelX - 1 || curseurLigne == 0) {
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
-            alignementLigne(curseurLigne, curseurColonne, directionLigne);
+            curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
+            if(directionLigne < 0) {
+                this.bas = new Coordonne(curseurLigne+1, curseurColonne);
+            } else {
+                this.haut = new Coordonne(curseurLigne, curseurColonne);
+            }
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
-            alignementColonne(curseurLigne, curseurColonne, directionColonne);
+            curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
+            if(directionColonne < 0) {
+                this.droite = new Coordonne(curseurLigne, curseurColonne+1);
+            } else {
+                this.gauche = new Coordonne(curseurLigne, curseurColonne-1);
+            }
         }
     }
 
