@@ -2,18 +2,21 @@ package terd.controller;
 
 import terd.Player.Player;
 import terd.etage.Etage;
+import terd.item.Inventaire;
 
 import java.util.Scanner;
 
 public class GameController {
     private Etage etage;
     private Player player;
+    private Inventaire inventaire;
     private boolean keepPlaying = true;
     private boolean refresh = true;
 
     public GameController(Etage etage, Player player) {
         this.etage = etage;
         this.player = player;
+        inventaire = new Inventaire(player);
     }
 
     public void afficher(){
@@ -52,6 +55,8 @@ public class GameController {
             refresh = true;
         } else if (boutonDeplacement == ('x') || boutonDeplacement == ('X')) {
             keepPlaying = false;
+        } else if (boutonDeplacement == ('p') || boutonDeplacement == ('P')) {
+           inventaire.affichage();
         }
 
         //TP du joueur
