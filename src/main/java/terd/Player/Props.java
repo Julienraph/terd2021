@@ -1,6 +1,8 @@
 package terd.Player;
 
 import terd.item.Arme;
+import terd.item.Competence;
+import terd.item.Inventaire;
 
 public interface Props {
    void takeDamages(int damages);
@@ -22,5 +24,8 @@ public interface Props {
    void setMainWeapon(Arme mainWeapon);
    int getLevelProps();
    void setLevelProps(int levelProps);
-   public void addPV(int pv);
+   void addPV(int pv);
+   Competence getMainCompetence();
+   void setMainCompetence(Competence mainCompetence);
+   Inventaire getInventaire();
 }

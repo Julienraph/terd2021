@@ -11,8 +11,8 @@ public class Competence extends AbstractItem {
 
     @Override
     public Competence useInventaire(Player player) {
-        Competence competence = player.getCompetenceActuel();
-        player.setCompetenceActuel(this);
+        Competence competence = player.getMainCompetence();
+        player.setMainCompetence(this);
         return competence;
     }
 

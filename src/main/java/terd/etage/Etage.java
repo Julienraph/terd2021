@@ -202,7 +202,7 @@ public class Etage {
                 sb.append(String.format("Arme Principale : %s", player.getMainWeapon().getNom()));
             }
             if (i == positionCompetence) {
-                sb.append(String.format("Competence Principale : %s", player.getCompetenceActuel().getNom()));
+                sb.append(String.format("Competence Principale : %s", player.getMainCompetence().getNom()));
             }
             if (i < map.length - 1) {
                 sb.append("\n");

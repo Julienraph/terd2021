@@ -9,25 +9,18 @@ import terd.item.Inventaire;
 
 
 public class Player extends AbstractProps {
-    private Seed seedGame;
     private Etage etageActuel;
-    private Inventaire inventaire;
-    private Competence competenceActuel;
 
 
     public Player(char skin, int pv){
         super(skin, pv);
         this.setLevelProps(1);
         this.setMainWeapon(new Arme(0, "épée", 10, 10, 10));
-        this.competenceActuel = new Competence(0, "eau", 10, 10, 10);
-        this.inventaire = new Inventaire();
-        Arme arme = new Arme(0, "hache", 10, 10, 10);
-        Competence competence = new Competence(0, "feu", 10, 10, 10);
-        Consommable consommable = new Consommable(0, "cerise", 1, 10, 20);
-        inventaire.ajoutItem(arme);
-        inventaire.ajoutItem(competence);
-        inventaire.ajoutItem(consommable);
-        inventaire.ajoutItem(consommable);
+        this.setMainCompetence(new Competence(0, "eau", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Arme(0, "hache", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Competence(0, "feu", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Consommable(0, "cerise", 1, 10, 20));
+        this.getInventaire().ajoutItem(new Consommable(0, "cerise", 1, 10, 20));
     }
 
     public void interaction(){
@@ -40,18 +33,6 @@ public class Player extends AbstractProps {
 
     public void setEtageActuel(Etage etageActuel) {
         this.etageActuel = etageActuel;
-    }
-
-    public Inventaire getInventaire() {
-        return inventaire;
-    }
-
-    public void setCompetenceActuel(Competence competence) {
-        this.competenceActuel = competence;
-    }
-
-    public Competence getCompetenceActuel() {
-        return competenceActuel;
     }
 }
 

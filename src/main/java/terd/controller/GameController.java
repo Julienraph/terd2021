@@ -20,7 +20,6 @@ public class GameController {
         do {
             if(refresh) {
                 etage.afficherMap(player.getPosEtageY(), player.getPosEtageX(), player);
-                player.takeDamages(60);
             }
             String entry = scanner.next();
             controller(scanner, entry);

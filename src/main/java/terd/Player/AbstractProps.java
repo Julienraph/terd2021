@@ -1,6 +1,8 @@
 package terd.Player;
 
 import terd.item.Arme;
+import terd.item.Competence;
+import terd.item.Inventaire;
 
 public abstract class AbstractProps implements Props {
     private int posX;
@@ -11,8 +13,11 @@ public abstract class AbstractProps implements Props {
     private int maxPV;
     private int speed;
     private char skin;
+    private char cache;
     private int levelProps;
     private Arme mainWeapon;
+    private Competence mainCompetence;
+    private Inventaire inventaire;
 
     public AbstractProps(int posX, int posY, int posEtageY, int posEtageX, char skin, int pv) {
         this.posX = posX;
@@ -23,6 +28,7 @@ public abstract class AbstractProps implements Props {
         this.speed = 1;
         this.pv = pv;
         this.maxPV = pv;
+        this.inventaire = new Inventaire();
     }
 
     public AbstractProps(char skin, int pv) {
@@ -34,6 +40,7 @@ public abstract class AbstractProps implements Props {
         this.skin = skin;
         this.pv = pv;
         this.maxPV = pv;
+        this.inventaire = new Inventaire();
     }
 
     public void takeDamages(int damages) {
@@ -128,5 +135,17 @@ public abstract class AbstractProps implements Props {
 
     public void setLevelProps(int levelProps) {
         this.levelProps = levelProps;
+    }
+
+    public Competence getMainCompetence() {
+        return mainCompetence;
+    }
+
+    public void setMainCompetence(Competence mainCompetence) {
+        this.mainCompetence = mainCompetence;
+    }
+
+    public Inventaire getInventaire() {
+        return inventaire;
     }
 }
