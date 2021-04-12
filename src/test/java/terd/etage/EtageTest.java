@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EtageTest extends TestCase {
     public void testmoveProps()
     {//
-        Player player = new Player('@');
+        Player player = new Player('@',100);
         player.setNewMap(4,4);
         player.setPosition(9,7);
         assertFalse(player.getEtageActuel().moveProps(player,9,8,'@')); // Test pour bord droit bas de l'etage, valide si retourne = false

@@ -146,21 +146,24 @@ public class Etage {
     }
 
 
-    public void afficherMap(int x, int y) {
+    public void afficherMap(int x, int y, Player player) {
         StringBuilder sb = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
-        int positionCarte = 10;
+        int positionCarte = 2;
         int positionEcritCarte = positionCarte - 2;
-        int positionTuto = map.length - 5;
-        int positionAfficherCarte = map.length - 4;
-        int positionTP = map.length - 3;
+        int positionTuto = positionCarte + 1 + hauteurEtage;
+        int positionAfficherCarte = positionTuto + 1;
+        int positionTP = positionAfficherCarte + 1;
+        int positionLevel = positionTP + 2;
+        int positionPV = positionLevel + 1;
+        int positionArme = positionPV + 1;
+        int positionCompetence = positionArme + 1;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 if (MapColor.getMapColorForSymbol(map[i][j]) == null) {
                     throw new EnumConstantNotPresentException(MapColor.class, String.valueOf(map[i][j]));
                 }
                 sb.append(MapColor.getMapColorForSymbol(map[i][j]).getColoredString());
-                //sb.append(map[i][j]);
             }
             sb.append("       ");
             if (i == positionEcritCarte) {
@@ -188,6 +191,18 @@ public class Etage {
             }
             if (i == positionTP) {
                 sb.append("- T pour se téléporter");
+            }
+            if (i == positionLevel) {
+                sb.append(String.format("Level : %d", player.getLevelProps()));
+            }
+            if (i == positionPV) {
+                sb.append(String.format("PV : %d", player.getPv()));
+            }
+            if (i == positionArme) {
+                sb.append(String.format("Arme Principale : %s", player.getMainWeapon().getNom()));
+            }
+            if (i == positionCompetence) {
+                sb.append(String.format("Competence Principale : %s", player.getCompetenceActuel().getNom()));
             }
             if (i < map.length - 1) {
                 sb.append("\n");
