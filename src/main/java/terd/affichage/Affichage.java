@@ -11,7 +11,6 @@ public class Affichage {
     public Affichage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, char skin, Seed seed) {
         Player player = new Player(skin, 100);
         Etage etage = new Etage(hauteurEtage, largeurEtage, coefHauteurMap, coefLargeurMap, 0, 0, seed);
-        etage.spawnPlayer(player,0,0);
         this.gameController = new GameController(etage, player);
     }
 
