@@ -2,13 +2,13 @@ package terd.item;
 
 public abstract class Item {
     int prix;
-    NomItem nom;
+    String nom;
     int nbrUtilisation;
     int rarete;
     int degat;
     // Type type;
 
-    public Item(int prix, NomItem nom, int nbrUtilisation, int rarete, int degat){
+    public Item(int prix, String nom, int nbrUtilisation, int rarete, int degat){
         this.prix = prix;
         this.nom = nom;
         this.nbrUtilisation = nbrUtilisation;
@@ -20,7 +20,7 @@ public abstract class Item {
         return prix;
     }
 
-    public NomItem getNom() {
+    public String getNom() {
         return nom;
     }
 
@@ -37,6 +37,9 @@ public abstract class Item {
     }
 
     public void  setNbrUtilisation(int minusNbr){
+        if (minusNbr > nbrUtilisation) {
+            nbrUtilisation = 0;
+        }
         nbrUtilisation -= minusNbr;
     }
 
