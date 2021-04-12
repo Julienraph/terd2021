@@ -1,11 +1,11 @@
 package terd.Map;
 
 
-public class Coordonne {
+public class Pos {
     private int x;
     private int y;
 
-    public Coordonne(int x, int y) {
+    public Pos(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -16,6 +16,14 @@ public class Coordonne {
 
     public int getY() {
         return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 
     @Override

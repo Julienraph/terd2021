@@ -1,7 +1,7 @@
 package terd.etage;
 
 
-import terd.Map.Coordonne;
+import terd.Map.Pos;
 import terd.Map.Map;
 import terd.Player.Player;
 import terd.Player.Props;
@@ -18,8 +18,8 @@ public class Etage {
     private int largeurMap;
     private int hauteurEtage;
     private int largeurEtage;
-    public int spawnLigne;
-    public int spawnColonne;
+    private int spawnLigne;
+    private int spawnColonne;
 
     public Etage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, int biome, int niveau, Seed seed) {
         this.hauteurEtage = hauteurEtage;
@@ -38,8 +38,6 @@ public class Etage {
     }
 
     public void spawnPlayer(Player player, int ligne, int colonne) {
-        ligne = spawnLigne;
-        colonne = spawnColonne;
         tabMap[ligne][colonne].spawnPlayer(player.getSkin());
         player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getY());
         player.setPosY(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getX());
@@ -64,25 +62,25 @@ public class Etage {
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
-                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        Pos pos = new Pos(hauteur, largeur);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
                     if (map.getBas() != null) {
                         int hauteur = 0;
                         int largeur = map.getBas().getY();
-                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        Pos pos = new Pos(hauteur, largeur);
                         tabMap[i + 1][y].creationCheminDepuisExte(pos);
                     }
                     if (map.getGauche() != null) {
                         int hauteur = map.getGauche().getX();
                         int largeur = largeurMap - 1;
-                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        Pos pos = new Pos(hauteur, largeur);
                         tabMap[i][y - 1].creationCheminDepuisExte(pos);
                     }
                     if (map.getDroite() != null) {
                         int hauteur = map.getDroite().getX();
                         int largeur = 0;
-                        Coordonne pos = new Coordonne(hauteur, largeur);
+                        Pos pos = new Pos(hauteur, largeur);
                         tabMap[i][y + 1].creationCheminDepuisExte(pos);
                     }
                 }
@@ -251,6 +249,14 @@ public class Etage {
 
     public Map[][] getEtage() {
         return tabMap;
+    }
+
+    public int getSpawnLigne() {
+        return spawnLigne;
+    }
+
+    public int getSpawnColonne() {
+        return spawnColonne;
     }
 
     public Map getMap(int x, int y) {

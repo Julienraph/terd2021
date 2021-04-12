@@ -13,6 +13,7 @@ public class GameController {
     public GameController(Etage etage, Player player) {
         this.etage = etage;
         this.player = player;
+        this.etage.spawnPlayer(player,etage.getSpawnLigne(),etage.getSpawnColonne());
     }
 
     public void afficher(){

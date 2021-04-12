@@ -9,11 +9,11 @@ public class Map {
     private int tailleReelX; // colonne // hauteur
     private int tailleReelY; // ligne // largeur
     private final int decalage = 2 ;
-    private Coordonne haut;
-    private Coordonne bas;
-    private Coordonne droite;
-    private Coordonne gauche;
-    private Coordonne spawnPos;
+    private Pos haut;
+    private Pos bas;
+    private Pos droite;
+    private Pos gauche;
+    private Pos spawnPos;
     private char cache;
 
 
@@ -37,7 +37,7 @@ public class Map {
         tableauMap = new char[tailleReelX][tailleReelY];
         this.sortie=sortie;
         this.creationMap();
-        this.spawnPos = new Coordonne(decalage+1,decalage+1);
+        this.spawnPos = new Pos(decalage+1,decalage+1);
     }
     private void RemplissageMap()
     {
@@ -82,28 +82,28 @@ public class Map {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.haut=new Coordonne(decalage+1,sortieHautY);
+                    this.haut=new Pos(decalage+1,sortieHautY);
                 }
                 //Création pont du bas si y a une sortie
                 if(sortie % 1000 >= 100 && ligne >= height + decalage && colonne == sortieBasY) {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.bas=new Coordonne(height+decalage-1,sortieBasY);
+                    this.bas=new Pos(height+decalage-1,sortieBasY);
                 }
                 //Création pont de droite si y a une sortie
                 if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.droite=new Coordonne(sortieDroiteX,width + decalage-1);
+                    this.droite=new Pos(sortieDroiteX,width + decalage-1);
                 }
                 //Création pont de gauche si y a une sortie
                 if(sortie % 10 >= 1 && ligne == sortieGaucheX && colonne <= decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.gauche=new Coordonne(sortieGaucheX,decalage+1);
+                    this.gauche=new Pos(sortieGaucheX,decalage+1);
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
@@ -128,27 +128,27 @@ public class Map {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
 
-    public void creationCheminDepuisExte(Coordonne coordonne)
+    public void creationCheminDepuisExte(Pos pos)
     {
-        int curseurColonne = coordonne.getY();
-        int curseurLigne = coordonne.getX();
-        int directionColonne = (int)Math.signum(decalage + 3 - coordonne.getY());
-        int directionLigne = (int)Math.signum(decalage + 3 - coordonne.getX());
+        int curseurColonne = pos.getY();
+        int curseurLigne = pos.getX();
+        int directionColonne = (int)Math.signum(decalage + 3 - pos.getY());
+        int directionLigne = (int)Math.signum(decalage + 3 - pos.getX());
         if(curseurLigne == tailleReelX - 1 || curseurLigne == 0) {
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             if(directionLigne < 0) {
-                this.bas = new Coordonne(curseurLigne+1, curseurColonne);
+                this.bas = new Pos(curseurLigne+1, curseurColonne);
             } else {
-                this.haut = new Coordonne(curseurLigne, curseurColonne);
+                this.haut = new Pos(curseurLigne, curseurColonne);
             }
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             if(directionColonne < 0) {
-                this.droite = new Coordonne(curseurLigne, curseurColonne+1);
+                this.droite = new Pos(curseurLigne, curseurColonne+1);
             } else {
-                this.gauche = new Coordonne(curseurLigne, curseurColonne-1);
+                this.gauche = new Pos(curseurLigne, curseurColonne-1);
             }
         }
     }
@@ -193,7 +193,7 @@ public class Map {
         return curseurLigne;
     }
 
-    public Coordonne spawnPlayer(char skin) {
+    public Pos spawnPlayer(char skin) {
 
         tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
         return(spawnPos);
@@ -244,19 +244,19 @@ public class Map {
         return sortie;
     }
 
-    public Coordonne getHaut() {
+    public Pos getHaut() {
         return haut;
     }
 
-    public Coordonne getBas() {
+    public Pos getBas() {
         return bas;
     }
 
-    public Coordonne getDroite() {
+    public Pos getDroite() {
         return droite;
     }
 
-    public Coordonne getGauche() {
+    public Pos getGauche() {
         return gauche;
     }
 

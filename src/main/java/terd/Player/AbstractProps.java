@@ -1,12 +1,11 @@
 package terd.Player;
 
+import terd.Map.Pos;
 import terd.item.Arme;
 import terd.item.Competence;
 import terd.item.Inventaire;
 
 public abstract class AbstractProps implements Props {
-    private int posX;
-    private int posY;
     private int posEtageY;
     private int posEtageX;
     private int pv;
@@ -18,10 +17,10 @@ public abstract class AbstractProps implements Props {
     private Arme mainWeapon;
     private Competence mainCompetence;
     private Inventaire inventaire;
+    private Pos pos = new Pos(0,0);
 
-    public AbstractProps(int posX, int posY, int posEtageY, int posEtageX, char skin, int pv) {
-        this.posX = posX;
-        this.posY = posY;
+    public AbstractProps(Pos pos, int posEtageY, int posEtageX, char skin, int pv) {
+        this.pos = pos;
         this.posEtageY = posEtageY;
         this.posEtageX = posEtageX;
         this.skin = skin;
@@ -32,8 +31,6 @@ public abstract class AbstractProps implements Props {
     }
 
     public AbstractProps(char skin, int pv) {
-        this.posX = 0;
-        this.posY = 0;
         this.posEtageY = 0;
         this.posEtageX = 0;
         this.speed = 1;
@@ -56,17 +53,17 @@ public abstract class AbstractProps implements Props {
     }
 
     public double getDistance(AbstractProps abstractProps) {
-        double dx = posX - abstractProps.getX();
-        double dy = posY - abstractProps.getY();
+        double dx = pos.getX() - abstractProps.getX();
+        double dy = pos.getY() - abstractProps.getY();
         return Math.hypot(dx, dy);
     }
 
     public void setPosX(int x){
-        posX = x;
+        pos.setX(x);
     }
 
     public void setPosY(int y){
-        posY = y;
+        pos.setY(y);
     }
 
     public Arme getMainWeapon() {
@@ -89,12 +86,12 @@ public abstract class AbstractProps implements Props {
 
     @Override
     public int getX() {
-        return posX;
+        return pos.getX();
     }
 
     @Override
     public int getY() {
-        return posY;
+        return pos.getY();
     }
 
     public int getPosEtageY() {
@@ -147,5 +144,13 @@ public abstract class AbstractProps implements Props {
 
     public Inventaire getInventaire() {
         return inventaire;
+    }
+
+    public Pos getPos() {
+        return pos;
+    }
+
+    public void setPos(Pos pos) {
+        this.pos = pos;
     }
 }

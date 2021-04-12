@@ -1,5 +1,6 @@
 package terd.Player;
 
+import terd.Map.Pos;
 import terd.item.Arme;
 import terd.item.Competence;
 import terd.item.Inventaire;
@@ -13,6 +14,8 @@ public interface Props {
    void setPosition(int newPosX, int newPosY);
    int getX();
    int getY();
+   Pos getPos();
+   void setPos(Pos pos);
    int getPosEtageY();
    char getSkin();
    void setSkin(char skin);
