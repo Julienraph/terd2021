@@ -1,30 +1,33 @@
 package terd.Player;
 
-import terd.Map.Coordonne;
 import terd.etage.Etage;
+import terd.item.Competence;
+import terd.item.Consommable;
 import terd.utils.Seed;
 import terd.item.Arme;
 import terd.item.Inventaire;
 
-import java.awt.event.*;
-import java.util.Scanner;
 
-public class Player extends Props {
-    private int niveauPlayer;
+public class Player extends AbstractProps {
     private Seed seedGame;
     private Etage etageActuel;
     private Inventaire inventaire;
-    private Arme armeActuel;
-    private int pv;
-    private int speed;
+    private Competence competenceActuel;
 
 
-    public Player(char skin){
-        super(skin);
-        this.niveauPlayer = 1 ;
-        this.pv = 20;
-        this.speed = 1;
-        this.armeActuel = null;
+    public Player(char skin, int pv){
+        super(skin, pv);
+        this.setLevelProps(1);
+        this.setMainWeapon(new Arme(0, "épée", 10, 10, 10));
+        this.competenceActuel = new Competence(0, "eau", 10, 10, 10);
+        this.inventaire = new Inventaire();
+        Arme arme = new Arme(0, "hache", 10, 10, 10);
+        Competence competence = new Competence(0, "feu", 10, 10, 10);
+        Consommable consommable = new Consommable(0, "cerise", 1, 10, 20);
+        inventaire.ajoutItem(arme);
+        inventaire.ajoutItem(competence);
+        inventaire.ajoutItem(consommable);
+        inventaire.ajoutItem(consommable);
     }
 
     public void interaction(){
@@ -35,25 +38,21 @@ public class Player extends Props {
         return etageActuel;
     }
 
-    public int getSpeed() {
-        return speed;
-    }
-
     public void setEtageActuel(Etage etageActuel) {
         this.etageActuel = etageActuel;
     }
-    public void addPV(int pv){
-        this.pv += pv;
-    }
-    public void removePV(int pv){
-        if(pv > this.pv){ //si perte de PV supérieur aux pv du joueur pv = 0
-            this.pv = 0;
-        } else {
-            this.pv -= pv;
-        }
+
+    public Inventaire getInventaire() {
+        return inventaire;
     }
 
-    public void setArmeActuel(Arme arme){
-        this.armeActuel = arme;
+    public void setCompetenceActuel(Competence competence) {
+        this.competenceActuel = competence;
+    }
+
+    public Competence getCompetenceActuel() {
+        return competenceActuel;
     }
 }
+
+

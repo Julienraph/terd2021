@@ -1,23 +1,20 @@
 package terd.item;
 
-
 import terd.Player.Player;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public  class Inventaire {
-    private List<Arme> armes;
-    private List<Competence> competences;
-    private List<Consommable> consommables;
-    private Player joueur;
+    private List<Item> armes;
+    private List<Item> competences;
+    private List<Item> consommables;
+    private List<Item> items;
+    private int etat = -1;
 
-    public Inventaire(Player joueur) {
+    public Inventaire() {
         armes = new ArrayList<>();
         competences = new ArrayList<>();
         consommables = new ArrayList<>();
-        this.joueur = joueur;
-
     }
 
     public void ajoutItem(Item item) {
@@ -26,76 +23,64 @@ public  class Inventaire {
         } else if (item instanceof Competence) {
             competences.add((Competence) item);
         } else if (item instanceof Consommable) {
+            for(Item consommable : consommables) {
+                if (consommable.getNom().equals(item.getNom())) {
+                    consommable.setNbrUtilisation(-1);
+                    return;
+                }
+            }
             consommables.add((Consommable) item);
         }
     }
 
-    public void affichage() {
-        System.out.println("0. Armes");               //Affichage du menu principal
+    public boolean quitter() {
+        etat = -1;
+        System.out.println("Fermeture de l'inventaire");
+        return false;
+    }
+
+    public boolean retour() {
+        if(etat == -1) {
+            return quitter();
+        } else {
+            menuPrincipal();
+            etat = -1;
+            return true;
+        }
+    }
+
+    public void menuPrincipal() {
+        System.out.println("B : Retour - P : Quitter");
+        System.out.println("0. Armes");
         System.out.println("1. Compétences");
         System.out.println("2. Consommables");
-        System.out.println("3. Quitter");
-        try (Scanner scanner = new Scanner(System.in)) {
-            int numeroChoix = -1;
-            do {
-                System.out.print("Veuillez saisir le numéro de l'inventaire: "); //Choix du menu
-                numeroChoix = scanner.nextInt();
-                if (numeroChoix == 1) {                                            // début Arme
-                    for (int i = 0; i < armes.size(); i++) {
-                        System.out.println(i + ". " + armes.get(i).getNom());   //affichage des armes
-                    }
-                    System.out.println(armes.size() + ". Quitter");
-                    int numeroArme = -1;
-                    do {
-                        System.out.println("Choisissez l'arme à équiper: ");
-                        numeroArme = scanner.nextInt();
-                    } while (numeroArme < 0 || numeroArme > armes.size());
-                    if(numeroArme == armes.size()){
-                        System.out.println("Fermeture de l'inventaire");
-                    } else {
-                        joueur.setArmeActuel(armes.get(numeroArme));
-                    }                                                           // fin Arme
-                } else if (numeroChoix == 2) {                                  //debut competence
-                    for (int i = 0; i < competences.size(); i++) {               //affichage des competences
-                        System.out.println(i + ". " + competences.get(i).getNom());
-                    }
-                    System.out.println(competences.size() + ". Quitter");
-                    int numeroCompetence = -1;
-                    do {
-                        System.out.println("Choisissez votre compétence");
-                        numeroCompetence = scanner.nextInt();
-                    } while (numeroCompetence < 0 || numeroCompetence > competences.size());
-                    if(numeroCompetence == competences.size()){
-                        System.out.println("Fermeture de l'inventaire");
-                    } else {
-                        //TODO UTILISATION COMPETENCE
-                    }
-                                                                                 //fin competence
-                } else if (numeroChoix == 3) {                                  //debut consommable
-                    for (int i = 0; i < consommables.size(); i++) {             //affichage des consommables
-                        System.out.println(i + ". " + consommables.get(i).getNom() + "nbr utilisation: " + consommables.get(i).nbrUtilisation);
-                    }
-                    System.out.println(competences.size() + ". Quitter");
-                    int numeroConsommable = -1;
-                    do {
-                        System.out.println("Quel consommable voulez-vous utiliser ?");
-                        numeroConsommable = scanner.nextInt(); //choix consommable
-                    } while ( numeroConsommable < 0 || numeroConsommable > consommables.size());
-                    if(numeroConsommable == consommables.size()){
-                        System.out.println("Fermeture de l'inventaire");
-                    } else {
-                        if(consommables.get(numeroConsommable).getNbrUtilisation() > 0){ //s'il y a assez de nbr utilisation
-                            joueur.addPV(consommables.get(numeroConsommable).degat);
-                            consommables.get(numeroConsommable).setNbrUtilisation(1);
-                            if (consommables.get(numeroConsommable).getNbrUtilisation() <= 0){ //suppr de l'inventaire si nbr utilisation <= 0
-                                consommables.remove(numeroConsommable);
-                            }
-                        }
-                    }                                                                  //fin consommable
-                } else if (numeroChoix == 4) {
-                    System.out.println("Fermeture de l'inventaire");
-                }
-            } while (numeroChoix != 0 && numeroChoix != 1 && numeroChoix != 2 && numeroChoix != 3);
+    }
+
+    public boolean affichageItem(Player joueur, int choix) {
+        //Si on est dans une catégorie et le joueur choisit un item
+        if (etat != -1 && (choix >= 0 && choix < items.size())) {
+            Item item = items.get(choix).useInventaire(joueur);
+            if(etat == 0 || etat == 1) {
+                items.remove(choix);
+                items.add(item);
+            }
+            if(items.get(choix).getNbrUtilisation() == 0) {
+                items.remove(choix);
+            }
+            etat = -1;
+            return false;
         }
+        //Si on est dans le Menu Principal et le joueur choisit une catégorie
+        if (etat == -1 && (choix == 0 || choix == 1 || choix == 2)) {
+            System.out.println("B : Retour - P : Quitter");
+            items = (choix == 0) ? armes : (choix == 1) ? competences : consommables;
+            for (int i = 0; i < items.size(); i++) {
+                items.get(0).messageInventaire();
+                System.out.println(i + ". " + items.get(i).description());
+            }
+            etat = choix;
+        }
+        //Si le joueur donne un nombre non-valide
+        return true;
     }
 }

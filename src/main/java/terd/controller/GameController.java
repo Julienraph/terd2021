@@ -1,29 +1,26 @@
 package terd.controller;
-
 import terd.Player.Player;
 import terd.etage.Etage;
-import terd.item.Inventaire;
 
 import java.util.Scanner;
 
 public class GameController {
     private Etage etage;
     private Player player;
-    private Inventaire inventaire;
     private boolean keepPlaying = true;
     private boolean refresh = true;
 
     public GameController(Etage etage, Player player) {
         this.etage = etage;
         this.player = player;
-        inventaire = new Inventaire(player);
     }
 
     public void afficher(){
         Scanner scanner = new Scanner(System.in);
         do {
             if(refresh) {
-                etage.afficherMap(player.getPosEtageY(), player.getPosEtageX());
+                etage.afficherMap(player.getPosEtageY(), player.getPosEtageX(), player);
+                player.takeDamages(60);
             }
             String entry = scanner.next();
             controller(scanner, entry);
@@ -55,9 +52,9 @@ public class GameController {
             refresh = true;
         } else if (boutonDeplacement == ('x') || boutonDeplacement == ('X')) {
             keepPlaying = false;
-        } else if (boutonDeplacement == ('p') || boutonDeplacement == ('P')) {
-           inventaire.affichage();
         }
+
+
 
         //TP du joueur
         int ligne;
@@ -80,6 +77,25 @@ public class GameController {
         //Affichage de la carte
         if(stringEntry.toUpperCase().equals("M")) {
             etage.afficherCarte(0,0);
+        }
+
+        //Affichage Inventaire
+        if(stringEntry.toUpperCase().equals("P")) {
+            refresh = true;
+            boolean inInventaire = true;
+            player.getInventaire().menuPrincipal();
+            do {
+                String entry = scanner.next();
+                if(entry.toUpperCase().equals("B")) {
+                    inInventaire = player.getInventaire().retour();
+                }
+                if(entry.toUpperCase().equals("P")) {
+                    inInventaire = player.getInventaire().quitter();
+                }
+                if(Character.isDigit(entry.charAt(0))) {
+                    inInventaire = player.getInventaire().affichageItem(player, Integer.parseInt(entry));
+                }
+            } while (inInventaire);
         }
 
         //Retour
