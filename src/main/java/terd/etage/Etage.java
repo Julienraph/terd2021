@@ -154,7 +154,8 @@ public class Etage {
         int positionTuto = positionCarte + 1 + hauteurEtage;
         int positionAfficherCarte = positionTuto + 1;
         int positionTP = positionAfficherCarte + 1;
-        int positionLevel = positionTP + 2;
+        int positionXP = positionTP + 2;
+        int positionLevel = positionXP + 1;
         int positionPV = positionLevel + 1;
         int positionArme = positionPV + 1;
         int positionCompetence = positionArme + 1;
@@ -191,6 +192,9 @@ public class Etage {
             }
             if (i == positionTP) {
                 sb.append("- T pour se téléporter");
+            }
+            if (i == positionXP) {
+                sb.append(String.format("XP : %d", player.getXP()));
             }
             if (i == positionLevel) {
                 sb.append(String.format("Level : %d", player.getLevelProps()));

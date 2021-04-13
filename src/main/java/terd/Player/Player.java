@@ -15,6 +15,7 @@ public class Player extends AbstractProps {
     public Player(char skin, int pv){
         super("Player",skin, pv);
         this.setLevelProps(1);
+        this.setXP(0);
         this.setMainWeapon(new Arme(0, "Epée", 10, 10, 10));
         this.setMainCompetence(new Competence(0, "Eau", 10, 10, 10));
         this.getInventaire().ajoutItem(new Arme(0, "Hache", 10, 10, 10));

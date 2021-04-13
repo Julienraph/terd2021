@@ -46,7 +46,7 @@ public class GameController {
             entry = scanner.next();
             deplacement(entry);
             afficherInventaire(scanner,entry);
-            afficherCarte(entry);
+            afficherCarte(scanner, entry);
             tp(scanner, entry);
             retour(entry);
         }  while (etat == 0);
@@ -69,12 +69,19 @@ public class GameController {
                 etat = -1;
                 break;
             }
+            if(tour == 2) {
+                System.out.println("Entrez O pour continuer - Tour du Monstre");
+                entry = scanner.next();
+                if (entry.toUpperCase().equals("O")) {
+                    tour = 1;
+                }
+            }
             //Si au tour du Joueur
             if (tour == 0) {
                 System.out.println("Entrez A pour attaquer");
                 entry = scanner.next();
                 afficherInventaire(scanner, entry);
-                afficherCarte(entry);
+                afficherCarte(scanner, entry);
                 tour = playerAttack(entry);
             }
             //Si au tour du Monstre
@@ -90,14 +97,15 @@ public class GameController {
         if (entry.toUpperCase().equals("A")) {
             monster.takeDamages(player.getMainWeapon().getDegat());
             System.out.println(String.format("%s utilise attaque %s : %d damage", player.getName(), player.getMainWeapon().getNom(), player.getMainWeapon().getDegat()));
-            tour = 1;
+            tour = 2;
         }
         if (monster.getPv() == 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
             tour = 0;
             dureeMessage = 4;
-            message = "Vous avez gagné";
+            player.addXP(monster.getXP());
+            message = String.format("Monstre tué, Vous avez gagné ! +%dxp", monster.getXP());
         }
         return tour;
     }
@@ -141,11 +149,16 @@ public class GameController {
         }
     }
 
-    private void afficherCarte(String stringEntry) {
+    private void afficherCarte(Scanner scanner, String stringEntry) {
         //Affichage de la carte
-        if(stringEntry.toUpperCase().equals("M")) {
-            etage.afficherCarte(0,0);
-            System.out.println("\n Entrez B pour quitter la Carte");
+        boolean inMap = true;
+        if (stringEntry.toUpperCase().equals("M")) {
+            etage.afficherCarte(0, 0);
+            do {
+                System.out.println("\n Entrez B pour quitter la Carte");
+                entry = scanner.next();
+                inMap = !(entry.toUpperCase().equals("B") || entry.toUpperCase().equals("M"));
+            } while (inMap);
         }
     }
 

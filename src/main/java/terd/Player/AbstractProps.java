@@ -13,6 +13,7 @@ public abstract class AbstractProps implements Props {
     private int speed;
     private char skin;
     private char cache;
+    private int xp;
     private final String name;
     private int levelProps;
     private Arme mainWeapon;
@@ -20,7 +21,7 @@ public abstract class AbstractProps implements Props {
     private Inventaire inventaire;
     private Pos pos = new Pos(0,0);
 
-    public AbstractProps(String name, Pos pos, int posEtageY, int posEtageX, char skin, int pv) {
+    public AbstractProps(String name, Pos pos, int posEtageY, int posEtageX, char skin, int pv,int xp) {
         this.pos = pos;
         this.posEtageY = posEtageY;
         this.posEtageX = posEtageX;
@@ -28,6 +29,7 @@ public abstract class AbstractProps implements Props {
         this.speed = 1;
         this.pv = pv;
         this.maxPV = pv;
+        this.xp = xp;
         this.name = name;
         this.inventaire = new Inventaire();
     }
@@ -88,6 +90,14 @@ public abstract class AbstractProps implements Props {
     public void setPosition(int newPosX, int newPosY) {
         this.setPosX(newPosX);
         this.setPosY(newPosY);
+    }
+
+    public void addXP(int monsterXP) {
+        xp += monsterXP;
+        if(xp >= 100) {
+            xp = xp % 100;
+            levelProps += 1;
+        }
     }
 
     public boolean isBeside(Pos posProps) {
@@ -176,6 +186,14 @@ public abstract class AbstractProps implements Props {
 
     public char getCache() {
         return cache;
+    }
+
+    public int getXP() {
+        return xp;
+    }
+
+    public void setXP(int xp) {
+        this.xp = xp;
     }
 
     public void setCache(char cache) {

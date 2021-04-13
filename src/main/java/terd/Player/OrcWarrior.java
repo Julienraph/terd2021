@@ -5,7 +5,7 @@ import terd.item.Arme;
 
 public class OrcWarrior extends AbstractMonster {
     public OrcWarrior(Pos pos, char skin) {
-        super("Orc Warrior",pos, 0,0,skin, 100);
+        super("Orc Warrior",pos, 0,0,skin, 100, 50);
         this.setMainWeapon(new Arme(0,"Massue",10,0,5));
     }
 

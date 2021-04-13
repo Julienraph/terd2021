@@ -35,5 +35,8 @@ public interface Props {
    void setCache(char cache);
    boolean isBeside(Pos posProps);
    String getName();
+   void setXP(int xp);
+   int getXP();
+   void addXP(int monsterXP);
 
 }
