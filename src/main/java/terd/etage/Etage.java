@@ -3,6 +3,7 @@ package terd.etage;
 
 import terd.Map.Pos;
 import terd.Map.Map;
+import terd.Player.OrcWarrior;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.utils.Generator;
@@ -38,9 +39,9 @@ public class Etage {
     }
 
     public void spawnPlayer(Player player, int ligne, int colonne) {
-        tabMap[ligne][colonne].spawnPlayer(player.getSkin());
-        player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getY());
-        player.setPosY(this.getMap(ligne, colonne).spawnPlayer(player.getSkin()).getX());
+        tabMap[ligne][colonne].spawnPlayer(player);
+        player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player).getY());
+        player.setPosY(this.getMap(ligne, colonne).spawnPlayer(player).getX());
         player.setNewMap(ligne, colonne);
         player.setEtageActuel(this);
     }
@@ -121,8 +122,8 @@ public class Etage {
             int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
             if ((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal] != null)) {
                 if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY);
-                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, spawnColonne, spawnLigne, skin);
+                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props);
+                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, props);
                     props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
                     props.setPosition(spawnColonne, spawnLigne);
                     return true;
@@ -135,7 +136,8 @@ public class Etage {
         //Si le joueur se déplace à l'intérieur de la salle
         if (posActuelY < hauteurMap && posActuelX < largeurMap) {
             if (tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
-                tabMap[ligneEtage][colonneEtage].moveProps(posActuelX, posActuelY, newPosX, newPosY, skin);
+                tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props);
+                tabMap[ligneEtage][colonneEtage].moveProps(newPosX, newPosY, props);
                 props.setPosition(newPosX, newPosY);
                 return true;
             }

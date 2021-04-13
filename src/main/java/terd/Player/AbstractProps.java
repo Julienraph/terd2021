@@ -13,13 +13,14 @@ public abstract class AbstractProps implements Props {
     private int speed;
     private char skin;
     private char cache;
+    private final String name;
     private int levelProps;
     private Arme mainWeapon;
     private Competence mainCompetence;
     private Inventaire inventaire;
     private Pos pos = new Pos(0,0);
 
-    public AbstractProps(Pos pos, int posEtageY, int posEtageX, char skin, int pv) {
+    public AbstractProps(String name, Pos pos, int posEtageY, int posEtageX, char skin, int pv) {
         this.pos = pos;
         this.posEtageY = posEtageY;
         this.posEtageX = posEtageX;
@@ -27,24 +28,29 @@ public abstract class AbstractProps implements Props {
         this.speed = 1;
         this.pv = pv;
         this.maxPV = pv;
+        this.name = name;
         this.inventaire = new Inventaire();
     }
 
-    public AbstractProps(char skin, int pv) {
+    public AbstractProps(String name, char skin, int pv) {
         this.posEtageY = 0;
         this.posEtageX = 0;
         this.speed = 1;
         this.skin = skin;
         this.pv = pv;
-        this.maxPV = pv;
+        this.maxPV = 100;
+        this.name = name;
         this.inventaire = new Inventaire();
     }
 
     public void takeDamages(int damages) {
-        if(pv - damages > 0) {
+        if(pv - damages > maxPV) {
+            pv = this.getMaxPV();
+        }
+        else if (pv - damages > 0) {
             pv -= damages;
         } else {
-            /* TODO : gérer la mort */
+            pv = 0;
         }
     }
 
@@ -84,10 +90,20 @@ public abstract class AbstractProps implements Props {
         this.setPosY(newPosY);
     }
 
+    public boolean isBeside(Pos posProps) {
+        System.out.println(pos.toString());
+        System.out.println(posProps.toString());
+        return pos.getX() == posProps.getX() + 1 && pos.getY() == posProps.getY()
+                || pos.getX() == posProps.getX() - 1 && pos.getY() == posProps.getY()
+                || pos.getY() == posProps.getY() + 1 && pos.getX() == posProps.getX()
+                || pos.getY() == posProps.getY() - 1 && pos.getX() == posProps.getX();
+    }
+
     @Override
     public int getX() {
         return pos.getX();
     }
+
 
     @Override
     public int getY() {
@@ -108,6 +124,10 @@ public abstract class AbstractProps implements Props {
 
     public int getPv() {
         return pv;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getMaxPV() {
@@ -152,5 +172,13 @@ public abstract class AbstractProps implements Props {
 
     public void setPos(Pos pos) {
         this.pos = pos;
+    }
+
+    public char getCache() {
+        return cache;
+    }
+
+    public void setCache(char cache) {
+        this.cache = cache;
     }
 }

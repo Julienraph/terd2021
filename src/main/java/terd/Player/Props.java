@@ -31,4 +31,9 @@ public interface Props {
    Competence getMainCompetence();
    void setMainCompetence(Competence mainCompetence);
    Inventaire getInventaire();
+   char getCache();
+   void setCache(char cache);
+   boolean isBeside(Pos posProps);
+   String getName();
+
 }

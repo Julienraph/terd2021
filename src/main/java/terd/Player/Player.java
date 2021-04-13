@@ -13,14 +13,14 @@ public class Player extends AbstractProps {
 
 
     public Player(char skin, int pv){
-        super(skin, pv);
+        super("Player",skin, pv);
         this.setLevelProps(1);
-        this.setMainWeapon(new Arme(0, "épée", 10, 10, 10));
-        this.setMainCompetence(new Competence(0, "eau", 10, 10, 10));
-        this.getInventaire().ajoutItem(new Arme(0, "hache", 10, 10, 10));
-        this.getInventaire().ajoutItem(new Competence(0, "feu", 10, 10, 10));
-        this.getInventaire().ajoutItem(new Consommable(0, "cerise", 1, 10, 20));
-        this.getInventaire().ajoutItem(new Consommable(0, "cerise", 1, 10, 20));
+        this.setMainWeapon(new Arme(0, "Epée", 10, 10, 10));
+        this.setMainCompetence(new Competence(0, "Eau", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Arme(0, "Hache", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Competence(0, "Feu", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Consommable(0, "Cerise", 1, 10, 20));
+        this.getInventaire().ajoutItem(new Consommable(0, "Cerise", 1, 10, 20));
     }
 
     public void interaction(){

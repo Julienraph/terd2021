@@ -6,6 +6,7 @@ public abstract class AbstractItem implements Item {
     int nbrUtilisation;
     int rarete;
     int degat;
+    String messageInventaire;
     // Type type;
 
     public AbstractItem(int prix, String nom, int nbrUtilisation, int rarete, int degat){
@@ -41,6 +42,14 @@ public abstract class AbstractItem implements Item {
             nbrUtilisation = 0;
         }
         nbrUtilisation -= minusNbr;
+    }
+
+    public String getMessageInventaire() {
+        return messageInventaire;
+    }
+
+    public void setMessageInventaire(String messageInventaire) {
+        this.messageInventaire = messageInventaire;
     }
 
     public int utiliser(){return degat;}

@@ -16,4 +16,5 @@ public interface Item {
     default String description() {
         return(String.format("%s | dégat : %d",this.getNom(),this.getDegat()));
     }
+    String getMessageInventaire();
 }

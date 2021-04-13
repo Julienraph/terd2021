@@ -1,5 +1,13 @@
 package terd.Map;
+import terd.Player.Monster;
+import terd.Player.OrcWarrior;
+import terd.Player.Player;
+import terd.Player.Props;
 import terd.utils.Seed;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map {
     private char[][] tableauMap;
     private Seed seedMap;
@@ -14,6 +22,7 @@ public class Map {
     private Pos droite;
     private Pos gauche;
     private Pos spawnPos;
+    private List<Monster> monsterList = new ArrayList<>();
     private char cache;
 
 
@@ -38,6 +47,8 @@ public class Map {
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
+        monsterList.add(new OrcWarrior(new Pos(5,6), 'M'));
+        spawnProps(monsterList.get(0));
     }
     private void RemplissageMap()
     {
@@ -52,6 +63,39 @@ public class Map {
                 tableauMap[i][j]=Lacase;
             }
         }
+    }
+
+    public boolean isInside(Pos pos) {
+        return (pos.getX() > decalage && pos.getX() < tailleReelY - (tailleReelY - decalage - width)
+                && pos.getY() > decalage && pos.getY() < tailleReelX - (tailleReelX - height - decalage));
+    }
+
+    public Boolean moveProps(Props props, int newPosX, int newPosY) {
+        if (props.getY() < tailleReelX && props.getX() < tailleReelY) {
+            if (this.isValide(newPosX, newPosY)) {
+                this.resetCase(props.getX(), props.getY(),props);
+                this.moveProps(newPosX, newPosY, props);
+                props.setPosition(newPosX, newPosY);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int moveMonsters(Pos posPlayer) {
+        for(int i = 0; i < monsterList.size(); i++) {
+            Monster monster = monsterList.get(i);
+            if(monster.isBeside(posPlayer)) {
+                return i;
+            }
+            if(isInside(posPlayer)) {
+                moveProps(monster, monster.getX(), monster.getY() - 1);
+            }
+            if (monster.isBeside(posPlayer)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 
@@ -113,19 +157,10 @@ public class Map {
         }
     }
 
-
-    /*public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(3, 3, seed, 0);
-        map.moveProps(0, 0, 1, 0, 'X');
-        System.out.println(map.isValide(1, 0));
-        System.out.println(map.isValide(0, 1));
-        System.out.println(seed.getSeed());
-
-    }*/
-
-    private boolean isInside(int ligne, int colonne, int decalage) {
-        return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
+    public void killMonster(int i) {
+        Monster monster = monsterList.get(i);
+        monsterList.remove(i);
+        resetCase(monster.getX(),monster.getY(),monster);
     }
 
     public void creationCheminDepuisExte(Pos pos)
@@ -193,25 +228,26 @@ public class Map {
         return curseurLigne;
     }
 
-    public Pos spawnPlayer(char skin) {
+    public void spawnProps(Props props) {
+        props.setCache(tableauMap[props.getY()][props.getX()]);
+        tableauMap[props.getY()][props.getX()] = props.getSkin();
+    }
 
-        tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
+    public Pos spawnPlayer(Props props) {
+        props.setCache('.');
+        tableauMap[spawnPos.getX()][spawnPos.getY()] = props.getSkin();
         return(spawnPos);
     }
-    private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
-    {
-        tableauMap[ligne][colonne] = '.';
-    }
+
     //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
-    public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void resetCase(int colonne, int ligne, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        tableauMap[ligne][colonne]=cache;
+        tableauMap[ligne][colonne] = props.getCache();
     }
-    public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void moveProps(int newPosX, int newPosY, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
     {
-        resetCase(colonne, ligne); //
-        cache=tableauMap[newPosY][newPosX];
-        tableauMap[newPosY][newPosX] = Props;
+        props.setCache(tableauMap[newPosY][newPosX]);
+        tableauMap[newPosY][newPosX] = props.getSkin();
     }
 
     public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
@@ -240,6 +276,11 @@ public class Map {
             System.out.print("\n");
         }
     }
+
+    public List<Monster> getMonsterList() {
+        return monsterList;
+    }
+
     public int getSortie() {
         return sortie;
     }
