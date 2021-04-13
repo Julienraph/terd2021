@@ -1,5 +1,9 @@
 package terd.Map;
 import terd.utils.Seed;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map {
     private char[][] tableauMap;
     private Seed seedMap;
@@ -11,9 +15,10 @@ public class Map {
     private final int decalage = 2 ;
     private Pos haut;
     private Pos bas;
-    private Pos droite;
+    private Pos droite;  // remplacé par posSortie
     private Pos gauche;
     private Pos spawnPos;
+    private Pos posSortie;
     private char cache;
 
 
@@ -65,10 +70,6 @@ public class Map {
         RemplissageMap();
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
-                //Remplissage de la salle si on est à l'intérieur
-                /*if(isInside(ligne, colonne, decalage)) {
-                    whatToPutAt(ligne, colonne);
-                }*/
                 //Création mur vertical
                 if((ligne >= decalage && ligne <= height + decalage) && (colonne == decalage || colonne == width + decalage)) {
                     tableauMap[ligne][colonne] = '#';
@@ -82,28 +83,28 @@ public class Map {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.haut=new Pos(decalage+1,sortieHautY);
+                    this.posSortie=new Pos(decalage+1,sortieHautY);
                 }
                 //Création pont du bas si y a une sortie
                 if(sortie % 1000 >= 100 && ligne >= height + decalage && colonne == sortieBasY) {
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.bas=new Pos(height+decalage-1,sortieBasY);
+                    this.posSortie=new Pos(height+decalage-1,sortieBasY);
                 }
                 //Création pont de droite si y a une sortie
                 if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.droite=new Pos(sortieDroiteX,width + decalage-1);
+                    this.posSortie=new Pos(sortieDroiteX,width + decalage-1);
                 }
                 //Création pont de gauche si y a une sortie
                 if(sortie % 10 >= 1 && ligne == sortieGaucheX && colonne <= decalage) {
                     tableauMap[ligne-1][colonne] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
-                    this.gauche=new Pos(sortieGaucheX,decalage+1);
+                    this.posSortie=new Pos(sortieGaucheX,decalage+1);
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
@@ -114,15 +115,6 @@ public class Map {
     }
 
 
-    /*public static void main(String[] args) {
-        Seed seed = new Seed();
-        Map map = new Map(3, 3, seed, 0);
-        map.moveProps(0, 0, 1, 0, 'X');
-        System.out.println(map.isValide(1, 0));
-        System.out.println(map.isValide(0, 1));
-        System.out.println(seed.getSeed());
-
-    }*/
 
     private boolean isInside(int ligne, int colonne, int decalage) {
         return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
@@ -138,23 +130,30 @@ public class Map {
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             if(directionLigne < 0) {
-                this.bas = new Pos(curseurLigne+1, curseurColonne);
+                this.spawnPos = new Pos(curseurLigne, curseurColonne);
+               // tableauMap[curseurLigne][curseurColonne]='S'; /////////////////////
             } else {
-                this.haut = new Pos(curseurLigne, curseurColonne);
+                this.spawnPos = new Pos(curseurLigne, curseurColonne);
+               // tableauMap[curseurLigne][curseurColonne]='S'; /////////////////////
             }
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             if(directionColonne < 0) {
-                this.droite = new Pos(curseurLigne, curseurColonne+1);
+                this.spawnPos = new Pos(curseurLigne, curseurColonne);
+               // tableauMap[curseurLigne][curseurColonne]='S'; /////////////////////
             } else {
-                this.gauche = new Pos(curseurLigne, curseurColonne-1);
+                this.spawnPos = new Pos(curseurLigne, curseurColonne);
+               // tableauMap[curseurLigne][curseurColonne]='S'; /////////////////////
             }
         }
+       //tableauMap[spawnPos.getX()][spawnPos.getY()]='S';
+
+
     }
 
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
-        while((curseurColonne >= 0 && curseurColonne <= decalage + 1) || (curseurColonne >= width + decalage - 1 && curseurColonne < tailleReelY))
+        while((curseurColonne >= 0 && curseurColonne <= decalage ) || (curseurColonne >= width + decalage  && curseurColonne < tailleReelY))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurLigne < height + decalage)&&(tableauMap[curseurLigne +1][curseurColonne]==' '))
@@ -174,7 +173,7 @@ public class Map {
 
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
 
-        while((curseurLigne >= 0 && curseurLigne < decalage + 1) || (curseurLigne >= height + decalage - 1 && curseurLigne < tailleReelX))
+        while((curseurLigne >= 0 && curseurLigne < decalage ) || (curseurLigne >= height + decalage  && curseurLigne < tailleReelX))
         {
             tableauMap[curseurLigne][curseurColonne]='.';
             if((curseurColonne < width + decalage) && tableauMap[curseurLigne][curseurColonne+1]==' ')
@@ -213,17 +212,35 @@ public class Map {
         cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
     }
-
-    public boolean isValide(int colonne, int ligne)  // indique si la case ciblé est valide pour se déplacé ou non
+    public void popProps( int newPosX, int newPosY, char Props) // fait apparaitre une case
     {
-        if (tableauMap[ligne][colonne] == '.' || tableauMap[ligne][colonne] == 'L' || tableauMap[ligne][colonne] == ',') {
+       // resetCase(colonne, ligne); //
+        //cache=tableauMap[newPosY][newPosX];
+        tableauMap[newPosY][newPosX] = Props;
+    }
+    public void popProps(Pos coordonne,char Props)
+    {
+        popProps(coordonne.getY(), coordonne.getX(), Props);
+    }
+
+    public boolean isValide(int gaucheDroite, int basHaut)  // indique si la case ciblé est valide pour se déplacé ou non
+    {
+        if(gaucheDroite<0 || basHaut<0 || gaucheDroite>tailleReelX || basHaut > tailleReelY)
+        {
+            return false;
+        }
+        if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
             return true; //
         }
-        else if (tableauMap[ligne][colonne] == 'X' || tableauMap[ligne][colonne] == '-' || tableauMap[ligne][colonne] == '#')
+        else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == '#')
         { // =='X'
             return false;
         }
         else{return false;}
+    }
+    public boolean isValide(Pos coordonne)
+    {
+        return isValide(coordonne.getY(),coordonne.getX());
     }
     public char[][] getTableauMap() {
         return tableauMap;
@@ -243,6 +260,14 @@ public class Map {
     public int getSortie() {
         return sortie;
     }
+    public Pos getPosSortie() {
+        return posSortie;
+    }
+    public Pos getSpawnPos()
+    {
+        return spawnPos;
+    }
+
 
     public Pos getHaut() {
         return haut;
@@ -270,5 +295,22 @@ public class Map {
         return tailleReelY;
     }
 
+   public void creationCheminInterne(Pos debut, Pos fin)
+   {
+     // TODO
+   }
+
+    public static void main(String[] args) {
+        Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
+        Map map = new Map(5,5,seed,1000,1);
+        map.popProps(11,3,'X');
+        map.popProps(9,8,'X');
+        map.popProps(5,8,'.');
+        map.popProps(8,9,'X');
+        map.creationCheminDepuisExte(new Pos(8,0));
+       System.out.println(map.getSpawnPos());
+       map.creationCheminInterne(map.getSpawnPos(), new Pos(8,18));
+       map.affichageMap();
+    }
 
 }
