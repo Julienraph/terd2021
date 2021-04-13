@@ -16,9 +16,9 @@ public class Consommable extends AbstractItem {
         } else {
             player.takeDamages(-degat);
             this.setNbrUtilisation(1);
-            this.setMessageInventaire(String.format("Vous avez utilisé %s : Vous augmente de %d PV.", nom,degat));
+            this.setMessageInventaire(String.format("Vous avez utilisé %s : Augmente vos PV de %d.", nom,degat));
         }
-        //Renvoie un consommable pour cause d'implémentation de code, on l'utilise pas
+        //Renvoie un consommable pour cause d'implémentation de code, on ne l'utilise pas
         return new Consommable(0, "cerise", 1, 10, 20);
     }
 

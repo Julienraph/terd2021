@@ -23,14 +23,12 @@ public class Map {
     private Pos gauche;
     private Pos spawnPos;
     private List<Monster> monsterList = new ArrayList<>();
-    private char cache;
 
 
     private final int biome;
     DecisionCase decisionCase;
 
     public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
-        this.cache='.';
         this.seedMap = seedMap;
         this.biome= seedMap.getAnswer(0)%2;
         if(biome==0){

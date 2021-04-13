@@ -17,6 +17,23 @@ public abstract class AbstractItem implements Item {
         this.degat = degat;
     }
 
+    public void  setNbrUtilisation(int minusNbr){
+        if (minusNbr > nbrUtilisation) {
+            nbrUtilisation = 0;
+        }
+        nbrUtilisation -= minusNbr;
+    }
+
+    public String getMessageInventaire() {
+        return messageInventaire;
+    }
+
+    public void setMessageInventaire(String messageInventaire) {
+        this.messageInventaire = messageInventaire;
+    }
+
+    public int utiliser(){return degat;}
+
     public int getPrix() {
         return prix;
     }
@@ -36,22 +53,5 @@ public abstract class AbstractItem implements Item {
     public int getDegat(){
         return degat;
     }
-
-    public void  setNbrUtilisation(int minusNbr){
-        if (minusNbr > nbrUtilisation) {
-            nbrUtilisation = 0;
-        }
-        nbrUtilisation -= minusNbr;
-    }
-
-    public String getMessageInventaire() {
-        return messageInventaire;
-    }
-
-    public void setMessageInventaire(String messageInventaire) {
-        this.messageInventaire = messageInventaire;
-    }
-
-    public int utiliser(){return degat;}
 
 }

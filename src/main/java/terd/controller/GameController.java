@@ -2,7 +2,6 @@ package terd.controller;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.etage.Etage;
-import terd.item.Item;
 
 import java.util.Scanner;
 
@@ -49,6 +48,7 @@ public class GameController {
             afficherCarte(scanner, entry);
             tp(scanner, entry);
             retour(entry);
+            arreterJeu(entry);
         }  while (etat == 0);
         refresh = true;
     }
@@ -58,17 +58,20 @@ public class GameController {
         afficherMap();
         System.out.println("EN COMBAT");
         do {
-            if(dureeMessage > 0) {
+            //Affiche la description de l'action effectué par le Joueur ou le Monstre qu'une fois
+            if (dureeMessage > 0) {
                 System.out.println(message);
                 dureeMessage = (dureeMessage > 1) ? dureeMessage - 1 : 0;
             }
             System.out.println(String.format("Player PV : %d   | Monster PV : %d", player.getPv(), monster.getPv()));
+            //Si le joueur meurt
             if(player.getPv() == 0) {
                 System.out.println("GAME OVER");
                 keepPlaying = false;
                 etat = -1;
                 break;
             }
+            //Si le joueur a effectué une action (Exemple : Attaque), on demande si il veut continuer pour bien séparer les tours
             if(tour == 2) {
                 System.out.println("Entrez O pour continuer - Tour du Monstre");
                 entry = scanner.next();
@@ -82,6 +85,7 @@ public class GameController {
                 entry = scanner.next();
                 afficherInventaire(scanner, entry);
                 afficherCarte(scanner, entry);
+                arreterJeu(entry);
                 tour = playerAttack(entry);
             }
             //Si au tour du Monstre
@@ -94,11 +98,13 @@ public class GameController {
     }
 
     private int playerAttack(String entry) {
+        //Si le joueur attaque
         if (entry.toUpperCase().equals("A")) {
             monster.takeDamages(player.getMainWeapon().getDegat());
             System.out.println(String.format("%s utilise attaque %s : %d damage", player.getName(), player.getMainWeapon().getNom(), player.getMainWeapon().getDegat()));
             tour = 2;
         }
+        //Si le monstre n'a plus de PV
         if (monster.getPv() == 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
@@ -118,15 +124,6 @@ public class GameController {
         }
     }
 
-    private void deplacementMonster() {
-        int i = etage.getMap(player.getPosEtageY(), player.getPosEtageX()).moveMonsters(player.getPos());
-        if(i != -1) {
-            etat = 1;
-            monster =  etage.getMap(player.getPosEtageY(), player.getPosEtageX()).getMonsterList().get(i);
-            monsterListPosition = i;
-            etage.afficherMap(player.getPosEtageY(), player.getPosEtageX(), player);
-        }
-    }
 
     private void tp(Scanner scanner, String stringEntry) {
         //TP du joueur
@@ -157,7 +154,7 @@ public class GameController {
             do {
                 System.out.println("\n Entrez B pour quitter la Carte");
                 entry = scanner.next();
-                inMap = !(entry.toUpperCase().equals("B") || entry.toUpperCase().equals("M"));
+                inMap = (!entry.toUpperCase().equals("B") && !entry.toUpperCase().equals("M") && !arreterJeu(entry));
             } while (inMap);
         }
     }
@@ -170,6 +167,7 @@ public class GameController {
             player.getInventaire().menuPrincipal();
             do {
                 String entry = scanner.next();
+                inInventaire = !arreterJeu(entry);
                 if(entry.toUpperCase().equals("B")) {
                     inInventaire = player.getInventaire().retour();
                 }
@@ -183,10 +181,6 @@ public class GameController {
                         dureeMessage = 1;
                     }
                 }
-                if(entry.toUpperCase().equals("X")) {
-                    keepPlaying = false;
-                    break;
-                }
             } while (inInventaire);
         }
     }
@@ -196,6 +190,15 @@ public class GameController {
         if(stringEntry.toUpperCase().equals("B")) {
             refresh = true;
         }
+    }
+
+    private boolean arreterJeu(String stringEntry) {
+        //Retour
+        if(stringEntry.toUpperCase().equals("X")) {
+            keepPlaying = false;
+            etat = -1;
+        }
+        return !keepPlaying;
     }
 
     public void deplacement(String stringEntry) {
@@ -225,7 +228,13 @@ public class GameController {
 
         //Si le joueur bouge, on bouge les monstres
         if(refresh) {
-            deplacementMonster();
+            int i = etage.getMap(player.getPosEtageY(), player.getPosEtageX()).moveMonsters(player.getPos());
+            if(i != -1) {
+                etat = 1;
+                monster =  etage.getMap(player.getPosEtageY(), player.getPosEtageX()).getMonsterList().get(i);
+                monsterListPosition = i;
+                etage.afficherMap(player.getPosEtageY(), player.getPosEtageX(), player);
+            }
         }
     }
 
