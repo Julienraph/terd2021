@@ -225,7 +225,7 @@ public class Map {
 
     public boolean isValide(int gaucheDroite, int basHaut)  // indique si la case ciblé est valide pour se déplacé ou non
     {
-        if(gaucheDroite<0 || basHaut<0 || gaucheDroite>tailleReelX || basHaut > tailleReelY)
+        if(gaucheDroite<0 || basHaut<0 || gaucheDroite>tailleReelY || basHaut > tailleReelX)
         {
             return false;
         }
@@ -234,6 +234,7 @@ public class Map {
         }
         else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == '#')
         { // =='X'
+
             return false;
         }
         else{return false;}
@@ -295,21 +296,119 @@ public class Map {
         return tailleReelY;
     }
 
-   public void creationCheminInterne(Pos debut, Pos fin)
+   public void creationCheminInterne(Pos debut, Pos fin)   // getY = gaucheDroite   getX = hautBas
    {
-     // TODO
+     while(!(debut.equals(fin))) {
+
+         if(debut.getY()<fin.getY()) {
+             while (debut.getY() < fin.getY() && isValide(debut.addY(1))) {
+                 System.out.println("while gaucheDroite");
+                 debut.setY(debut.getY() + 1);
+                 popProps(debut, '1');
+             }
+             if(debut.getY()!=fin.getY()) {
+                 if (isValide(debut.addX(1))) // case du haut libre
+                 {
+                     debut = debut.addX(1);
+
+                 } else if (isValide(debut.addX(-1))) // case du bas libre
+                 {
+                     debut = debut.addX(-1);
+
+                 } else {                      // pas de chemin par là, retour en arriere
+                     popProps(debut, 'I');
+                     debut = debut.addY(-1);
+                 }
+             }
+         }
+         if(debut.getX()> fin.getX())
+         {
+             while (debut.getX() > fin.getX() && isValide(debut.addX(-1))) {
+                 debut.setX(debut.getX() - 1);
+                 popProps(debut, '2');
+             }
+             if(debut.getX()!=fin.getX()) {
+                 if (isValide(debut.addY(1))) // case de droite libre
+                 {
+                     debut = debut.addY(1);
+
+                 } else if (isValide(debut.addY(-1))) // case de gauche libre
+                 {
+                     debut = debut.addY(-1);
+
+                 } else {                      // pas de chemin par là, retour en arriere
+                     popProps(debut, 'I');
+                     debut = debut.addX(1);
+                 }
+             }
+         }
+          if(debut.getY()>fin.getY()) {
+             while (debut.getY() > fin.getY() && isValide(debut.addY(-1))) {
+                 System.out.println("while gaucheDroite");
+                 debut=debut.addY(-1);
+                 popProps(debut, '3');
+             }
+             if(debut.getY()!=fin.getY()) {
+                 if (isValide(debut.addX(1))) // case du haut libre
+                 {
+                     debut = debut.addX(1);
+
+                 } else if (isValide(debut.addX(-1))) // case du bas libre
+                 {
+                     debut = debut.addX(-1);
+
+                 } else {                      // pas de chemin par là, retour en arriere
+                     popProps(debut, 'I');
+                     debut = debut.addY(1);
+                 }
+             }
+         }
+          if(debut.getX()< fin.getX())
+          {
+              while (debut.getX() > fin.getX() && isValide(debut.addX(1))) {
+                  debut.setX(debut.getX() + 1);
+                  popProps(debut, '2');
+              }
+              if(debut.getX()!=fin.getX()) {
+                  if (isValide(debut.addY(-1))) // case de droite libre
+                  {
+                      debut = debut.addY(-1);
+
+                  } else if (isValide(debut.addY(1))) // case de gauche libre
+                  {
+                      debut = debut.addY(1);
+
+                  } else {                      // pas de chemin par là, retour en arriere
+                      popProps(debut, 'I');
+                      debut = debut.addX(-1);
+                  }
+              }
+          }
+         System.out.println(debut);
+         System.out.println(fin);
+         affichageMap();
+     }
    }
+
 
     public static void main(String[] args) {
         Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         Map map = new Map(5,5,seed,1000,1);
-        map.popProps(11,3,'X');
+       // map.popProps(11,3,'X');
+        map.popProps(12,3,'.');
         map.popProps(9,8,'X');
         map.popProps(5,8,'.');
         map.popProps(8,9,'X');
         map.creationCheminDepuisExte(new Pos(8,0));
        System.out.println(map.getSpawnPos());
-       map.creationCheminInterne(map.getSpawnPos(), new Pos(8,18));
+        System.out.println(map.getPosSortie());
+        Pos debut = new Pos(3,3);
+        map.popProps(debut,'k');
+        Pos fin = new Pos(3,11);
+      //  System.out.println(debut.getY()<fin.getY());
+       // map.popProps(pos,'K');
+        //map.popProps(pos2,'M');
+    // map.creationCheminInterne(map.getSpawnPos(),map.getPosSortie());
        map.affichageMap();
     }
 
