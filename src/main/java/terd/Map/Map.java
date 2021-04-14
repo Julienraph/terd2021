@@ -20,9 +20,7 @@ public class Map {
     private Pos spawnPos;
     private Pos posSortie;
     private char cache;
-
-
-    private final int biome;
+    private int biome;
     DecisionCase decisionCase;
 
     public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
@@ -43,6 +41,12 @@ public class Map {
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
+    }
+    public Map(char[][] tableauMap, int tailleReelX, int tailleReelY)
+    {
+        this.tableauMap=tableauMap;
+        this.tailleReelX=tailleReelX;
+        this.tailleReelY=tailleReelY;
     }
     private void RemplissageMap()
     {
@@ -299,6 +303,8 @@ public class Map {
    public void creationCheminInterne(Pos debut, Pos fin)   // getY = gaucheDroite   getX = hautBas
    {
      while(!(debut.equals(fin))) {
+        // int positionHautBas= debut.getX()- fin.getX(); // si sup a 0 haut
+         //int positionGaucheDroite=debut.getY() - fin.getY(); // si inf a 0 droite
 
          if(debut.getY()<fin.getY()) {
              while (debut.getY() < fin.getY() && isValide(debut.addY(1))) {
@@ -389,27 +395,131 @@ public class Map {
          affichageMap();
      }
    }
+   /* public boolean IsCheminFromTo(Pos debut, Pos fin)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
+    {
+        if (debut.equals(fin)) {
+            return true;
+        }
+        else {
+            return  isValide(debut.addX(1)) && IsCheminFromTo(debut.addX(1), fin) || isValide(debut.addX(-1)) && IsCheminFromTo(debut.addX(-1), fin) || isValide(debut.addY(1)) && IsCheminFromTo(debut.addY(1), fin) || isValide(debut.addY(-1)) && IsCheminFromTo(debut.addY(-1), fin);
+        }
+    }*/
+    public boolean IsCheminFromTo(Pos debut, Pos fin)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
+    {
+
+        if (debut.equals(fin)) {
+            return true;
+        }
+        else {
+            int hautBas;
+            int gaucheDroite;
+            if(debut.getX()< fin.getX()){hautBas=1;}else{hautBas=-1;}
+            if(debut.getY()<fin.getY()){gaucheDroite=1;}else{gaucheDroite=-1;}
+            if(debut.getY()<fin.getY())
+            {
+                if(isValide(debut.addY(1)) && IsCheminFromTo(debut.addY(1), fin) )
+                {
+                    popProps(debut,'1');
+                    return true;
+                }else{return false || (isValide(debut.addX(-1)) && IsCheminFromTo(debut.addX(-1), fin)) ;}
+            }
+            else if(debut.getY()>fin.getY())
+            {
+                if(isValide(debut.addY(-1)) && IsCheminFromTo(debut.addY(-1), fin))
+                {
+                    popProps(debut,'2');
+                    return true;
+                }else{return false;}
+            }
+            else if(debut.getX()>fin.getX())
+            {
+                if(isValide(debut.addX(-1)) && IsCheminFromTo(debut.addX(-1), fin) )
+                {
+                    popProps(debut,'3');
+                    return true;
+                }
+            else{return false;}
+            }
+            /*if(isValide(debut.addX(1)) && IsCheminFromTo(debut.addX(1), fin) )
+            {
+                return true;
+            }*/
+            else{return false;}
+        }
+    }
+    public boolean IsCheminFromToV2(Pos debut, Pos fin)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
+    {
+        popProps(debut,'1');
+        affichageMap();
+        if (debut.equals(fin)) {
+            return true;
+        }
+        else {
+            int hautBas;
+            int gaucheDroite;
+            if(debut.getX()< fin.getX()){hautBas=1;}else{hautBas=-1;}
+            if(debut.getY()<fin.getY()){gaucheDroite=1;}else{gaucheDroite=-1;}
+            if(isValide(debut.addY(1)) && IsCheminFromToV2(debut.addY(1), fin) )
+            {
+                return true;
+            }else{return false || (isValide(debut.addX(hautBas)) && IsCheminFromToV2(debut.addX(hautBas), fin))  ;}
+        }
+    }
+    public Map copy()
+    {
+        return new Map(this.getTableauMap(),this.getTailleReelX(),this.getTailleReelY());
+    }
+    public boolean IsCheminFromToV3(Pos debut, Pos fin, Pos aEvite,Map mapCopy)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
+    {
+        mapCopy.popProps(debut,'1');
+        if (debut.equals(fin)) {
+            return true;
+        }
+        else {
+            if(debut.getY()-aEvite.getY()>0)
+            {
+                return ( isValide(debut.addY(1)) && IsCheminFromToV3(debut.addY(1),fin,debut,mapCopy) ) || ( isValide(debut.addX(-1)) && IsCheminFromToV3(debut.addX(-1),fin,debut,mapCopy) ) || ( isValide(debut.addX(1)) && IsCheminFromToV3(debut.addX(1),fin,debut,mapCopy) ) ;
+            }
+            if(debut.getY()-aEvite.getY()<0)
+            {
+                return ( isValide(debut.addY(-1)) && IsCheminFromToV3(debut.addY(-1),fin,debut,mapCopy) ) || ( isValide(debut.addX(-1)) && IsCheminFromToV3(debut.addX(-1),fin,debut,mapCopy) ) || ( isValide(debut.addX(1)) && IsCheminFromToV3(debut.addX(1),fin,debut,mapCopy) ) ;
+            }
+            if(debut.getX()-aEvite.getX()<0)
+            {
+                return ( isValide(debut.addX(-1)) && IsCheminFromToV3(debut.addX(-1),fin,debut,mapCopy) ) || ( isValide(debut.addY(-1)) && IsCheminFromToV3(debut.addY(-1),fin,debut,mapCopy) ) || ( isValide(debut.addY(1)) && IsCheminFromToV3(debut.addY(1),fin,debut,mapCopy) ) ;
+            }
+            if(debut.getX()-aEvite.getX()>0)
+            {
+                return ( isValide(debut.addX(1)) && IsCheminFromToV3(debut.addX(1),fin,debut,mapCopy) ) || ( isValide(debut.addY(-1)) && IsCheminFromToV3(debut.addY(-1),fin,debut,mapCopy) ) || ( isValide(debut.addY(1)) && IsCheminFromToV3(debut.addY(1),fin,debut,mapCopy) ) ;
+            }
+            else{
+                return false; // aucun chemin
+            }
+        }
+    }
 
 
     public static void main(String[] args) {
         Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         Map map = new Map(5,5,seed,1000,1);
-       // map.popProps(11,3,'X');
+       // System.out.println(map.getTableauMap().length);
+        Map mapbis=map.copy();
+        map.popProps(10,3,'X');
+        map.popProps(11,4,'X');
         map.popProps(12,3,'.');
         map.popProps(9,8,'X');
         map.popProps(5,8,'.');
         map.popProps(8,9,'X');
         map.creationCheminDepuisExte(new Pos(8,0));
-       System.out.println(map.getSpawnPos());
-        System.out.println(map.getPosSortie());
-        Pos debut = new Pos(3,3);
-        map.popProps(debut,'k');
-        Pos fin = new Pos(3,11);
-      //  System.out.println(debut.getY()<fin.getY());
-       // map.popProps(pos,'K');
-        //map.popProps(pos2,'M');
-    // map.creationCheminInterne(map.getSpawnPos(),map.getPosSortie());
+       //System.out.println(map.getSpawnPos());
+       // System.out.println(map.getPosSortie());
+       Pos debut = map.getSpawnPos();// Pos debut = new Pos(8,3);
+        Pos fin = map.getPosSortie();
+        //map.popProps(debut,'M');
+      //  map.popProps(fin,'M');
+        System.out.println(map.IsCheminFromToV3(debut,fin,debut.addY(-1),mapbis));
        map.affichageMap();
+       mapbis.affichageMap();
     }
 
 }
