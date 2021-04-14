@@ -11,8 +11,14 @@ public class Consommable extends AbstractItem {
 
     @Override
     public Consommable useInventaire(Player player) {
-        player.addPV(this.degat);
-        this.setNbrUtilisation(1);
+        if (player.getPv() == player.getMaxPV()) {
+            this.setMessageInventaire(String.format("Impossible d'utiliser %s : Vos PV sont déjà au maximum.", nom));
+        } else {
+            player.takeDamages(-degat);
+            this.setNbrUtilisation(1);
+            this.setMessageInventaire(String.format("Vous avez utilisé %s : Augmente vos PV de %d.", nom,degat));
+        }
+        //Renvoie un consommable pour cause d'implémentation de code, on ne l'utilise pas
         return new Consommable(0, "cerise", 1, 10, 20);
     }
 

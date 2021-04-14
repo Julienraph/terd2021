@@ -11,9 +11,10 @@ public class Competence extends AbstractItem {
 
     @Override
     public Competence useInventaire(Player player) {
-        Competence competence = player.getMainCompetence();
+        Competence oldCompetence = player.getMainCompetence();
         player.setMainCompetence(this);
-        return competence;
+        this.setMessageInventaire(String.format("Vous avez remplacé la compétence %s par %s.", oldCompetence.getNom(),nom));
+        return oldCompetence;
     }
 
     @Override
