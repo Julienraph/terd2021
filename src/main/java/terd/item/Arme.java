@@ -10,9 +10,10 @@ public class Arme extends AbstractItem {
 
     @Override
     public Arme useInventaire(Player player) {
-        Arme arme = player.getMainWeapon();
+        Arme oldArme = player.getMainWeapon();
         player.setMainWeapon(this);
-        return arme;
+        this.setMessageInventaire(String.format("Vous avez remplacé l'arme %s par %s.", oldArme.getNom(),nom));
+        return oldArme;
     }
 
     @Override

@@ -10,6 +10,7 @@ public  class Inventaire {
     private List<Item> consommables;
     private List<Item> items;
     private int etat = -1;
+    private Item itemUse;
 
     public Inventaire() {
         armes = new ArrayList<>();
@@ -59,10 +60,11 @@ public  class Inventaire {
     public boolean affichageItem(Player joueur, int choix) {
         //Si on est dans une catégorie et le joueur choisit un item
         if (etat != -1 && (choix >= 0 && choix < items.size())) {
-            Item item = items.get(choix).useInventaire(joueur);
+            itemUse = items.get(choix);
+            Item oldItem = items.get(choix).useInventaire(joueur);
             if(etat == 0 || etat == 1) {
                 items.remove(choix);
-                items.add(item);
+                items.add(oldItem);
             }
             if(items.get(choix).getNbrUtilisation() == 0) {
                 items.remove(choix);
@@ -82,5 +84,9 @@ public  class Inventaire {
         }
         //Si le joueur donne un nombre non-valide
         return true;
+    }
+
+    public Item getItemUse() {
+        return itemUse;
     }
 }
