@@ -139,6 +139,7 @@ public class Map{
             }
         }
     }
+    /////////////////////////////////
     private void creationMap(){
         int moduloWidth = (width - decalage - 2) == 0 ? (width - decalage - 2 + 1) : (width - decalage - 2);
         int moduloHeight = (height - decalage - 2) == 0 ? (height - decalage - 2 + 1) : (height - decalage - 2);
