@@ -26,6 +26,8 @@ public class Pos {
         this.y = y;
     }
 
+    public Pos addX(int i){return new Pos(this.getX()+i,this.getY());}
+    public Pos addY(int i){return new Pos(this.getX(),this.getY()+i);}
     @Override
     public String toString() {
         return "Coordonne{" +
