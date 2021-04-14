@@ -1,5 +1,13 @@
 package terd.Map;
+import terd.Player.Monster;
+import terd.Player.OrcWarrior;
+import terd.Player.Player;
+import terd.Player.Props;
 import terd.utils.Seed;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map{
     private char[][] tableauMap;
     private Seed seedMap;
@@ -18,6 +26,8 @@ public class Map{
     private char cache;
     private int biome;
     DecisionCase decisionCase;
+
+    private List<Monster> monsterList = new ArrayList<>();
     public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
         this.cache='.';
         this.seedMap = seedMap;
@@ -36,6 +46,8 @@ public class Map{
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
+        monsterList.add(new OrcWarrior(new Pos(5,6), 'M'));
+        spawnProps(monsterList.get(0));
     }
     //copy constructor because clone is broken
     public Map(char[][] tableauMap, Seed seedMap, int sortie, int width, int height, int tailleReelX, int tailleReelY, Pos haut, Pos bas, Pos droite, Pos gauche, Pos spawnPos, Pos posSortie, char cache, int biome, DecisionCase decisionCase) {
@@ -56,6 +68,63 @@ public class Map{
         this.biome = biome;
         this.decisionCase = decisionCase;
     }
+    public boolean isInside(Pos pos) {
+        return (pos.getX() > decalage && pos.getX() < tailleReelY - (tailleReelY - decalage - width)
+                && pos.getY() > decalage && pos.getY() < tailleReelX - (tailleReelX - height - decalage));
+    }
+    public Boolean moveProps(Props props, int newPosX, int newPosY) {
+        if (props.getY() < tailleReelX && props.getX() < tailleReelY) {
+            if (this.isValide(newPosX, newPosY)) {
+                this.resetCase(props.getX(), props.getY(),props);
+                this.moveProps(newPosX, newPosY, props);
+                props.setPosition(newPosX, newPosY);
+                return true;
+            }
+        }
+        return false;
+    }
+    public int moveMonsters(Pos posPlayer) {
+        for(int i = 0; i < monsterList.size(); i++) {
+            Monster monster = monsterList.get(i);
+            if(monster.isBeside(posPlayer)) {
+                return i;
+            }
+            if(isInside(posPlayer)) {
+                moveProps(monster, monster.getX(), monster.getY() - 1);
+            }
+            if (monster.isBeside(posPlayer)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    public void killMonster(int i) {
+        Monster monster = monsterList.get(i);
+        monsterList.remove(i);
+        resetCase(monster.getX(),monster.getY(),monster);
+    }
+    public void spawnProps(Props props) {
+        props.setCache(tableauMap[props.getY()][props.getX()]);
+        tableauMap[props.getY()][props.getX()] = props.getSkin();
+    }
+
+    public Pos spawnPlayer(Props props) {
+        props.setCache('.');
+        tableauMap[spawnPos.getX()][spawnPos.getY()] = props.getSkin();
+        return(spawnPos);
+    }
+    public void resetCase(int colonne, int ligne, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    {
+        tableauMap[ligne][colonne] = props.getCache();
+    }
+    public void moveProps(int newPosX, int newPosY, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    {
+        props.setCache(tableauMap[newPosY][newPosX]);
+        tableauMap[newPosY][newPosX] = props.getSkin();
+    }
+    public List<Monster> getMonsterList() {
+        return monsterList;
+    }
     private void RemplissageMap()
     {
         int i;
@@ -65,7 +134,7 @@ public class Map{
             for(j=decalage+1;j<width+decalage;j++)
             {
                 char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1]);
-              //  System.out.println(Lacase);
+                //  System.out.println(Lacase);
                 tableauMap[i][j]=Lacase;
             }
         }
@@ -122,9 +191,6 @@ public class Map{
                 }
             }
         }
-    }
-    private boolean isInside(int ligne, int colonne, int decalage) {
-        return ((ligne > decalage && ligne < height + decalage) && (colonne > decalage && colonne < width + decalage));
     }
     public void creationCheminDepuisExte(Pos pos)
     {
@@ -195,20 +261,10 @@ public class Map{
     {
         tableauMap[ligne][colonne] = '.';
     }
-    //Appelé si le joueur passe dans une autre map, cela fait réapparaitre l'ancienne case de l'ancienne map
-    public void resetCase(int colonne, int ligne) // deplace un Props sur la map et fait réapparaitre l'ancienne case
-    {
-        tableauMap[ligne][colonne]=cache;
-    }
-    public void moveProps(int colonne, int ligne, int newPosX, int newPosY, char Props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
-    {
-        resetCase(colonne, ligne); //
-        cache=tableauMap[newPosY][newPosX];
-        tableauMap[newPosY][newPosX] = Props;
-    }
+
     public void popProps( int newPosX, int newPosY, char Props) // fait apparaitre une case
     {
-       // resetCase(colonne, ligne); //
+        // resetCase(colonne, ligne); //
         //cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
     }
@@ -288,7 +344,7 @@ public class Map{
         Map map=new Map(current,this.seedMap,this.sortie,this.width,this.height,this.tailleReelX,this.tailleReelY,this.haut,this.bas,this.droite,this.gauche,this.spawnPos,this.posSortie,this.cache,this.biome,this.decisionCase);
         return map;
     }
-   public boolean IsCheminFromTo(Pos debut, Pos fin, Pos aEvite)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
+    public boolean IsCheminFromTo(Pos debut, Pos fin, Pos aEvite)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
     {
         popProps(debut,'1');
         if (debut.equals(fin)) {
@@ -316,6 +372,7 @@ public class Map{
             }
         }
     }
+
     public static void main(String[] args) {
         Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         Map map = new Map(5,5,seed,1,1);
