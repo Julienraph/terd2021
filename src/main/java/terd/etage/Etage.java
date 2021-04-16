@@ -59,6 +59,7 @@ public class Etage {
         for (int i = 0; i < tabMap.length; i++) {
             for (int y = 0; y < tabMap[0].length; y++) {
                 Map map = tabMap[i][y];
+                if(i==spawnLigne && y==spawnColonne){map.creationCheminInterne(map.getSpawnPos(),map.getPosSortie(),map.getSortie());}
                 if (map != null) {
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
