@@ -33,10 +33,10 @@ public class Map{
         this.seedMap = seedMap;
         this.biome= seedMap.getAnswer(0)%2;
         if(biome==0){
-            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X');
+            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X',seedpos);
         }
         else{
-            this.decisionCase=new DecisionCase(seedMap,'.',',','L','X');
+            this.decisionCase=new DecisionCase(seedMap,'.',',','L','X',seedpos);
         }
         this.width = (seedMap.getAnswer(10+seedpos))+y;
         this.height = (seedMap.getAnswer(8+seedpos))%10+x;

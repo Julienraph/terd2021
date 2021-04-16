@@ -16,7 +16,8 @@ public class DecisionCase {
     private int CaseCommuneRepetitionDessus;
     private int CaseRareRepetitionLigne;
     private int CaseCommuneRepetitionLigne;
-    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel)
+    private int seedPos;
+    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel,int seedPos)
     {
         this.seed=seed;
         this.caseDeBase=base;
@@ -28,6 +29,7 @@ public class DecisionCase {
         this.CaseCommuneRepetitionDessus=0;
         this.CaseRareRepetitionLigne=0;
         this.CaseCommuneRepetitionLigne=0;
+        this.seedPos=seedPos;
     }
     private void resetProba(){
         borneMax=borneMaxDebut;
@@ -39,7 +41,9 @@ public class DecisionCase {
     public char DonneMoiUneCase(char dessus,char derriere)
     {
         int decision=seed.getAnswer(this.increment);
-        this.increment++;
+       // this.increment++;
+        this.increment=seed.getAnswer(seedPos);
+        seedPos++;
         //System.out.println(increment);
 
        // System.out.print(decision);

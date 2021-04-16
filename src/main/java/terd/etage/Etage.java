@@ -54,7 +54,7 @@ public class Etage {
         return largeurEtage;
     }
 
-    //Connecte les sorties avec la carte suivante
+    ///Connecte les sorties avec la carte suivante
     public void generationPont() {
         for (int i = 0; i < tabMap.length; i++) {
             for (int y = 0; y < tabMap[0].length; y++) {
