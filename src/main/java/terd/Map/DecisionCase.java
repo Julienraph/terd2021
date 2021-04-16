@@ -10,7 +10,7 @@ public class DecisionCase {
     private char caseExceptionnel; private int chanceExceptionnel=15;
     private Seed seed;
     private int increment=0;
-
+   // 0 1 2 3 4 5 6 7 8 9 | 10  11 12  13 14 |  15
     // biome
     private int CaseRareRepetitionDessus;
     private int CaseCommuneRepetitionDessus;
@@ -40,10 +40,9 @@ public class DecisionCase {
 
     public char DonneMoiUneCase(char dessus,char derriere)
     {
+         this.increment++;
+       // this.increment=+seedPos+seed.getAnswer();
         int decision=seed.getAnswer(this.increment);
-       // this.increment++;
-        this.increment=seed.getAnswer(seedPos);
-        seedPos++;
         //System.out.println(increment);
 
        // System.out.print(decision);
@@ -166,9 +165,9 @@ public class DecisionCase {
 
             borneMax--;
         }
-        if(derriere==caseDeBase)
+      /*  if(derriere==caseDeBase)
         {
             resetProba();
-        }
+        }*/
     }
 }

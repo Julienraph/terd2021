@@ -33,7 +33,7 @@ public class Map{
         this.seedMap = seedMap;
         this.biome= seedMap.getAnswer(0)%2;
         if(biome==0){
-            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X',seedpos);
+            this.decisionCase=new DecisionCase(seedMap,'X','X','X','X',seedpos);
         }
         else{
             this.decisionCase=new DecisionCase(seedMap,'.',',','L','X',seedpos);
@@ -164,11 +164,9 @@ public class Map{
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    System.out.println("pas executer");
                     this.posSortie=new Pos(decalage+1,sortieHautY);
                     this.haut=new Pos(decalage+1,sortieHautY);
-                    System.out.println(haut);
-                    System.out.println(posSortie);
+
                 }
                 //Création pont du bas si y a une sortie
                 if(sortie % 1000 >= 100 && ligne >= height + decalage && colonne == sortieBasY) {
@@ -177,6 +175,7 @@ public class Map{
                     tableauMap[ligne][colonne+1] = '#';
                     this.posSortie=new Pos(height+decalage-1,sortieBasY);
                     this.bas=new Pos(height+decalage-1,sortieBasY);
+
                 }
                 //Création pont de droite si y a une sortie
                 if(sortie % 100 >= 10 && ligne == sortieDroiteX && colonne >= width + decalage) {
@@ -185,6 +184,7 @@ public class Map{
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieDroiteX,width + decalage-1);
                     this.droite=new Pos(sortieDroiteX,width + decalage-1);
+
                 }
                 //Création pont de gauche si y a une sortie
                 if(sortie % 10 >= 1 && ligne == sortieGaucheX && colonne <= decalage) {
@@ -193,6 +193,7 @@ public class Map{
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieGaucheX,decalage+1);
                     this.gauche=new Pos(sortieGaucheX,decalage+1);
+
                 }
                 //Remplissage de vide si rien n'a été remplie
                 if(tableauMap[ligne][colonne] == '\u0000') {
@@ -200,6 +201,7 @@ public class Map{
                 }
             }
         }
+
     }
     public void creationCheminDepuisExte(Pos pos)
     {
@@ -228,7 +230,7 @@ public class Map{
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         }
-          this.creationCheminInterne(this.spawnPos,this.getPosSortie(),this.sortie);
+          this.creationCheminInterne(this.spawnPos,this.getPosSortie());
     }
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
         while((curseurColonne >= 0 && curseurColonne <= decalage +1 ) || (curseurColonne >= width + decalage -1  && curseurColonne < tailleReelY))
@@ -371,6 +373,10 @@ public class Map{
         {
             return false;
         }
+        if(isValide(debut)==false)
+        {
+            return false;
+        }
         popProps(debut,'1');
         if (debut.equals(fin)) {
             return true;
@@ -398,23 +404,24 @@ public class Map{
         }
     }
 
-    public boolean creationCheminInterne(Pos debut, Pos fin,int from){
+    public boolean creationCheminInterne(Pos debut, Pos fin){
         if( posSortie==null )
         {
-            return true;
+           return false;
         }
         Pos aEvite;
-        if(from==1000){aEvite=fin.addY(1);}  //// on cherche la position a ne pas controler lors de la recherche de chemin
-        if(from==100){aEvite=fin.addY(-1);} //// cette position est en réalité le bout du couloir vers une autre map
-        if(from==10){aEvite=fin.addX(1);} //// mais je laisse la possibilité d'utililisé cette methode pour faire autre chose qu'une liaison interne entre deux couloirs
-        if(from==1){aEvite=fin.addX(-1);} ////int from correspond donc a la direction où on ne veux pas chercher, obligatoire pour IsCheminFromTo
-        else{aEvite=fin;} // impossible, c juste pour faire plaisir au compilo
+        if(debut.getY()==decalage+width-1 && debut.getX()!=decalage+1 && debut.getX()!=decalage+height-1){aEvite=debut.addY(1);}  //// on cherche la position a ne pas controler lors de la recherche de chemin
+        if(debut.getY()==decalage+width+1 && debut.getX()!=decalage+1 && debut.getX()!=decalage+height-1){aEvite=debut.addY(-1);} //// cette position est en réalité le bout du couloir vers une autre map
+        if(debut.getX()==decalage+1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);} //// mais je laisse la possibilité d'utililisé cette methode pour faire autre chose qu'une liaison interne entre deux couloirs
+        if(debut.getX()==decalage-1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);} ////int from correspond donc a la direction où on ne veux pas chercher, obligatoire pour IsCheminFromTo
+        else{aEvite=debut;} //
         if(this.copy().IsCheminFromTo(debut,fin,aEvite))
         {
             return true;
         }
         else
         {
+            popProps(debut,'.');
             popProps(fin,'.');
             Pos chemin=new Pos(debut.getX(), debut.getY());
             while(!(chemin.equals(fin))){
@@ -475,24 +482,35 @@ public class Map{
         //Seed seed=new Seed("f3a300134c0b020b2fd3b41ace65b34e60c04c6fd63b73d7f52412ee5677873afb288b9a842f213b88d46d22949f6ff9d4505790cf0ad051f4e7d691185cee23c8059e34f2f7ed5ee95b25823d615745619b5f124f0463d316d4fff1279b74d6bc91e4f672b850a849eed77dff51a9213aa859f6de8508b8786cbd5e4f539160c4d49f860e50764ebba41b5978b7307af36cb018d5e59b61ca2a8d096a41f726df6c3d60e48eedd9d47c1da48a242bead");
         // Seed seed=new Seed("db9ab3576b058ededcb7bfe7531331978fc861d1cf3ac95c0871cf2fa5a2cc9ac99952179b1b29a7746da526ae131fdef51f2a05de964b37b7ce2ec4a2c652e1794ae9f92e10cc4ced37dcf080a1811944a953b458c22d97cc75982994b62e840257bb4d97f3ef2cb30756a819eb812e5bda8630a376ac905acab492e5bf539ed28e5bb5c7d75e3ae3574a07a2d6f91e0a55bd72d06085a4997f93de35692dd339a7ca4f91042959ec54efb27e5518d3f3ff6");
         //Seed seed=new Seed("90adae30d0c28688de49cbdbf6b844cf6d90faa7a2e5679292f0262af1a312c5e67dcaf5497fc79881d0187fcbdd07861f000f0547a1f671e657b0987e60c7c5ef4a54a2ff5ff5f0778e7fae6d8c8bf2380dd3a2307d656463b2fd73207c3d76679cbe535fce60699028bab790c4f61ee43afa450e9a87f9a7cdc2a9904b0bd3e13eded91a5c885f5a8c0ddd7553ba82b52d167ab4c79a1b9f0e63a1624d2ce529340f171d2fccc736c3e4c49c85da2");
-        Seed seed=new Seed("ac5008b1903e1a84430f2589a13eb647fe65c546c467583bfeaf47c83f306089e73e9a3bb86627a5ac5e42631f640bcdd7a1a191b8806e6579134c87c1c8bb09aa41bd9a81d375c7c465e8cc21c202ed3d5ae5bcb9f5b23ae092099774cd607f5350fb751da90dfb196f97c0dc0de4e7e6f86b9e475aab1366093f7417c64a87bf11ff388850835cd8a75babb6c74e730084d2edf2f6bcfa6c75fc4cd5304eb5dfa742d9092754d79ec960692b428b");
-       // System.out.println(seed.getSeed());
-        Map map = new Map(5,5,seed,1000,1);
-       //map.affichageMap();
-        Pos fin = map.getPosSortie();
-        Pos debut = map.getSpawnPos();
-
-        // map.popProps(fin,'X');
-        map.creationCheminDepuisExte(new Pos(5,0));
-        fin=map.getPosSortie();
-        debut =map.getSpawnPos();
-        System.out.println(debut);
-        System.out.println(fin);
-        map.popProps(debut,'I');
-        map.popProps(fin,'S');
-       // map.creationCheminInterne(map.getSpawnPos(),map.getPosSortie(),100);
+        Seed seed=new Seed("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a41bd9a81d375c7c465e8cc21c202ed3d5ae5bcb9f5b23ae092099774cd607f5350fb751da90dfb196f97c0dc0de4e7e6f86b9e475aab1366093f7417c64a87bf11ff388850835cd8a75babb6c74e730084d2edf2f6bcfa6c75fc4cd5304eb5dfa742d9092754d79ec960692b428b");
+       //Seed seed=new Seed();
+        // System.out.println(seed.getSeed());
+        Map map = new Map(10,10,seed,0,1);
+        Pos hautDroit = new Pos(map.decalage,map.decalage+map.getWidth());
+        System.out.println(hautDroit);
+        map.popProps(hautDroit,'2');
+        Pos hautgauche = new Pos(map.decalage,map.decalage);
+        System.out.println(hautgauche);
+        map.popProps(hautgauche,'1');
+        Pos basGauche = new Pos(map.decalage+map.getHeight(),map.decalage);
+        System.out.println(basGauche);
+        map.popProps(basGauche,'3');
+        Pos basDroite = new Pos(map.decalage+map.getHeight(),map.decalage+map.getWidth());
+        System.out.println(basDroite);
+        Pos test=new Pos((hautgauche.getX()+ basDroite.getX())/2, (hautgauche.getY()+ basDroite.getY())/2);
+        map.popProps(test,'I');
+        map.popProps(map.getSpawnPos(),'@');
+       // System.out.println(map.copy().IsCheminFromTo(map.getSpawnPos(),map.getPosSortie(),map.getSpawnPos()));
+        map.creationCheminInterne(map.getSpawnPos(),test);
+        map.popProps(basDroite,'4');
         map.affichageMap();
     }
 
+    public int getDecalage() {
+        return decalage;
+    }
 
+    public void setPosSortie(Pos posSortie) {
+        this.posSortie = posSortie;
+    }
 }
