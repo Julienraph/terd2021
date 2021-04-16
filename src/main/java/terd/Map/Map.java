@@ -28,12 +28,16 @@ public class Map{
     DecisionCase decisionCase;
 
     private List<Monster> monsterList = new ArrayList<>();
-    public Map(int x, int y, Seed seedMap,int sortie,int seedpos) {
+    public Map(int x, int y, Seed seedMapBase,int sortie,int seedpos) {
         this.cache='.';
-        this.seedMap = seedMap;
-        this.biome= seedMap.getAnswer(0)%2;
-        if(biome==0){
-            this.decisionCase=new DecisionCase(seedMap,'X','X','X','X',seedpos);
+        this.seedMap = new Seed(seedMapBase,seedpos);
+        this.biome= seedMap.getAnswer(1);
+        /*System.out.print("Numero :");
+        System.out.print(seedpos);
+        System.out.print(" :");
+        System.out.print(seedMap.getSeed());*/
+        if(biome>=7){
+            this.decisionCase=new DecisionCase(seedMap,'.',',','T','X',seedpos);
         }
         else{
             this.decisionCase=new DecisionCase(seedMap,'.',',','L','X',seedpos);
@@ -213,20 +217,20 @@ public class Map{
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             if(directionLigne < 0) {
-                System.out.println(spawnPos);
+               // System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             } else {
-                System.out.println(spawnPos);
+              //  System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             if(directionColonne < 0) {
-                System.out.println(spawnPos);
+             //   System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             } else {
-                System.out.println(spawnPos);
+               // System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         }
