@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class Seed {
 
-    public static final Integer SEED_LENGTH = 32;
+    public static final Integer SEED_LENGTH = 500;
     private String seed;
     private int offset = 0;
 
@@ -17,7 +17,10 @@ public class Seed {
     public Seed() {
         this.generateSeed();
     }
-
+    public Seed(Seed seedb,int modif) { // genere une nouvelle seed a partir d'une existante
+        this.generateSeed(seedb, modif);
+    }
+    public Seed(String fake){this.seed=fake;} // pour obtenir une seed prevue
     /**
      * Generate a new seed.
      */
@@ -28,6 +31,16 @@ public class Seed {
             stringBuilder.append(Integer.toHexString(random.nextInt()));
         }
 
+        seed = stringBuilder.toString();
+    }
+    private void generateSeed(Seed seedb,int modif) { // genere une nouvelle seed a partir d'une existante
+        Random random = new Random();
+        StringBuilder stringBuilder = new StringBuilder();
+        int i=1;
+        while (stringBuilder.length() < SEED_LENGTH) {
+            stringBuilder.append(Integer.toHexString(seedb.getAnswer(i*modif)+i*modif));
+            i++;
+        }
         seed = stringBuilder.toString();
     }
 
@@ -96,4 +109,32 @@ public class Seed {
                 "seed='" + seed + '\'' +
                 '}';
     }
+    public static void main(String[] args) {
+        Seed seed=new Seed("111111111111111111111111111111");
+        Seed seed2=new Seed(seed,1);
+        System.out.print("Seed de base : ");
+        System.out.print(seed.getSeed());
+        System.out.print(" taille :");
+        System.out.println(seed.getSeed().length());
+
+        System.out.print("Seed n + 1    : ");
+        System.out.print(seed2.getSeed());
+        System.out.print(" taille :");
+        System.out.println(seed2.getSeed().length());
+
+        Seed seed3=new Seed(seed,2);
+        System.out.print("Seed n + 2    : ");
+        System.out.print(seed3.getSeed());
+        System.out.print(" taille :");
+        System.out.println(seed3.getSeed().length());
+
+        Seed seed15=new Seed(seed,18);
+        System.out.print("Seed n + 17   : ");
+        System.out.print(seed15.getSeed());
+        System.out.print(" taille :");
+        System.out.println(seed15.getSeed().length());
+
+    }
 }
+
+

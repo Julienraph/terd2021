@@ -7,7 +7,6 @@ import terd.item.Inventaire;
 
 public interface Props {
    void takeDamages(int damages);
-   double getDistance(AbstractProps abstractProps);
    void setPosX(int x);
    void setPosY(int y);
    void setNewMap(int newPosY, int newPosX);
@@ -19,7 +18,7 @@ public interface Props {
    int getPosEtageY();
    char getSkin();
    void setSkin(char skin);
-   int getPv();
+   int getPV();
    int getMaxPV();
    int getSpeed();
    int getPosEtageX();
@@ -38,5 +37,7 @@ public interface Props {
    void setXP(int xp);
    int getXP();
    void addXP(int monsterXP);
+   void useWeapon(Props victime);
+   double getDistance(Props props);
 
 }

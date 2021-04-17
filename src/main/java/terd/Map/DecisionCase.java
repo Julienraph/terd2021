@@ -10,13 +10,14 @@ public class DecisionCase {
     private char caseExceptionnel; private int chanceExceptionnel=15;
     private Seed seed;
     private int increment=0;
-
+   // 0 1 2 3 4 5 6 7 8 9 | 10  11 12  13 14 |  15
     // biome
     private int CaseRareRepetitionDessus;
     private int CaseCommuneRepetitionDessus;
     private int CaseRareRepetitionLigne;
     private int CaseCommuneRepetitionLigne;
-    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel)
+    private int seedPos;
+    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel,int seedPos)
     {
         this.seed=seed;
         this.caseDeBase=base;
@@ -28,6 +29,7 @@ public class DecisionCase {
         this.CaseCommuneRepetitionDessus=0;
         this.CaseRareRepetitionLigne=0;
         this.CaseCommuneRepetitionLigne=0;
+        this.seedPos=seedPos;
     }
     private void resetProba(){
         borneMax=borneMaxDebut;
@@ -38,8 +40,9 @@ public class DecisionCase {
 
     public char DonneMoiUneCase(char dessus,char derriere)
     {
+         this.increment++;
+       // this.increment=+seedPos+seed.getAnswer();
         int decision=seed.getAnswer(this.increment);
-        this.increment++;
         //System.out.println(increment);
 
        // System.out.print(decision);
@@ -162,9 +165,9 @@ public class DecisionCase {
 
             borneMax--;
         }
-        if(derriere==caseDeBase)
+      /*  if(derriere==caseDeBase)
         {
             resetProba();
-        }
+        }*/
     }
 }
