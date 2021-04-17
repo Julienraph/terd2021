@@ -3,171 +3,135 @@ package terd.Map;
 import terd.utils.Seed;
 
 public class DecisionCase {
-    private char caseDeBase;   private int borneMax=9;        private final int borneMaxDebut=9;
-    private char caseCommune;  private int chanceCommune=9;  private final int chanceDebutCommune=9;
-    //private char caseMoinsCommune; private int chanceMoinsCommune=11; private final int chanceDebutMoinsCommune=11;
-    private char caseRare;     private int chanceRare=13;    private final int chanceDebutRare=13;
-    private char caseExceptionnel; private int chanceExceptionnel=15;
+
     private Seed seed;
-    private int increment=0;
-   // 0 1 2 3 4 5 6 7 8 9 | 10  11 12  13 14 |  15
+
+
+    private char caseCommune;
+    private char caseDeBase;
+    private int borneBase = 6;
+
+    private int chanceCommune =6;
+    private final int chanceDebutCommune = 6;
+
+    private char caseRare;
+    private int chanceRare = 10;
+    private final int chanceDebutRare = 10;
+
+    private char caseExceptionnel;
+    private int chanceExceptionnel = 13;
+    private int chanceDebutExceptionnel = 13;
+
+    // 0 1 2 3 4 5 | 6 7 8 9 | 10 11 12 | 13 14 15
+
+    private int baseRepetition;
+    private int communeRepetition;
+    private int rareRepetition;
+    private int exceptionnelRepetition;
+    private int increment = 0;
+
+    private int nbrBiomeCommune=0;
+    private int nbrBiomeRare=0;
+    private int nbrBiomeExceptionnel=0;
     // biome
-    private int CaseRareRepetitionDessus;
-    private int CaseCommuneRepetitionDessus;
-    private int CaseRareRepetitionLigne;
-    private int CaseCommuneRepetitionLigne;
-    private int seedPos;
-    public DecisionCase(Seed seed,char base,char commune,char rare, char exceptionnel,int seedPos)
-    {
-        this.seed=seed;
-        this.caseDeBase=base;
-        this.caseCommune=commune;
-        this.caseRare=rare;
-        this.caseExceptionnel=exceptionnel;
-        //this.caseMoinsCommune='T';
-        this.CaseRareRepetitionDessus=0;
-        this.CaseCommuneRepetitionDessus=0;
-        this.CaseRareRepetitionLigne=0;
-        this.CaseCommuneRepetitionLigne=0;
-        this.seedPos=seedPos;
-    }
-    private void resetProba(){
-        borneMax=borneMaxDebut;
-        chanceCommune=chanceDebutCommune;
-        chanceRare=chanceDebutRare;
-        chanceExceptionnel=15;
+
+
+    public DecisionCase(Seed seed, char base, char commune, char rare, char exceptionnel, int seedPos) {
+        this.seed = seed;
+        this.caseDeBase = base; //  .
+        this.caseCommune = commune; // ,
+        this.caseRare = rare;  // L
+        this.caseExceptionnel = exceptionnel; // X
+        baseRepetition=0;
+        communeRepetition=0;
+        rareRepetition=0;
+        exceptionnelRepetition=0;
     }
 
-    public char DonneMoiUneCase(char dessus,char derriere)
-    {
-         this.increment++;
-       // this.increment=+seedPos+seed.getAnswer();
-        int decision=seed.getAnswer(this.increment);
-        //System.out.println(increment);
-
-       // System.out.print(decision);
-        //System.out.print("=");
-        changementProba(dessus,derriere);
-
-        if(decision>=chanceExceptionnel){
-            return caseExceptionnel;
-        }
-       /*if(decision>=chanceMoinsCommune){
-            return caseMoinsCommune;
-        }*/
-        if(decision>=chanceRare){
-            return caseRare;
-        }
-        if(decision>=chanceCommune){
-            return caseCommune;
-        }
-        else{return caseDeBase;}
-        /*if(decision<=borneMax)
+    private void resetProba() {
+        borneBase=7;
+        chanceCommune = chanceDebutCommune;
+        chanceRare = chanceDebutRare;
+        chanceExceptionnel = chanceDebutExceptionnel;
+    }
+/*
+    public char DonneMoiUneCase(char dessus, char derriere) {
+        if(dessus==derriere && (dessus==caseCommune || dessus==caseExceptionnel || dessus==caseRare))
         {
-            return caseDeBase;
+            return dessus;
         }
-        if(decision>=chanceExceptionnel){
-            return caseExceptionnel;
-        }
-        if(decision>=chanceRare){
-            return caseRare;
-            }
-        if(decision>=chanceCommune){
-            return caseCommune;
+        return pasDeBiome();
+
+    }*/
+    public char DonneMoiUneCase(char dessus, char derriere, char diagonal) {
+        this.increment++;
+        int decision = seed.getAnswer(increment);
+        if(dessus==derriere && (dessus==caseCommune || dessus==caseExceptionnel || dessus==caseRare))
+        {
+            return dessus;
         }
         else{
-            return caseDeBase;  // impossible;
-        }*/
+            if(diagonal==caseExceptionnel)
+            {
+                if(decision>=6)
+                {
+                    return caseExceptionnel;
+                }
+            }
+            if(derriere==caseRare)
+            {
+                if(decision>=6)
+                {
+                    return caseRare;
+                }
+            }
+        }
+        return pasDeBiome(decision);
+
     }
+        private char pasDeBiome(int decision)
+        {
+            if(decision>=chanceDebutExceptionnel){   // 0 1 2 3 4 5 6 7 | 8 9 10 11 | 12 13 14 |  15
+                chanceExceptionnel--;  // 0 1 2 3 4 5 6 | 7 8 9 10 | 11  12 13 | 14  15
+                chanceRare--;
+                chanceCommune--;
+                exceptionnelRepetition++;
+                if(exceptionnelRepetition>4)
+                {
+                    resetProba();
+                }
+                return caseExceptionnel;
+            }
+            if(decision>=chanceRare){  //  0 1 2 3 4 5 6 7 | 8 9 10 11 | 12 13 14 |  15
+                chanceExceptionnel++; //  0 1 2 3 4 5 6 | 7 8 9 10 | 11 12 13 14   15 |
+                chanceRare--; //
+                chanceCommune--; //  0 1 2 3 4 5 6 | 7 8 9 10 | 11 12 13 14   15 |
+                rareRepetition++;
+                if(rareRepetition>4)
+                {
+                    resetProba();
+                }
+                return caseRare;
+            }
+            if(decision>=chanceCommune)   // 0 1 2 3 4 5 6 7 | 8 9 10 11 | 12 13 14 |  15
+            {
+                chanceCommune--;  // 0 1 2 3 4 5 6 | 7 8 9 10 11 | 12 13 14 |  15
+                chanceRare++;      // 0 1 2 3 4 5 6 | 7 8 9 10 11 12 |  13 | 14 15
+                chanceExceptionnel--;
+                communeRepetition++;
+                if(communeRepetition>4)
+                {
+                    resetProba();
+                }
+                return caseCommune;
+            }
+            //else                  // 0 1 2 3 4 5 6 7 | 8 9 10 11 | 12 13 14 |  15
+            chanceExceptionnel--;   // 0 1 2 3 4 5 6 7 | 8 9 10 11 | 12 13 | 14 15
+            chanceRare-=2;          // 0 1 2 3 4 5 6 7 | 8 9 | 10 11 12 13 | 14 15
+            chanceCommune-=3;       // 0 1 2 3 4 | 5 6 7 8 9 | 10 11 12 13 | 14 15
+            return caseDeBase;
+        }
 
-    private void changementProba(char dessus,char derriere)
-    {
-        //chanceCommune  chanceRare  chanceExceptionnel
-        if(dessus==caseCommune) // ,
-        {
-            if(CaseCommuneRepetitionDessus<3)
-            {
-                chanceCommune-=4;
-                chanceRare++;
-                // Biome de 3 de haut MAX
-            }
-            else
-            {
-                resetProba();
-                CaseCommuneRepetitionDessus=0;
-                chanceCommune++;
-            }
-            CaseCommuneRepetitionDessus++;
 
-        }
-        if(derriere==caseCommune)
-        {
-            if(CaseCommuneRepetitionLigne<4)
-            {
-                chanceCommune-=2;  // Biome de 3 de haut MAX
-                chanceRare++;
-            }
-            else
-            {
-                resetProba();
-                CaseCommuneRepetitionLigne=0;
-                chanceCommune++;
-            }
-            CaseCommuneRepetitionLigne++;
-        }
-////////////////////////////////////////////////////////
-// //////////////////////////////////////////////////////
-        if(dessus==caseRare)  // L
-        {
-            if(CaseRareRepetitionDessus<3)
-            {
 
-                chanceRare-=3;
-               // Biome de 3 de haut MAX
-            }
-            else
-            {
-                resetProba();
-                CaseRareRepetitionDessus=0;
-                chanceRare++;
-            }
-            CaseRareRepetitionDessus++;
-        }
-        if(derriere==caseRare)
-        {
-            if(CaseRareRepetitionLigne<4)
-            {
-                chanceRare-=2;
-            }
-            else
-            {
-                resetProba();
-                CaseRareRepetitionLigne=0;
-                borneMax=borneMaxDebut;
-                chanceRare++;
-            }
-            CaseRareRepetitionLigne++;
-        }
-////////////////////////////////////////////////////
-// /////////////////////////////////////////////////
-        if(dessus==caseExceptionnel) // X
-        {
-            chanceCommune--;
-            chanceExceptionnel++;
-        }
-        if(derriere==caseExceptionnel) {
-            chanceCommune--;
-            chanceExceptionnel++;
-        }
-//////////////////////////
-        if(dessus==caseDeBase)  // .
-        {
-
-            borneMax--;
-        }
-      /*  if(derriere==caseDeBase)
-        {
-            resetProba();
-        }*/
-    }
 }
