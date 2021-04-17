@@ -63,9 +63,9 @@ public class GameController {
                 System.out.println(message);
                 dureeMessage = (dureeMessage > 1) ? dureeMessage - 1 : 0;
             }
-            System.out.println(String.format("Player PV : %d   | Monster PV : %d", player.getPv(), monster.getPv()));
+            System.out.println(String.format("Player PV : %d   | Monster PV : %d", player.getPV(), monster.getPV()));
             //Si le joueur meurt
-            if(player.getPv() == 0) {
+            if(player.getPV() == 0) {
                 System.out.println("GAME OVER");
                 keepPlaying = false;
                 etat = -1;
@@ -105,7 +105,7 @@ public class GameController {
             tour = 2;
         }
         //Si le monstre n'a plus de PV
-        if (monster.getPv() == 0) {
+        if (monster.getPV() == 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
             tour = 0;

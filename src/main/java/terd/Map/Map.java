@@ -16,7 +16,7 @@ public class Map{
     private  int height;
     private int tailleReelX; // colonne // hauteur
     private int tailleReelY; // ligne // largeur
-    private final int decalage = 2 ;
+    private int decalage = 2 ;
     private Pos haut;
     private Pos bas;
     private Pos droite;  // remplacé par posSortie
@@ -73,6 +73,7 @@ public class Map{
         this.biome = biome;
         this.decisionCase = decisionCase;
     }
+
     public boolean isInside(Pos pos) {
         return (pos.getX() > decalage && pos.getX() < tailleReelY - (tailleReelY - decalage - width)
                 && pos.getY() > decalage && pos.getY() < tailleReelX - (tailleReelX - height - decalage));
@@ -482,7 +483,7 @@ public class Map{
     }
 
     public static void main(String[] args) {
-        //Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
+        /*//Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
         //Seed seed=new Seed("f3a300134c0b020b2fd3b41ace65b34e60c04c6fd63b73d7f52412ee5677873afb288b9a842f213b88d46d22949f6ff9d4505790cf0ad051f4e7d691185cee23c8059e34f2f7ed5ee95b25823d615745619b5f124f0463d316d4fff1279b74d6bc91e4f672b850a849eed77dff51a9213aa859f6de8508b8786cbd5e4f539160c4d49f860e50764ebba41b5978b7307af36cb018d5e59b61ca2a8d096a41f726df6c3d60e48eedd9d47c1da48a242bead");
         // Seed seed=new Seed("db9ab3576b058ededcb7bfe7531331978fc861d1cf3ac95c0871cf2fa5a2cc9ac99952179b1b29a7746da526ae131fdef51f2a05de964b37b7ce2ec4a2c652e1794ae9f92e10cc4ced37dcf080a1811944a953b458c22d97cc75982994b62e840257bb4d97f3ef2cb30756a819eb812e5bda8630a376ac905acab492e5bf539ed28e5bb5c7d75e3ae3574a07a2d6f91e0a55bd72d06085a4997f93de35692dd339a7ca4f91042959ec54efb27e5518d3f3ff6");
         //Seed seed=new Seed("90adae30d0c28688de49cbdbf6b844cf6d90faa7a2e5679292f0262af1a312c5e67dcaf5497fc79881d0187fcbdd07861f000f0547a1f671e657b0987e60c7c5ef4a54a2ff5ff5f0778e7fae6d8c8bf2380dd3a2307d656463b2fd73207c3d76679cbe535fce60699028bab790c4f61ee43afa450e9a87f9a7cdc2a9904b0bd3e13eded91a5c885f5a8c0ddd7553ba82b52d167ab4c79a1b9f0e63a1624d2ce529340f171d2fccc736c3e4c49c85da2");
@@ -507,6 +508,8 @@ public class Map{
        // System.out.println(map.copy().IsCheminFromTo(map.getSpawnPos(),map.getPosSortie(),map.getSpawnPos()));
         map.creationCheminInterne(map.getSpawnPos(),test);
         map.popProps(basDroite,'4');
+        map.affichageMap();*/
+        Map map = new Map(10,10,10,0,new Seed());
         map.affichageMap();
     }
 
@@ -516,5 +519,22 @@ public class Map{
 
     public void setPosSortie(Pos posSortie) {
         this.posSortie = posSortie;
+    }
+
+    //Constructeur pour pouvoir faire des tests dans EtageTest
+    public Map(int x, int y, int sortie, int decalage, Seed seed) {
+        this.decisionCase=new DecisionCase(seed,'.','.','.','.',0);
+        this.decalage = decalage;
+        this.seedMap = seed;
+        this.height = x;
+        this.width = y;
+        this.tailleReelX = this.decalage+height+1;
+        this.tailleReelY = this.decalage+width+1;
+        tableauMap = new char[tailleReelX][tailleReelY];
+        this.sortie=sortie;
+        this.creationMap();
+        this.spawnPos = new Pos(decalage+2,decalage+2);
+        monsterList.add(new OrcWarrior(new Pos(5,6), 'M'));
+        spawnProps(monsterList.get(0));
     }
 }

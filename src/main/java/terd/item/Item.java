@@ -9,7 +9,7 @@ public interface Item {
     int getNbrUtilisation();
     int getRarete();
     int getDegat();
-    void  setNbrUtilisation(int minusNbr);
+    void addNbrUtilisation(int minusNbr);
     int utiliser();
     Item useInventaire(Player player);
     void messageInventaire();

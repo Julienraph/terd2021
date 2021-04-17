@@ -4,7 +4,7 @@ import terd.Player.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public  class Inventaire {
+public class Inventaire {
     private List<Item> armes;
     private List<Item> competences;
     private List<Item> consommables;
@@ -26,7 +26,7 @@ public  class Inventaire {
         } else if (item instanceof Consommable) {
             for(Item consommable : consommables) {
                 if (consommable.getNom().equals(item.getNom())) {
-                    consommable.setNbrUtilisation(-1);
+                    consommable.addNbrUtilisation(item.getNbrUtilisation());
                     return;
                 }
             }
@@ -86,7 +86,23 @@ public  class Inventaire {
         return true;
     }
 
+    public int getEtat() {
+        return etat;
+    }
+
     public Item getItemUse() {
         return itemUse;
+    }
+
+    public List<Item> getArmes() {
+        return armes;
+    }
+
+    public List<Item> getCompetences() {
+        return competences;
+    }
+
+    public List<Item> getConsommables() {
+        return consommables;
     }
 }
