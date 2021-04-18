@@ -37,7 +37,6 @@ public class Etage {
         this.largeurMap = generator.tailleReelY;
         this.spawnColonne = generator.spawnColonne;
         this.spawnLigne = generator.spawnLigne;
-        affichage();
         this.generationPont();
     }
 
@@ -88,7 +87,9 @@ public class Etage {
                         Pos pos = new Pos(hauteur, largeur);
                         tabMap[i][y + 1].creationCheminDepuisExte(pos);
                     }
-                    map.spawnProps(map.getMonsterList().get(0));
+                    if(map.getMonsterList().get(0).getPos() != null) {
+                        map.spawnProps(map.getMonsterList().get(0));
+                    }
                 }
             }
         }

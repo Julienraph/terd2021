@@ -36,6 +36,7 @@ public class Map{
     private Pos gauche; // en cas de sortie gauche
     private Pos spawnPos; // la position d'entrée sur la map par défaut 0,0 puis set en fonction de la sortie de la map relié a this
     private Pos posSortie; // la position de sortie sur la map par défaut 0,0 puis set en fonction de la sortie  haut/bas/gauche/droite
+    private Pos posMonster; //Position du monster situé à la sortie
 
     private char cache;
     private int biome;
@@ -67,8 +68,7 @@ public class Map{
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
-        //this.posSortie= new Pos(decalage+1,decalage+1);
-        monsterList.add(new OrcWarrior(randomMonsterPos(), 'M'));
+        monsterList.add(new OrcWarrior(posMonster, 'M'));
     }
     //ce constructeur permet de faire une copie complete d'un objet map, Java utilisant des adresses pour ses objets, faire Map map2 = map1 ne copie pas
     // il faut donc faire Map map2 = map1.copy() , et copy() utilise ce constructeur
@@ -110,13 +110,6 @@ public class Map{
         return false;
     }
 
-    public Pos randomMonsterPos() {
-        Random random = new Random();
-        int x = (decalage + 1)+random.nextInt((tailleReelY - (tailleReelY - decalage - width))-(decalage + 1));
-        int y = (decalage + 2)+random.nextInt((tailleReelX - (tailleReelX - decalage - height))-(decalage + 2));
-        return new Pos(x,y);
-    }
-
     public int moveMonsters(Pos posPlayer) {
         for(int i = 0; i < monsterList.size(); i++) {
             Monster monster = monsterList.get(i);
@@ -140,8 +133,8 @@ public class Map{
     }
 
     public void spawnProps(Props props) {
-        props.setCache(tableauMap[props.getY()][props.getX()]);
-        tableauMap[props.getY()][props.getX()] = props.getSkin();
+        props.setCache(tableauMap[props.getX()][props.getY()]);
+        tableauMap[props.getX()][props.getY()] = props.getSkin();
     }
     // fait apparaitre le player a sa spawnPos
     public Pos spawnPlayer(Props props) {
@@ -223,6 +216,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
                     this.posSortie=new Pos(decalage+1,sortieHautY); // cette affectation double n'est plus censé existé par la suite,
+                    this.posMonster=new Pos(decalage+1,sortieHautY);
                     this.haut=new Pos(decalage+1,sortieHautY);      // a l'avenir posSortie remplacera completement haut/bas/gauche/droite
 
                 }
@@ -232,6 +226,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
                     this.posSortie=new Pos(height+decalage-1,sortieBasY);
+                    this.posMonster=new Pos(height+decalage-1,sortieBasY);
                     this.bas=new Pos(height+decalage-1,sortieBasY);
 
                 }
@@ -241,6 +236,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieDroiteX,width + decalage-1);
+                    this.posMonster=new Pos(sortieDroiteX,width + decalage-1);
                     this.droite=new Pos(sortieDroiteX,width + decalage-1);
 
                 }
@@ -250,6 +246,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieGaucheX,decalage+1);
+                    this.posMonster=new Pos(sortieGaucheX,decalage+1);
                     this.gauche=new Pos(sortieGaucheX,decalage+1);
 
                 }
@@ -544,6 +541,8 @@ public class Map{
         }
         return false;
     }
+
+
 
     public static void main(String[] args) {
        Seed seed=new Seed("81cad2488b706822a6472707bbf11f762b6d006f0fbe5e548446569998affd0a4a3037b10add7022821a20750edfa5c63cabcdcafe9ed3f973ba2ccd68927537aa5c3f077b95c4e29628ee2562b266b309958cf988453ec3183284b633abeec0b1fcede89e5334f1d999de4fdb086a64248561da47b59296d30ae291c4a5be8434f3a7c611a15af3b8ff4a563835faf175bace6ad77dc09754c94777c0e88317ffa6afec110a86e2ad4a7033907e2164c35020cfb68cf9e77a39a9dcedf6dff7f3812cd7d05dfdf12b25de2056bfe65b5485edd9b4d98e65b8c876593e7bd5aebd20a583a10ddc0961af3914b8d1e54eddd37216a8ad1aaf0d20");
