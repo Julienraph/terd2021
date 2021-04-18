@@ -20,6 +20,7 @@ public class GameController {
     String entry;
     String message;
     int dureeMessage;
+    int freeze;
 
     public GameController(Etage etage, Player player) {
         this.etage = etage;
@@ -33,6 +34,7 @@ public class GameController {
 
 
     public boolean afficher() {
+        etage.getMap(player.getPosEtageY(), player.getPosEtageX()).moveMonsters(player.getPos());
         Scanner scanner = new Scanner(System.in);
         do {
             if(etat == 0) {
@@ -185,6 +187,10 @@ public class GameController {
         return message;
     }
 
+    public void setFreeze(int freeze) {
+        this.freeze = freeze;
+    }
+
     public boolean arreterJeu(String stringEntry) {
         //Retour
         if(stringEntry.toUpperCase().equals("X")) {
@@ -219,8 +225,12 @@ public class GameController {
             keepPlaying = false;
         }
 
-        //Si le joueur bouge, on bouge les monstres
         if(refresh) {
+            freeze -= 1;
+        }
+
+        //Si le joueur bouge, on bouge les monstres
+        if(refresh && freeze <= 0) {
             int i = etage.getMap(player.getPosEtageY(), player.getPosEtageX()).moveMonsters(player.getPos());
             if(i != -1) {
                 etat = 1;

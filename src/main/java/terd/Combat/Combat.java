@@ -56,6 +56,7 @@ public class Combat {
                 } else {
                     if (random.nextInt(1) == 0){
                         System.out.println("Vous prenez la fuite.");
+                        gameController.setFreeze(2);
                         break;
                     } else {
                         message = ("Vous n'avez pas réussi à prendre la fuite.");

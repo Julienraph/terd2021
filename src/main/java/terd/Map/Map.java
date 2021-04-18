@@ -92,8 +92,8 @@ public class Map{
     }
     // détermine si une Pos est a l'intérieur de la map ( a l'interieur des 4 murs )
     public boolean isInside(Pos pos) {
-        return (pos.getX() > decalage && pos.getX() < tailleReelY - (tailleReelY - decalage - width)
-                && pos.getY() > decalage && pos.getY() < tailleReelX - (tailleReelX - height - decalage));
+        return (pos.getX() >= decalage && pos.getX() <= tailleReelY - (tailleReelY - decalage - width)
+                && pos.getY() >= decalage && pos.getY() <= tailleReelX - (tailleReelX - height - decalage));
     }
     // détermine si une entité est déplaçable a la position donné en X Y et déplace l'entité si possible
     // X et Y plutot que Pos car cette fonction a été créé avant l'existence de la classe Pos, il est prévue de la mettre a jour
