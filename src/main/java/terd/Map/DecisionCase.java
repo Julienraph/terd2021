@@ -35,6 +35,7 @@ public class DecisionCase {
     private int nbrBiomeExceptionnel=0;
     // biome
 
+    private char[][] biome;
 
     public DecisionCase(Seed seed, char base, char commune, char rare, char exceptionnel, int seedPos) {
         this.seed = seed;
@@ -48,6 +49,54 @@ public class DecisionCase {
         exceptionnelRepetition=0;
     }
 
+    public char[][] DonneMoiUneMap(int width, int height)
+    {
+        int i=0;
+        int j=0;
+        int tailleBiomeX;
+        int tailleBiomeY;
+        int decalage=0;
+        int nbrBiome=0;
+        char[][] map=new char[height][width];
+        if(width>=height)
+        {
+            tailleBiomeY=width/2;
+            tailleBiomeX=height;
+        }
+        else{
+            tailleBiomeY=height/2;
+            tailleBiomeX=width;
+        }
+        this.resetbiome('.','L',',','X');
+        for(nbrBiome=0;nbrBiome<2;nbrBiome++)// fix pour l'instant
+        {
+            for (i = 0; i < tailleBiomeX-1; i++) {
+                for (j = decalage; j < tailleBiomeY-1; j++) {
+                    if(i==0 || j==0)
+                    {
+                        map[i][j]=this.pasDeBiome(seed.getAnswer(increment));
+                        increment++;
+                    }
+                    else{
+                        map[i][j] = this.DonneMoiUneCase(map[i - 1][j], map[i][j - 1]);
+                    }
+                }
+            }
+            decalage=j;
+            tailleBiomeY=width;
+            this.resetbiome(',','T','.','X');
+        }
+        return map;
+    }
+    public void resetbiome(char base,char commun,char rare, char exceptionnel)
+    {
+        this.seed=new Seed(seed,10);
+        this.resetProba();
+        this.caseDeBase=base;
+        this.caseCommune=commun;
+        this.caseRare=rare;
+        this.caseExceptionnel=exceptionnel;
+    }
     private void resetProba() {
         borneBase=7;
         chanceCommune = chanceDebutCommune;
@@ -63,6 +112,16 @@ public class DecisionCase {
         return pasDeBiome();
 
     }*/
+    public char DonneMoiUneCase(char dessus, char derriere) {
+        this.increment++;
+        int decision = seed.getAnswer(increment);
+        if(dessus==derriere && (dessus==caseCommune || dessus==caseExceptionnel || dessus==caseRare))
+        {
+            return dessus;
+        }
+        return pasDeBiome(decision);
+
+    }
     public char DonneMoiUneCase(char dessus, char derriere, char diagonal) {
         this.increment++;
         int decision = seed.getAnswer(increment);

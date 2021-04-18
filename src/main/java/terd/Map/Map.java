@@ -131,6 +131,23 @@ public class Map{
     public List<Monster> getMonsterList() {
         return monsterList;
     }
+    private void RemplissageMap(int fake)
+    {
+        char[][] copy=decisionCase.DonneMoiUneMap(width,height);
+        int i;
+        int j;
+        int ibis = 0;
+        for(i=decalage+1;i<height+decalage;i++)
+        {
+            int jbis=0;
+            for(j=decalage+1;j<width+decalage;j++)
+            {
+                tableauMap[i][j]=copy[ibis][jbis];
+                jbis++;
+            }
+            ibis++;
+        }
+    }
     private void RemplissageMap()
     {
         int i;
@@ -152,7 +169,7 @@ public class Map{
         int sortieBasY = ((width/2 - seedMap.getAnswer(13)/2 +decalage) %moduloWidth) + decalage + 1;
         int sortieGaucheX = ((width/2 - seedMap.getAnswer(14)/2 +decalage) %moduloHeight) + decalage + 1;
         int sortieDroiteX = ((width/2 - seedMap.getAnswer(15)/2 +decalage) %moduloHeight) + decalage + 1;
-        RemplissageMap();
+        RemplissageMap(1);
         for(int ligne = 0; ligne < tailleReelX; ligne++) {
             for(int colonne = 0; colonne < tailleReelY; colonne++) {
                 //Création mur vertical
