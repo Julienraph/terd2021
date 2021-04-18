@@ -1,4 +1,6 @@
 package terd.controller;
+import terd.Combat.Combat;
+import terd.Player.Monster;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.etage.Etage;
@@ -11,7 +13,7 @@ public class GameController {
     private boolean keepPlaying = true;
     private boolean refresh = true;
     private int etat = 0;
-    private Props monster;
+    private Monster monster;
     private int monsterListPosition;
     private int tour = 0;
     String entry;
@@ -22,6 +24,9 @@ public class GameController {
         this.etage = etage;
         this.player = player;
         this.etage.spawnPlayer(player,etage.getSpawnLigne(),etage.getSpawnColonne());
+    }
+
+    public GameController() {
     }
 
     public void afficher() {
@@ -54,47 +59,9 @@ public class GameController {
     }
 
     public void controllerCombat(Scanner scanner) {
+        Combat combat = new Combat(player, monster, this);
         dureeMessage = 0;
-        afficherMap();
-        System.out.println("EN COMBAT");
-        do {
-            //Affiche la description de l'action effectué par le Joueur ou le Monstre qu'une fois
-            if (dureeMessage > 0) {
-                System.out.println(message);
-                dureeMessage = (dureeMessage > 1) ? dureeMessage - 1 : 0;
-            }
-            System.out.println(String.format("Player PV : %d   | Monster PV : %d", player.getPv(), monster.getPv()));
-            //Si le joueur meurt
-            if(player.getPv() == 0) {
-                System.out.println("GAME OVER");
-                keepPlaying = false;
-                etat = -1;
-                break;
-            }
-            //Si le joueur a effectué une action (Exemple : Attaque), on demande si il veut continuer pour bien séparer les tours
-            if(tour == 2) {
-                System.out.println("Entrez O pour continuer - Tour du Monstre");
-                entry = scanner.next();
-                if (entry.toUpperCase().equals("O")) {
-                    tour = 1;
-                }
-            }
-            //Si au tour du Joueur
-            if (tour == 0) {
-                System.out.println("Entrez A pour attaquer");
-                entry = scanner.next();
-                afficherInventaire(scanner, entry);
-                afficherCarte(scanner, entry);
-                arreterJeu(entry);
-                tour = playerAttack(entry);
-            }
-            //Si au tour du Monstre
-            if(tour == 1) {
-                tour = 0;
-                player.takeDamages(monster.getMainWeapon().getDegat());
-                System.out.println(String.format("%s utilise attaque %s : %d damage", monster.getName(), monster.getMainWeapon().getNom(), monster.getMainWeapon().getDegat()));
-            }
-        } while (etat == 1);
+        etat = 0;
     }
 
     private int playerAttack(String entry) {
@@ -163,26 +130,17 @@ public class GameController {
         //Affichage Inventaire
         if(stringEntry.toUpperCase().equals("P")) {
             refresh = true;
-            boolean inInventaire = true;
-            player.getInventaire().menuPrincipal();
-            do {
-                String entry = scanner.next();
-                inInventaire = !arreterJeu(entry);
-                if(entry.toUpperCase().equals("B")) {
-                    inInventaire = player.getInventaire().retour();
-                }
-                if(entry.toUpperCase().equals("P")) {
-                    inInventaire = player.getInventaire().quitter();
-                }
-                if(Character.isDigit(entry.charAt(0))) {
-                    inInventaire = player.getInventaire().affichageItem(player, Integer.parseInt(entry));
-                    if(!inInventaire) {
-                        message = player.getInventaire().getItemUse().getMessageInventaire();
-                        dureeMessage = 1;
-                    }
-                }
-            } while (inInventaire);
+            player.getInventaire().affiche(scanner,this,player);
+            dureeMessage = 1;
         }
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setDureeMessage(int dureeMessage) {
+        this.dureeMessage = dureeMessage;
     }
 
     private void retour(String stringEntry) {
@@ -192,7 +150,11 @@ public class GameController {
         }
     }
 
-    private boolean arreterJeu(String stringEntry) {
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean arreterJeu(String stringEntry) {
         //Retour
         if(stringEntry.toUpperCase().equals("X")) {
             keepPlaying = false;
