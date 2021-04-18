@@ -62,16 +62,11 @@ public class GameController {
         Combat combat = new Combat(player, monster, this);
         dureeMessage = 0;
         etat = 0;
-    }
-
-    private int playerAttack(String entry) {
-        //Si le joueur attaque
-        if (entry.toUpperCase().equals("A")) {
-            monster.takeDamages(player.getMainWeapon().getDegat());
-            System.out.println(String.format("%s utilise attaque %s : %d damage", player.getName(), player.getMainWeapon().getNom(), player.getMainWeapon().getDegat()));
-            tour = 2;
+        if(player.getPV() == 0) {
+            System.out.println("GAME OVER");
+            keepPlaying = false;
+            etat = -1;
         }
-        //Si le monstre n'a plus de PV
         if (monster.getPV() == 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
@@ -80,7 +75,6 @@ public class GameController {
             player.addXP(monster.getXP());
             message = String.format("Monstre tué, Vous avez gagné ! +%dxp", monster.getXP());
         }
-        return tour;
     }
 
     private void afficherMap() {
