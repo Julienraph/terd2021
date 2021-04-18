@@ -1,5 +1,15 @@
+/*
+Auteur : Mascaro Valentin Contributeurs : Julien Raphael
+Derniere modification : 18/04 par Mascaro Valentin // Modif RemplissageMap ajout du dernier argument dans l'appel a la methode de decisionCase WIP
+Objectif : Créé une map contenant au plus une sortie, la sortie est un couloirs créé dans un des murs haut/bas/gauche/droite de la map, il marque la fin d'une map
+    - La map possède toujours un chemin entre son entré et sa sortie, l'entrée est le point de spawn du Player
+    - Le player spawn en 0,0 par défaut, sinon il spawn a la coordonné correspondante au points d'arrivé depuis la sortie d'une autre map
+    - Si le Player sort d'une map en 5,25 il spawnera en 5,0 sur une nouvelle map ( 5 = hauteur, 25 et 0 correspond a la droite pour la map de sortie, et la gauche pour celle d'arrivé)
+    - Le contenu de la map est déterminé par la classe DecisionCase qui renvoi les cases de manière aléatoires ( mais controler par certaines régle WIP )
+ */
+
 package terd.Map;
-import terd.Player.Monster;
+import terd.Player.Monster; // La map connait les differentes entité presente sur elle, et utilise des méthodes pour leur indiqué le terrain actuellement sur leur pied ( WIP )
 import terd.Player.OrcWarrior;
 import terd.Player.Player;
 import terd.Player.Props;
@@ -9,40 +19,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Map{
-    private char[][] tableauMap;
+    private char[][] tableauMap; // la map est un tableau de char[][], solution simple pour avoir une map 2d, le problème étant que déposé un "item" sur une case reviens a la supprimé
     private Seed seedMap;
     private int sortie;
     private  int width;
     private  int height;
     private int tailleReelX; // colonne // hauteur
     private int tailleReelY; // ligne // largeur
-    private int decalage = 2 ;
-    private Pos haut;
-    private Pos bas;
-    private Pos droite;  // remplacé par posSortie
-    private Pos gauche;
-    private Pos spawnPos;
-    private Pos posSortie;
+    private int decalage = 2 ;  // on remplie une map en décalé de 2, ce décalage est prévue pour pouvoir créé une "arrivée", un couloirs d'accès
+                                // venue de l'exterieur de la map.
+
+    private Pos haut; // en cas de sortie haut          // haut bas gauche et droite sont déterminé a etre remplacé par posSortie
+    private Pos bas;    // en cas de sortie bas         // ce n'est toujours pas fait en attendant de créé des maps intermédiaire comme des marchands/commerce
+    private Pos droite;  // en cas de sortie droite    // qui pourrait etre relié a haut/bas/gauche/droite,
+    private Pos gauche; // en cas de sortie gauche
+    private Pos spawnPos; // la position d'entrée sur la map par défaut 0,0 puis set en fonction de la sortie de la map relié a this
+    private Pos posSortie; // la position de sortie sur la map par défaut 0,0 puis set en fonction de la sortie  haut/bas/gauche/droite
+
     private char cache;
     private int biome;
-    DecisionCase decisionCase;
-
+    DecisionCase decisionCase; // cette classe permet de remplir la map a partir du seed et de 4 arguments
+    // new DecisionCase( la seed , ' la case de base presente sur la map ' , ' la case commune ' , ' la case rare ', ' la case très très rare ' )
+    // DecisionCase est loin d'etre fini, le but est de généré une map contenant des biomes differents, telle que des 'foret' dans lequel la case T sera très presente
+    // ou des plaines dans lesquel la case , sera très presente
     private List<Monster> monsterList = new ArrayList<>();
+
+    // x et y permettent de déterminé des tailles pour la map,
+    // la Seed est la clé qui remplace l'aléatoire dans le jeu ( plutot que de faire random.int(0-15), on va plutot rechercher la valeur a l'indice k sur la Seed
+    // sortie correspond a la position demandé pour la sortie sur la map, l'int varie entre 4 valeur 1000 100 10 1, correspondant a haut bas droite gauche
+    // seedpos correspond a un entier quelconque qui permet de généré une nouvelle seed pour chaque nouvelle map
     public Map(int x, int y, Seed seedMapBase,int sortie,int seedpos) {
         this.cache='.';
-        this.seedMap = new Seed(seedMapBase,seedpos);
+        this.seedMap = new Seed(seedMapBase,seedpos); // nouvelle generation du seed, chaque map a  le meme seed en argument de son constructeur, puis le modifie en fonction de seedpos
         this.biome= seedMap.getAnswer(1);
-        /*System.out.print("Numero :");
-        System.out.print(seedpos);
-        System.out.print(" :");
-        System.out.print(seedMap.getSeed());*/
         if(biome>=7){
             this.decisionCase=new DecisionCase(seedMap,'.',',','T','X',seedpos);
         }
         else{
             this.decisionCase=new DecisionCase(seedMap,'.',',','L','X',seedpos);
         }
-        this.width = (seedMap.getAnswer(10+seedpos))+y;
+        this.width = (seedMap.getAnswer(10+seedpos))+y;     // les differentes tailles utilisé dans les map sont déduites a partir du seed
         this.height = (seedMap.getAnswer(8+seedpos))%10+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;
@@ -54,7 +70,8 @@ public class Map{
         monsterList.add(new OrcWarrior(new Pos(5,6), 'M'));
         spawnProps(monsterList.get(0));
     }
-    //copy constructor because clone is broken
+    //ce constructeur permet de faire une copie complete d'un objet map, Java utilisant des adresses pour ses objets, faire Map map2 = map1 ne copie pas
+    // il faut donc faire Map map2 = map1.copy() , et copy() utilise ce constructeur
     public Map(char[][] tableauMap, Seed seedMap, int sortie, int width, int height, int tailleReelX, int tailleReelY, Pos haut, Pos bas, Pos droite, Pos gauche, Pos spawnPos, Pos posSortie, char cache, int biome, DecisionCase decisionCase) {
         this.tableauMap = tableauMap;
         this.seedMap = seedMap;
@@ -73,11 +90,14 @@ public class Map{
         this.biome = biome;
         this.decisionCase = decisionCase;
     }
-
+    // détermine si une Pos est a l'intérieur de la map ( a l'interieur des 4 murs )
     public boolean isInside(Pos pos) {
         return (pos.getX() > decalage && pos.getX() < tailleReelY - (tailleReelY - decalage - width)
                 && pos.getY() > decalage && pos.getY() < tailleReelX - (tailleReelX - height - decalage));
     }
+    // détermine si une entité est déplaçable a la position donné en X Y et déplace l'entité si possible
+    // X et Y plutot que Pos car cette fonction a été créé avant l'existence de la classe Pos, il est prévue de la mettre a jour
+    // cette fonction replace sur l'ancienne position de l'entité, la case anciennement placé. ( si @ était sur un '.', après s'etre déplacé, le '.' reviens )
     public Boolean moveProps(Props props, int newPosX, int newPosY) {
         if (props.getY() < tailleReelX && props.getX() < tailleReelY) {
             if (this.isValide(newPosX, newPosY)) {
@@ -104,26 +124,28 @@ public class Map{
         }
         return -1;
     }
+    // supprime un monstre et remet la case prévue a la position du monstres
     public void killMonster(int i) {
         Monster monster = monsterList.get(i);
         monsterList.remove(i);
         resetCase(monster.getX(),monster.getY(),monster);
     }
+
     public void spawnProps(Props props) {
         props.setCache(tableauMap[props.getY()][props.getX()]);
         tableauMap[props.getY()][props.getX()] = props.getSkin();
     }
-
+    // fait apparaitre le player a sa spawnPos
     public Pos spawnPlayer(Props props) {
         props.setCache('.');
         tableauMap[spawnPos.getX()][spawnPos.getY()] = props.getSkin();
         return(spawnPos);
     }
-    public void resetCase(int colonne, int ligne, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void resetCase(int colonne, int ligne, Props props) // fait réapparaitre l'ancienne case
     {
         tableauMap[ligne][colonne] = props.getCache();
     }
-    public void moveProps(int newPosX, int newPosY, Props props) // deplace un Props sur la map et fait réapparaitre l'ancienne case
+    public void moveProps(int newPosX, int newPosY, Props props) // deprecated
     {
         props.setCache(tableauMap[newPosY][newPosX]);
         tableauMap[newPosY][newPosX] = props.getSkin();
@@ -131,6 +153,24 @@ public class Map{
     public List<Monster> getMonsterList() {
         return monsterList;
     }
+    private void RemplissageMap(int test)  // inutilisé car DecisionCase WIP
+    {
+        char[][] copy=decisionCase.DonneMoiUneMap(width,height);
+        int i;
+        int j;
+        int ibis = 0;
+        for(i=decalage+1;i<height+decalage;i++)
+        {
+            int jbis=0;
+            for(j=decalage+1;j<width+decalage;j++)
+            {
+                tableauMap[i][j]=copy[ibis][jbis];
+                jbis++;
+            }
+            ibis++;
+        }
+    }
+    // Remplie l'interieur de la map en fonction des cases donné par decisionCase
     private void RemplissageMap()
     {
         int i;
@@ -139,13 +179,18 @@ public class Map{
         {
             for(j=decalage+1;j<width+decalage;j++)
             {
-                char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1]);
-                //  System.out.println(Lacase);
+                char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1],tableauMap[i-1][j-1]);
+               //char Lacase =decisionCase.DonneMoiUneCase(tableauMap[i-1][j],tableauMap[i][j-1]);
                 tableauMap[i][j]=Lacase;
             }
         }
     }
     /////////////////////////////////
+    //Commence par déterminé la longueur et la hauteur de la map
+    // Puis déterminé 4 positions de sortie
+    // On remplie ensuite la Map en prenant en compte le décalage
+    // On créé ensuite les 4 murs de '#'
+    // Puis on créé les ponts (couloirs) de sortie de la map
     private void creationMap(){
         int moduloWidth = (width - decalage - 2) == 0 ? (width - decalage - 2 + 1) : (width - decalage - 2);
         int moduloHeight = (height - decalage - 2) == 0 ? (height - decalage - 2 + 1) : (height - decalage - 2);
@@ -169,8 +214,8 @@ public class Map{
                     tableauMap[ligne][colonne-1] = '#';
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
-                    this.posSortie=new Pos(decalage+1,sortieHautY);
-                    this.haut=new Pos(decalage+1,sortieHautY);
+                    this.posSortie=new Pos(decalage+1,sortieHautY); // cette affectation double n'est plus censé existé par la suite,
+                    this.haut=new Pos(decalage+1,sortieHautY);      // a l'avenir posSortie remplacera completement haut/bas/gauche/droite
 
                 }
                 //Création pont du bas si y a une sortie
@@ -208,6 +253,11 @@ public class Map{
         }
 
     }
+    //Une fois une map créé, il faut rajouté la liaison entre deux maps
+    // Cette liaison entre une map X et une map Y est representé par la sortie de la map X, qui donne sur l'entrée de la map Y
+    // La sortie de X est créé lors de l'appel de créationMap(), l'entrée de Y est ensuite créé avec creationCheminDepuisExte
+    // La pos en argument correspond a la répresentation de la Pos de sortie de la map X , reporté sur la map Y
+    // Une sortie en haut a gauche sur X , deviens une entrée en haut a droite sur Y
     public void creationCheminDepuisExte(Pos pos)
     {
         int curseurColonne = pos.getY();
@@ -218,25 +268,22 @@ public class Map{
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             if(directionLigne < 0) {
-               // System.out.println(spawnPos);
-                this.spawnPos = new Pos(curseurLigne, curseurColonne);
+                this.spawnPos = new Pos(curseurLigne, curseurColonne); // après avoir créé le couloirs d'entréé on set la position de spawn comme étant le début de ce couloir
             } else {
-              //  System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         } else {
             curseurLigne = alignementLigne(curseurLigne, curseurColonne, directionLigne);
             curseurColonne = alignementColonne(curseurLigne, curseurColonne, directionColonne);
             if(directionColonne < 0) {
-             //   System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             } else {
-               // System.out.println(spawnPos);
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         }
           this.creationCheminInterne(this.spawnPos,this.getPosSortie());
     }
+    // fonction pour créé des couloirs verticaux
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
         while((curseurColonne >= 0 && curseurColonne <= decalage +1 ) || (curseurColonne >= width + decalage -1  && curseurColonne < tailleReelY))
         {
@@ -255,6 +302,7 @@ public class Map{
         curseurColonne = (curseurColonne == tailleReelY) ? (curseurColonne - 1) : curseurColonne;
         return curseurColonne;
     }
+    // fonction pour créé des couloirs horizontaux
     private int alignementLigne(int curseurLigne, int curseurColonne, int direction) {
         while((curseurLigne >= 0 && curseurLigne < decalage +1 ) || (curseurLigne >= height + decalage -1 && curseurLigne < tailleReelX))
         {
@@ -273,27 +321,27 @@ public class Map{
         curseurLigne = (curseurLigne == tailleReelX) ? (curseurLigne - 1) : curseurLigne;
         return curseurLigne;
     }
-    public Pos spawnPlayer(char skin) {
-
+    public Pos spawnPlayer(char skin) {             // deprecated
         tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
         return(spawnPos);
     }
-    private void whatToPutAt(int ligne, int colonne) // choisi quel case placé a une position donnée en fonction de la seed
+    private void whatToPutAt(int ligne, int colonne) //// deprecated
     {
         tableauMap[ligne][colonne] = '.';
     }
-
-    public void popProps( int newPosX, int newPosY, char Props) // fait apparaitre une case
+    // fait apparaitre une case, different de moveProps qui déplace une entité et remplace sa derniere case
+    // l'interet est de forcer des valeurs du tableauMap
+    public void popProps( int newPosX, int newPosY, char Props)
     {
-        // resetCase(colonne, ligne); //
-        //cache=tableauMap[newPosY][newPosX];
         tableauMap[newPosY][newPosX] = Props;
     }
+    // popProps mais compatible avec l'utilisation de coordonnée
     public void popProps(Pos coordonne,char Props)
     {
         popProps(coordonne.getY(), coordonne.getX(), Props);
     }
-    public boolean isValide(int gaucheDroite, int basHaut)  // indique si la case ciblé est valide pour se déplacé ou non
+    // indique si la case ciblé est valide pour se déplacé ou non
+    public boolean isValide(int gaucheDroite, int basHaut)
     {
         if(gaucheDroite<0 || basHaut<0 || gaucheDroite>=tailleReelY || basHaut >= tailleReelX)
         {
@@ -302,20 +350,23 @@ public class Map{
         if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
             return true; //
         }
-        else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == '#')
+        else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == 'L' || tableauMap[basHaut][gaucheDroite] == '#' || tableauMap[basHaut][gaucheDroite] == 'T')
         { // =='X'
 
-            return false;
+            return false; // reviens a faire if('.',','){true}{else false} mais on se laisse la possibilité de faire d'autre actions si le joueur tente de rentré dans une case non valide
         }
         else{return false;}
     }
+    // isValide mais compatible avec Pos
     public boolean isValide(Pos coordonne)
     {
         return isValide(coordonne.getY(),coordonne.getX());
     }
+    // retourne la map
     public char[][] getTableauMap() {
         return tableauMap;
     }
+    // affiche la map, uniquement utilisé pour faire des test unitaires sur map
     public void affichageMap(){
         ////affichage test//
         int i;
@@ -363,6 +414,7 @@ public class Map{
     public int getHeight() {
         return height;
     }
+    // créé une copy de la map actuelle
     public Map copy(){
         char[][] old=this.getTableauMap();
         char[][] current=new char[tailleReelX][tailleReelY];
@@ -372,6 +424,9 @@ public class Map{
         Map map=new Map(current,this.seedMap,this.sortie,this.width,this.height,this.tailleReelX,this.tailleReelY,this.haut,this.bas,this.droite,this.gauche,this.spawnPos,this.posSortie,this.cache,this.biome,this.decisionCase);
         return map;
     }
+    // Determine si il existe au moins un chemin entre Pos debut et Pos fin, sans passé par pos aEvite
+    // PosEvite correspond a la derniere position traversé , pour évité de créé une boucle infini
+    // cette methode laisse une trace des chemins déja traversé, ce qui détruit la map, il faut donc la lancé de la maniere suivante this.copy().IsCheminFromTo()
     public boolean IsCheminFromTo(Pos debut, Pos fin, Pos aEvite)   // getY = gaucheDroite   getX = hautBas // int = nbr de case traversé
     {
         if(isValide(fin)==false)
@@ -408,7 +463,7 @@ public class Map{
             }
         }
     }
-
+    // Cette méthode créé une chemin entre Pos debut et Pos fin si aucun chemin n'existe déja
     public boolean creationCheminInterne(Pos debut, Pos fin){
         if( posSortie==null )
         {
@@ -417,8 +472,8 @@ public class Map{
         Pos aEvite;
         if(debut.getY()==decalage+width-1 && debut.getX()!=decalage+1 && debut.getX()!=decalage+height-1){aEvite=debut.addY(1);}  //// on cherche la position a ne pas controler lors de la recherche de chemin
         if(debut.getY()==decalage+width+1 && debut.getX()!=decalage+1 && debut.getX()!=decalage+height-1){aEvite=debut.addY(-1);} //// cette position est en réalité le bout du couloir vers une autre map
-        if(debut.getX()==decalage+1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);} //// mais je laisse la possibilité d'utililisé cette methode pour faire autre chose qu'une liaison interne entre deux couloirs
-        if(debut.getX()==decalage-1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);} ////int from correspond donc a la direction où on ne veux pas chercher, obligatoire pour IsCheminFromTo
+        if(debut.getX()==decalage+1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);}
+        if(debut.getX()==decalage-1 && debut.getY()!=decalage+1 && debut.getY()!=decalage+width-1){aEvite=fin.addX(-1);}
         else{aEvite=debut;} //
         if(this.copy().IsCheminFromTo(debut,fin,aEvite))
         {
@@ -483,33 +538,8 @@ public class Map{
     }
 
     public static void main(String[] args) {
-        /*//Seed seed=new Seed("1a354af1afbc55784784a8e22d969f9d1380a229dd06fe7dc69a371bf829a19ea83bffaeeb58f7a44bfe26ce51b03a8c2fa40a6ad990fde1e573fd80415490de81c8ceb99a46276bcfa98e843f46b3e88b5cec0fc1d7a95819042bc8a6417b8aa5f93a281f72a81cf57255c33d883dc985fd5ad062b4b2d43107f86da92a34b3ad50e402976a0290385ba922f142651b5ec5ecf31635c9003ec1a953879dd7694bf8b97068d219c51c687fc6848de4b58f49");
-        //Seed seed=new Seed("f3a300134c0b020b2fd3b41ace65b34e60c04c6fd63b73d7f52412ee5677873afb288b9a842f213b88d46d22949f6ff9d4505790cf0ad051f4e7d691185cee23c8059e34f2f7ed5ee95b25823d615745619b5f124f0463d316d4fff1279b74d6bc91e4f672b850a849eed77dff51a9213aa859f6de8508b8786cbd5e4f539160c4d49f860e50764ebba41b5978b7307af36cb018d5e59b61ca2a8d096a41f726df6c3d60e48eedd9d47c1da48a242bead");
-        // Seed seed=new Seed("db9ab3576b058ededcb7bfe7531331978fc861d1cf3ac95c0871cf2fa5a2cc9ac99952179b1b29a7746da526ae131fdef51f2a05de964b37b7ce2ec4a2c652e1794ae9f92e10cc4ced37dcf080a1811944a953b458c22d97cc75982994b62e840257bb4d97f3ef2cb30756a819eb812e5bda8630a376ac905acab492e5bf539ed28e5bb5c7d75e3ae3574a07a2d6f91e0a55bd72d06085a4997f93de35692dd339a7ca4f91042959ec54efb27e5518d3f3ff6");
-        //Seed seed=new Seed("90adae30d0c28688de49cbdbf6b844cf6d90faa7a2e5679292f0262af1a312c5e67dcaf5497fc79881d0187fcbdd07861f000f0547a1f671e657b0987e60c7c5ef4a54a2ff5ff5f0778e7fae6d8c8bf2380dd3a2307d656463b2fd73207c3d76679cbe535fce60699028bab790c4f61ee43afa450e9a87f9a7cdc2a9904b0bd3e13eded91a5c885f5a8c0ddd7553ba82b52d167ab4c79a1b9f0e63a1624d2ce529340f171d2fccc736c3e4c49c85da2");
-        Seed seed=new Seed("000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a41bd9a81d375c7c465e8cc21c202ed3d5ae5bcb9f5b23ae092099774cd607f5350fb751da90dfb196f97c0dc0de4e7e6f86b9e475aab1366093f7417c64a87bf11ff388850835cd8a75babb6c74e730084d2edf2f6bcfa6c75fc4cd5304eb5dfa742d9092754d79ec960692b428b");
-       //Seed seed=new Seed();
-        // System.out.println(seed.getSeed());
-        Map map = new Map(10,10,seed,0,1);
-        Pos hautDroit = new Pos(map.decalage,map.decalage+map.getWidth());
-        System.out.println(hautDroit);
-        map.popProps(hautDroit,'2');
-        Pos hautgauche = new Pos(map.decalage,map.decalage);
-        System.out.println(hautgauche);
-        map.popProps(hautgauche,'1');
-        Pos basGauche = new Pos(map.decalage+map.getHeight(),map.decalage);
-        System.out.println(basGauche);
-        map.popProps(basGauche,'3');
-        Pos basDroite = new Pos(map.decalage+map.getHeight(),map.decalage+map.getWidth());
-        System.out.println(basDroite);
-        Pos test=new Pos((hautgauche.getX()+ basDroite.getX())/2, (hautgauche.getY()+ basDroite.getY())/2);
-        map.popProps(test,'I');
-        map.popProps(map.getSpawnPos(),'@');
-       // System.out.println(map.copy().IsCheminFromTo(map.getSpawnPos(),map.getPosSortie(),map.getSpawnPos()));
-        map.creationCheminInterne(map.getSpawnPos(),test);
-        map.popProps(basDroite,'4');
-        map.affichageMap();*/
-        Map map = new Map(10,10,10,0,new Seed());
+       Seed seed=new Seed("81cad2488b706822a6472707bbf11f762b6d006f0fbe5e548446569998affd0a4a3037b10add7022821a20750edfa5c63cabcdcafe9ed3f973ba2ccd68927537aa5c3f077b95c4e29628ee2562b266b309958cf988453ec3183284b633abeec0b1fcede89e5334f1d999de4fdb086a64248561da47b59296d30ae291c4a5be8434f3a7c611a15af3b8ff4a563835faf175bace6ad77dc09754c94777c0e88317ffa6afec110a86e2ad4a7033907e2164c35020cfb68cf9e77a39a9dcedf6dff7f3812cd7d05dfdf12b25de2056bfe65b5485edd9b4d98e65b8c876593e7bd5aebd20a583a10ddc0961af3914b8d1e54eddd37216a8ad1aaf0d20");
+        Map map = new Map(10,20,seed,1000,1);
         map.affichageMap();
     }
 
