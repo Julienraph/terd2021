@@ -120,9 +120,6 @@ public class Inventaire {
         return competences;
     }
 
-    public List<Item> getConsommables(){
-        return consommables;
-      
     public int getEtat() {
         return etat;
     }

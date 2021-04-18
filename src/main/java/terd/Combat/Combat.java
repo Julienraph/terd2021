@@ -31,8 +31,8 @@ public class Combat {
         int choix = -1;
         Random random = new Random();
         System.out.println("Vous entrez en combat.");
-        System.out.println(joueur.getPv());
-        System.out.println(monstre.getPv());
+        System.out.println(joueur.getPV());
+        System.out.println(monstre.getPV());
         while (estEnCombat()) {
             affichageApparenceCombat();
             System.out.println(message);
@@ -82,7 +82,7 @@ public class Combat {
     private void affichageApparenceCombat(){
         System.out.println(
                 "//////////////////////////		" + monstre.getName() + "/////////////\n" +
-                "//PV : " + monstre.getPv() + "//                           0         \n" +
+                "//PV : " + monstre.getPV() + "//                           0         \n" +
                 "                                      -|-        \n" +
                 "                                      / \\        \n" +
                 "\n" +
@@ -90,7 +90,7 @@ public class Combat {
                 "     0 \n" +
                 "    -|- \n" +
                 "    / \\ \n" +
-                "//PV : " + joueur.getPv() + "                                        //\n" +
+                "//PV : " + joueur.getPV() + "                                        //\n" +
                 "/Player///////////////////////////////////////////"
         );
     }
@@ -102,11 +102,11 @@ public class Combat {
     }
 
     private boolean estEnCombat(){ //Verification de combat terminé.
-        if (joueur.getPv() <= 0){
+        if (joueur.getPV() <= 0){
             System.out.println("Vous avez perdu");
             enCombat = false;
         }
-        else if(monstre.getPv() <= 0){
+        else if(monstre.getPV() <= 0){
             System.out.println("Monstre vaincu");
             enCombat = false;
         }

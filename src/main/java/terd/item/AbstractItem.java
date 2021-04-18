@@ -33,7 +33,7 @@ public abstract class AbstractItem implements Item {
     }
 
     public int utiliser(){
-        setNbrUtilisation(1);
+        addNbrUtilisation(-1);
         return degat;}
 
     public int getPrix() {
