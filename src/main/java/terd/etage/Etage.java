@@ -89,6 +89,7 @@ public class Etage {
                         Pos pos = new Pos(hauteur, largeur);
                         tabMap[i][y + 1].creationCheminDepuisExte(pos);
                     }
+                    map.spawnProps(map.getMonsterList().get(0));
                 }
             }
         }

@@ -34,7 +34,6 @@ public class GameController {
 
 
     public boolean afficher() {
-        etage.getMap(player.getPosEtageY(), player.getPosEtageX()).moveMonsters(player.getPos());
         Scanner scanner = new Scanner(System.in);
         do {
             if(etat == 0) {
