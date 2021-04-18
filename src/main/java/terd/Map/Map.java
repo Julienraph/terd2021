@@ -58,7 +58,7 @@ public class Map{
         else{
             this.decisionCase=new DecisionCase(seedMap,'.',',','L','X',seedpos);
         }
-        this.width = (seedMap.getAnswer(10+seedpos))+y;     // les differentes tailles utilisé dans les map sont déduites a partir du seed
+        this.width = (seedMap.getAnswer(2+seedpos))+y;     // les differentes tailles utilisé dans les map sont déduites a partir du seed
         this.height = (seedMap.getAnswer(8+seedpos))%10+x;
         this.tailleReelX = 15+x+decalage+1;
         this.tailleReelY = 15+y+decalage+1;

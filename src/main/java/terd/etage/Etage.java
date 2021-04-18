@@ -16,6 +16,8 @@ public class Etage {
     private Seed seed;
     private int hauteurMap;
     private int largeurMap;
+    private int largeurMinMap;
+    private int hauteurMinMap;
     private int hauteurEtage;
     private int largeurEtage;
     private int spawnLigne;
@@ -24,6 +26,8 @@ public class Etage {
     public Etage(int hauteurEtage, int largeurEtage, int coefHauteurMap, int coefLargeurMap, int biome, int niveau, Seed seed) {
         this.hauteurEtage = hauteurEtage;
         this.largeurEtage = largeurEtage;
+        this.largeurMinMap = coefLargeurMap;
+        this.hauteurMinMap = coefHauteurMap;
         this.biome = biome;
         this.niveau = niveau;
         this.seed = seed;
@@ -156,7 +160,9 @@ public class Etage {
         int positionTuto = positionCarte + 1 + hauteurEtage;
         int positionAfficherCarte = positionTuto + 1;
         int positionTP = positionAfficherCarte + 1;
-        int positionXP = positionTP + 2;
+        int positionInventaire = positionTP + 1;
+        int positionMenuPrincipal = positionInventaire + 1;
+        int positionXP = positionMenuPrincipal + 2;
         int positionLevel = positionXP + 1;
         int positionPV = positionLevel + 1;
         int positionArme = positionPV + 1;
@@ -187,13 +193,19 @@ public class Etage {
                 }
             }
             if (i == positionTuto) {
-                sb.append("- ZQSD pour se déplacer / X pour arrêter le jeu");
+                sb.append("- ZQSD pour se déplacer");
             }
             if (i == positionAfficherCarte) {
                 sb.append("- M pour afficher la carte");
             }
             if (i == positionTP) {
                 sb.append("- T pour se téléporter");
+            }
+            if (i == positionInventaire) {
+                sb.append("- P pour afficher l'Inventaire");
+            }
+            if (i == positionMenuPrincipal) {
+                sb.append("- X pour quitter au Menu Principal");
             }
             if (i == positionXP) {
                 sb.append(String.format("XP : %d", player.getXP()));
@@ -269,6 +281,34 @@ public class Etage {
 
     public Map getMap(int x, int y) {
         return tabMap[x][y];
+    }
+
+    public int getBiome() {
+        return biome;
+    }
+
+    public int getNiveau() {
+        return niveau;
+    }
+
+    public Seed getSeed() {
+        return seed;
+    }
+
+    public int getHauteurMap() {
+        return hauteurMap;
+    }
+
+    public int getLargeurMap() {
+        return largeurMap;
+    }
+
+    public int getLargeurMinMap() {
+        return largeurMinMap;
+    }
+
+    public int getHauteurMinMap() {
+        return hauteurMinMap;
     }
 
     //Constructeur pour pouvoir faire des tests dans EtageTest

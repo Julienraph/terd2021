@@ -4,6 +4,7 @@ import terd.Player.Monster;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.etage.Etage;
+import terd.utils.Seed;
 
 import java.util.Scanner;
 
@@ -29,7 +30,9 @@ public class GameController {
     public GameController() {
     }
 
-    public void afficher() {
+
+
+    public boolean afficher() {
         Scanner scanner = new Scanner(System.in);
         do {
             if(etat == 0) {
@@ -38,7 +41,41 @@ public class GameController {
             if(etat == 1) {
                 controllerCombat(scanner);
             }
+            if(!keepPlaying) {
+                controllerMenu(scanner);
+            }
         } while (keepPlaying);
+        return true;
+    }
+
+    private void controllerMenu(Scanner scanner) {
+        boolean inRetryMenu = true;
+        do{
+            System.out.println("0. Relancer la même Seed");
+            System.out.println("1. Relancer une nouvelle Seed");
+            System.out.println("2. Arrêter le jeu");
+            int entry = scanner.hasNextInt() ? scanner.nextInt() : -1;
+            if(entry == 0 || entry == 1) {
+                this.player = new Player(player.getSkin(), player.getMaxPV());
+                Seed seed = etage.getSeed();
+                if(entry == 1) {
+                    seed = new Seed();
+                }
+                this.etage = new Etage(etage.getHauteurEtage(), etage.getLargeurEtage(), etage.getHauteurMinMap(), etage.getLargeurMinMap(), etage.getBiome(), etage.getNiveau(), seed);
+                this.etage.spawnPlayer(player,etage.getSpawnLigne(),etage.getSpawnColonne());
+                this.tour = 0;
+                this.etat = 0;
+                this.refresh = true;
+                this.keepPlaying = true;
+                inRetryMenu = false;
+            }
+            if(entry == 2) {
+                inRetryMenu = false;
+            }
+            if(entry == -1) {
+                scanner.next();
+            }
+        } while(inRetryMenu);
     }
 
     private void controllerMap(Scanner scanner) {
