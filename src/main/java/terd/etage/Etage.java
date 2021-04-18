@@ -3,7 +3,6 @@ package terd.etage;
 
 import terd.Map.Pos;
 import terd.Map.Map;
-import terd.Player.OrcWarrior;
 import terd.Player.Player;
 import terd.Player.Props;
 import terd.utils.Generator;
@@ -54,16 +53,18 @@ public class Etage {
         return largeurEtage;
     }
 
-    //Connecte les sorties avec la carte suivante
+    ///Connecte les sorties avec la carte suivante
     public void generationPont() {
         for (int i = 0; i < tabMap.length; i++) {
             for (int y = 0; y < tabMap[0].length; y++) {
                 Map map = tabMap[i][y];
+                if(i==spawnLigne && y==spawnColonne){map.creationCheminInterne(map.getSpawnPos(),map.getPosSortie());}
                 if (map != null) {
                     if (map.getHaut() != null) {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
                         Pos pos = new Pos(hauteur, largeur);
+                        System.out.println(pos);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
                     if (map.getBas() != null) {
@@ -116,24 +117,25 @@ public class Etage {
         boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
         //Si le joueur essaye de sortir de la map
         if (isHorizontal || isVertical) {
-            int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0;
-            int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0;
-            int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1);
-            int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1);
-            if ((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal] != null)) {
-                if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) {
-                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props);
-                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, props);
-                    props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal);
-                    props.setPosition(spawnColonne, spawnLigne);
+            int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0; //Si le joueur sort de la map vers le haut, directionVertical = -1. Si vers le bas directionVertical = 1. Sinon 0.
+            int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0; //Si le joueur sort de la map vers la gauche, directionHorizontal = -1. Si vers la droite directionHorizontal = 1. Sinon 0.
+            int spawnLigne = (directionVertical == 0) ? newPosY : ((directionVertical > 0) ? 0 : hauteurMap - 1); //La ligne où on va spawn le Props de la map visée
+            int spawnColonne = (directionHorizontal == 0) ? newPosX : ((directionHorizontal > 0) ? 0 : largeurMap - 1); //La colonne où on va spawn le Props de la map visée
+            if ((tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal] != null)) { // Si la map visée existe
+                if (tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].isValide(spawnColonne, spawnLigne)) { // Si la case visée de la map visée est valide
+                    tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props); //On reset la case où se situe le Props de la map actuel avant de passer à la map visée
+                    tabMap[ligneEtage + directionVertical][colonneEtage + directionHorizontal].moveProps(spawnColonne, spawnLigne, props); //On place le Props sur la map visée
+                    props.setNewMap(ligneEtage + directionVertical, colonneEtage + directionHorizontal); //On assigne la nouvelle map du Props
+                    props.setPosition(spawnColonne, spawnLigne); //On la nouvelle position du Props
                     return true;
                 }
             }
         }
+        //Si le Props voulait sortir de la map mais n'a pas pu
         if (newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
             return false;
         }
-        //Si le joueur se déplace à l'intérieur de la salle
+        //Si le joueur se déplace à l'intérieur de la map
         if (posActuelY < hauteurMap && posActuelX < largeurMap) {
             if (tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
                 tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props);
@@ -200,7 +202,7 @@ public class Etage {
                 sb.append(String.format("Level : %d", player.getLevelProps()));
             }
             if (i == positionPV) {
-                sb.append(String.format("PV : %d", player.getPv()));
+                sb.append(String.format("PV : %d", player.getPV()));
             }
             if (i == positionArme) {
                 sb.append(String.format("Arme Principale : %s", player.getMainWeapon().getNom()));
@@ -267,6 +269,30 @@ public class Etage {
 
     public Map getMap(int x, int y) {
         return tabMap[x][y];
+    }
+
+    //Constructeur pour pouvoir faire des tests dans EtageTest
+    public Etage(int hauteurEtage, int largeurEtage, int hauteurSalle, int LargeurSalle) {
+        Seed seed = new Seed();
+        this.hauteurEtage = hauteurEtage;
+        this.largeurEtage = largeurEtage;
+        this.hauteurMap = hauteurSalle+2;
+        this.largeurMap = LargeurSalle+2;
+        this.spawnColonne = 1;
+        this.spawnLigne = 0;
+        int decalage = 1;
+        this.tabMap = new Map[hauteurEtage][largeurEtage];
+        tabMap[0][0] = new Map(hauteurSalle,LargeurSalle,0,decalage,seed);
+        tabMap[0][1] = new Map(hauteurSalle,LargeurSalle,100,decalage,seed);
+        tabMap[0][2] = new Map(hauteurSalle,LargeurSalle,0,decalage,seed);
+        tabMap[1][0] = new Map(hauteurSalle,LargeurSalle,10,decalage,seed);
+        tabMap[1][1] = new Map(hauteurSalle,LargeurSalle,0,decalage,seed);
+        tabMap[1][2] = new Map(hauteurSalle,LargeurSalle,1,decalage,seed);
+        tabMap[2][0] = new Map(hauteurSalle,LargeurSalle,0,decalage,seed);
+        tabMap[2][1] = new Map(hauteurSalle,LargeurSalle,1000,decalage,seed);
+        tabMap[2][2] = new Map(hauteurSalle,LargeurSalle,0,decalage,seed);
+        this.generationPont();
+        affichage();
     }
 
 }

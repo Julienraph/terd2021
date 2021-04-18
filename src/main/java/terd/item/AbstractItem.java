@@ -17,11 +17,11 @@ public abstract class AbstractItem implements Item {
         this.degat = degat;
     }
 
-    public void  setNbrUtilisation(int minusNbr){
-        if (minusNbr > nbrUtilisation) {
+    public void addNbrUtilisation(int n){
+        if (nbrUtilisation + n < 0 ) {
             nbrUtilisation = 0;
         }
-        nbrUtilisation -= minusNbr;
+        nbrUtilisation += n;
     }
 
     public String getMessageInventaire() {

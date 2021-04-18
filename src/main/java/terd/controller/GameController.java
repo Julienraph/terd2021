@@ -72,7 +72,7 @@ public class GameController {
             tour = 2;
         }
         //Si le monstre n'a plus de PV
-        if (monster.getPv() == 0) {
+        if (monster.getPV() == 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
             tour = 0;

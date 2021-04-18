@@ -1,6 +1,7 @@
 package terd.utils;
 
 import terd.Map.Map;
+import terd.Map.Pos;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,6 +94,11 @@ public class Generator {
             this.tailleReelX = map.getTailleReelX();
             this.tailleReelY = map.getTailleReelY();
             maps[caseLocation.getY()][caseLocation.getX()] = map;
+            if(i==length-1){
+                Pos basDroite = new Pos(map.getDecalage()+map.getHeight(),map.getDecalage()+map.getWidth());
+                Pos hautgauche = new Pos(map.getDecalage(),map.getDecalage());
+                map.setPosSortie(new Pos((hautgauche.getX()+ basDroite.getX())/2, (hautgauche.getY()+ basDroite.getY())/2));
+            }
         }
 
     }

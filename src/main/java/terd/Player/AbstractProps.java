@@ -60,9 +60,9 @@ public abstract class AbstractProps implements Props {
         victime.takeDamages(this.getMainWeapon().getDegat());
     }
 
-    public double getDistance(AbstractProps abstractProps) {
-        double dx = pos.getX() - abstractProps.getX();
-        double dy = pos.getY() - abstractProps.getY();
+    public double getDistance(Props props) {
+        double dx = pos.getX() - props.getX();
+        double dy = pos.getY() - props.getY();
         return Math.hypot(dx, dy);
     }
 
@@ -93,16 +93,11 @@ public abstract class AbstractProps implements Props {
     }
 
     public void addXP(int monsterXP) {
-        xp += monsterXP;
-        if(xp >= 100) {
-            xp = xp % 100;
-            levelProps += 1;
-        }
+        levelProps += (xp + monsterXP) / 100;
+        xp = (xp + monsterXP) % 100;
     }
 
     public boolean isBeside(Pos posProps) {
-        System.out.println(pos.toString());
-        System.out.println(posProps.toString());
         return pos.getX() == posProps.getX() + 1 && pos.getY() == posProps.getY()
                 || pos.getX() == posProps.getX() - 1 && pos.getY() == posProps.getY()
                 || pos.getY() == posProps.getY() + 1 && pos.getX() == posProps.getX()
@@ -132,7 +127,7 @@ public abstract class AbstractProps implements Props {
         this.skin = skin;
     }
 
-    public int getPv() {
+    public int getPV() {
         return pv;
     }
 
