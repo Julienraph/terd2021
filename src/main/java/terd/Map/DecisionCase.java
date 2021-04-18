@@ -1,3 +1,51 @@
+/*
+Auteur : Mascaro Valentin
+Derniere modification : 18/04 par Mascaro Valentin // création DonneMoiUneCase pasDeBiome DonneMoiUneMap // Suppression des ancienne methodes du meme nom
+                                                   // création de plusieurs methodes differentes pour obtenir une case
+WIP absolument pas satisfait du remplissage des map
+Objectif : Obtenir une map "ordonnée", a savoir, des parties avec beaucoup de case semblable, des biomes composé de beaucoup d'arbre ou lac ou colline ou d'herbes
+
+
+
+Les fonctions sont assez peu commenté car pas fini, voir probablement seront entierement remanié
+Toutefois l'idée est la suivante
+
+La seed comporte une suite de chiffre entre 0 et 15 ( 0àF )
+0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+Pour déterminé une case a une position donné, on commence par regardé la valeur de la seed a la position X
+Disons 12            0 1 2 3 4 5 6 7 8 9 10 11 (12) 13 14 15
+Maintenant on regarde pour 7 quel serait la valeur de la case ?
+    Pour repondre a cette question on associe des bornes a chaque valeur de retour possible
+
+    caseCommune : 6 et +  0 1 2 3 4 5 | 6 7 8 9 10 11 12 13 14 15
+    caseRare : 10 et + 0 1 2 3 4 5 6 7 8 9 | 10 11 12 13 14 15
+    caseExceptionnel : 13 et + 0 1 2 3 4 5 6 7 8 9 10 11 12 | 13 14 15
+
+    Dans le code on commence par controler si une case est exceptionnel ou rare, ou commune on obtiens donc
+    0 1 2 3 4 5 | 6 7 8 9 | 10 11 (12) | 13 14 15
+    La valeur 12 correspond donc a commune et rare, mais puisque l'on vérifie d'abord si elle est rare, elle sera rare
+
+    Viens ensuite la partie la compliqué, obtenir des biomes, un biome étant défini par une suite d'une meme case, on va augmenté
+    la chance d'obtenir un type de case, si celui est déja tombé  ( fonction pasDeBiome(), oui pasDeBiome() créé des biomes, car cette fonction est appelé c'est que le biome n'est pas encore créé )
+
+    Ainsi disons que j'obtiens une caseRare je vais supprimé de 1 la hauteur de ma borne Rare
+    caseCommune : 6 et +  0 1 2 3 4 5 | 6 7 8 9 10 11 12 13 14 15
+    caseRare : 9 et + 0 1 2 3 4 5 6 7 8 | 9 10 11 12 13 14 15
+    caseExceptionnel : 13 et + 0 1 2 3 4 5 6 7 8 9 10 11 12 | 13 14 15
+
+    Diminuant ainsi la chance d'obtenir une caseCommune de 1, et augmentant celle d'une caseRare de 1
+    On peux aussi augmenté la borne d'une des cases pour diminuer la chance de l'obtenir et donc augmenté indirectement les chances d'obtenir la case de rareté inférieur
+
+    Le danger étant de supprimé completement les caseCommunes, je rajoute donc un 'gardefou' resetProba() qui remet les probabilité d'obtenir chaque case, comme au début de la classe
+
+
+    Viens ensuite la partie la plus probable a etre modifié, dans la methode DonneMoiUneCase est demandé en argument la valeur de la case precedente, et celle du dessus ( voir meme celle en diagonal gauche )
+    L'interet est de, en fonction de ces trois cases, modifié de maniere brut la valeur de la case ciblé, a savoir, si 'dessus' et 'derriere' sont identiques, c'est que nous sommes dans un biome
+    par conséquent la case obtiens cette meme valeur
+
+    A l'avenir cela devrai déclenché une autre fonction qui construira un biome.
+ */
+
 package terd.Map;
 
 import terd.utils.Seed;
@@ -132,14 +180,14 @@ public class DecisionCase {
         else{
             if(diagonal==caseExceptionnel)
             {
-                if(decision>=6)
+                if(decision>=9)
                 {
                     return caseExceptionnel;
                 }
             }
             if(derriere==caseRare)
             {
-                if(decision>=6)
+                if(decision>=9)
                 {
                     return caseRare;
                 }
