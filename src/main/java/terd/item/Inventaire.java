@@ -104,7 +104,7 @@ public class Inventaire {
                if(entry.toUpperCase().equals("P")) {
                    inInventaire = quitter();
                }
-               if(Character.isDigit(entry.charAt(0))) {
+               if(Character.isDigit(entry.charAt(0)) && entry.length() == 1) {
                    inInventaire = affichageItem(player, Integer.parseInt(entry));
                    if(!inInventaire) {
                        controller.setMessage(player.getInventaire().getItemUse().getMessageInventaire());

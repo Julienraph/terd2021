@@ -66,6 +66,12 @@ public abstract class AbstractProps implements Props {
         return Math.hypot(dx, dy);
     }
 
+    public double getDistance(Pos posProps, Pos posProps2) {
+        double dx = posProps2.getX() - posProps.getX();
+        double dy = posProps2.getY() - posProps.getY();
+        return Math.hypot(dx, dy);
+    }
+
     public void setPosX(int x){
         pos.setX(x);
     }

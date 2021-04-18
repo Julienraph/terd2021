@@ -89,6 +89,9 @@ public class Etage {
                     }
                     if(map.getMonsterList().get(0).getPos() != null) {
                         map.spawnProps(map.getMonsterList().get(0));
+                    } else {
+                        map.randomMonsterPos();
+                        map.spawnProps(map.getMonsterList().get(0));
                     }
                 }
             }

@@ -52,14 +52,15 @@ public class GameController {
     private void controllerMenu(Scanner scanner) {
         boolean inRetryMenu = true;
         do{
-            System.out.println("0. Relancer la même Seed");
-            System.out.println("1. Relancer une nouvelle Seed");
-            System.out.println("2. Arrêter le jeu");
+            System.out.println("0. Reprendre la partie");
+            System.out.println("1. Relancer la même Seed");
+            System.out.println("2. Relancer une nouvelle Seed");
+            System.out.println("3. Arrêter le jeu");
             int entry = scanner.hasNextInt() ? scanner.nextInt() : -1;
-            if(entry == 0 || entry == 1) {
+            if(entry == 1 || entry == 2) {
                 this.player = new Player(player.getSkin(), player.getMaxPV());
                 Seed seed = etage.getSeed();
-                if(entry == 1) {
+                if(entry == 2) {
                     seed = new Seed();
                 }
                 this.etage = new Etage(etage.getHauteurEtage(), etage.getLargeurEtage(), etage.getHauteurMinMap(), etage.getLargeurMinMap(), etage.getBiome(), etage.getNiveau(), seed);
@@ -70,8 +71,13 @@ public class GameController {
                 this.keepPlaying = true;
                 inRetryMenu = false;
             }
-            if(entry == 2) {
+            if(entry == 3) {
                 inRetryMenu = false;
+            }
+            if(entry == 0) {
+                keepPlaying = true;
+                etat = 0;
+                return;
             }
             if(entry == -1) {
                 scanner.next();
@@ -110,8 +116,7 @@ public class GameController {
             etat = 0;
             tour = 0;
             dureeMessage = 4;
-            player.addXP(monster.getXP());
-            message = String.format("Monstre tué, Vous avez gagné ! +%dxp", monster.getXP());
+            message = monster.recompensePlayer(player);
         }
     }
 

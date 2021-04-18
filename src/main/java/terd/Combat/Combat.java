@@ -42,7 +42,7 @@ public class Combat {
                     choix=-1;
                     affichageMenuPrincipal();
                     String decision = scan.next();
-                    if(Character.isDigit(decision.charAt(0))){choix=Integer.parseInt(decision);decision="";}
+                    if(Character.isDigit(decision.charAt(0)) && decision.length() == 1){choix=Integer.parseInt(decision);decision="";}
                 } while (choix==-1);
                 if (choix == 0) {
                     message = ("Vous utilisez l'arme " + joueur.getMainWeapon().getNom() + ".\n");
@@ -75,7 +75,6 @@ public class Combat {
                 }
                 joueur.takeDamages(monstre.getMainWeapon().getDegat());
                 message = String.format("%s utilise attaque %s : %d damage", monstre.getName(), monstre.getMainWeapon().getNom(), monstre.getMainWeapon().getDegat());
-                monstre.act(joueur);
                 turn = true;
             }
         }
@@ -101,8 +100,8 @@ public class Combat {
 
     private void affichageMenuPrincipal(){
         //affichage des options de base
-        System.out.println("Veuillez choisir une action: 0.Attaquer  1.Competence\n" +
-                           "                             2.Objet     3.Fuir");
+        System.out.println("Veuillez choisir une action: 0.Attaquer     1.Competence\n" +
+                           "                             2.Inventaire   3.Fuir");
     }
 
     private boolean estEnCombat(){ //Verification de combat terminé.

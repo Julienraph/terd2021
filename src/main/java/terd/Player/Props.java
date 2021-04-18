@@ -30,6 +30,7 @@ public interface Props {
    Competence getMainCompetence();
    void setMainCompetence(Competence mainCompetence);
    Inventaire getInventaire();
+   double getDistance(Pos posProps, Pos posProps2);
    char getCache();
    void setCache(char cache);
    boolean isBeside(Pos posProps);

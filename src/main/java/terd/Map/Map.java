@@ -65,7 +65,7 @@ public class Map{
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
-        monsterList.add(new OrcWarrior(posMonster, 'M'));
+        choixMonstre();
     }
     //ce constructeur permet de faire une copie complete d'un objet map, Java utilisant des adresses pour ses objets, faire Map map2 = map1 ne copie pas
     // il faut donc faire Map map2 = map1.copy() , et copy() utilise ce constructeur
@@ -107,14 +107,39 @@ public class Map{
         return false;
     }
 
+    public void choixMonstre() {
+        Random random = new Random();
+        int choix = random.nextInt(3);
+        if(choix == 0) {
+            monsterList.add(new OrcWarrior(posMonster, 'M'));
+        } else if(choix == 1) {
+            monsterList.add(new Sanglier(posMonster, 'B'));
+        } else {
+            monsterList.add(new Cerf(posMonster, 'C'));
+        }
+    }
+
+    public void randomMonsterPos() {
+        Random random = new Random();
+        int x = (decalage + 1)+random.nextInt((tailleReelY - (tailleReelY - decalage - width))-(decalage + 1));
+        int y = (decalage + 2)+random.nextInt((tailleReelX - (tailleReelX - decalage - height))-(decalage + 2));
+        monsterList.get(0).setPos(new Pos(x,y));
+    }
+
     public int moveMonsters(Pos posPlayer) {
         for(int i = 0; i < monsterList.size(); i++) {
             Monster monster = monsterList.get(i);
             if(monster.isBeside(posPlayer)) {
                 return i;
             }
-            if(isInside(posPlayer)) {
-                moveProps(monster, monster.getX(), monster.getY() - 1);
+            if(monster instanceof OrcWarrior || monster instanceof Sanglier) {
+                if(isInside(posPlayer)) {
+                    ((AbstractMonster) monster).randomMove(this);
+                }
+            } else {
+                if (isInside(posPlayer)) {
+                    ((AbstractMonster) monster).randomMove(this);
+                }
             }
             if (monster.isBeside(posPlayer)) {
                 return i;
