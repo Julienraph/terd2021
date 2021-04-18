@@ -29,18 +29,26 @@ public enum Color {
 
     public static String toColoredString(Color foreGround, Color background, String content) {
 
-        String builder = "\033[" +
-                foreGround.getFg() +
-                ";" +
-                background.getBg() +
-                "m" +
-                content +
-                "\033[0m";
-        return builder;
+        StringBuilder builder = new StringBuilder();
+        builder.append("\033[")
+                .append(foreGround.getFg());
+
+        if (background == null) {
+            builder.append("m");
+        } else {
+            builder.append(";")
+                    .append(background.getBg())
+                    .append("m");
+        }
+
+        builder.append(content)
+                .append("\033[0m");
+        
+        return builder.toString();
     }
 
     public static String toColoredString(Color foreGround, String content) {
-        return toColoredString(foreGround, Color.BLACK, content);
+        return toColoredString(foreGround, null, content);
     }
 
     public int getFg() {
