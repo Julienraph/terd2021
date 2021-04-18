@@ -1,8 +1,11 @@
 package terd.item;
 
 import terd.Player.Player;
+import terd.controller.GameController;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Inventaire {
     private List<Item> armes;
@@ -86,6 +89,40 @@ public class Inventaire {
         return true;
     }
 
+
+   public boolean affiche(Scanner scanner, GameController controller, Player player) {
+       //Affichage Inventaire
+           boolean inInventaire = true;
+           StringBuilder sb = new StringBuilder();
+           menuPrincipal();
+           do {
+               String entry = scanner.next();
+               inInventaire = !entry.toUpperCase().equals("X");
+               if(entry.toUpperCase().equals("B")) {
+                   inInventaire = retour();
+               }
+               if(entry.toUpperCase().equals("P")) {
+                   inInventaire = quitter();
+               }
+               if(Character.isDigit(entry.charAt(0))) {
+                   inInventaire = affichageItem(player, Integer.parseInt(entry));
+                   if(!inInventaire) {
+                       controller.setMessage(player.getInventaire().getItemUse().getMessageInventaire());
+                       return true;
+                   }
+               }
+           } while (inInventaire);
+       controller.setMessage("Vous quitter l'inventaire");
+       return true;
+   }
+
+    public List<Item> getCompetence(){
+        return competences;
+    }
+
+    public List<Item> getConsommables(){
+        return consommables;
+      
     public int getEtat() {
         return etat;
     }
