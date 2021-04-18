@@ -20,7 +20,11 @@ Pour lancer le projet, exécutez: `java -jar TERD-<version>.jar`
 
 ' ' -> du vide, ce monde est vraiment étrange ...   vous ne pouvez PAS vous déplacez dessus.
 
-'M' -> Un monstre, a l'avenir chaque monstre aura un caractère different.
+'M' -> Un monstre OrcWarrior qui se déplace aléatoirement. Récompense avec de l'XP.
+
+'C' -> Un Cerf qui se déplace aléatoirement quand le joueur est hors de la salle (sur un pont) sinon essaye de fuir. Récompense avec de la Viande et de l'XP.
+
+'B' -> Sanglier qui se déplace aléatoirement. Récompense avec de la Viande et de l'XP.
 
 
 Ce qui est fait :  
@@ -28,10 +32,11 @@ Ce qui est fait :
 * Combat au tour par tour avec 2 types d'attaques différentes et 1 seul type de monstre.
 * Gestion de l'inventaire
 * Gestion de l'experience  
-* Le(s) monstre(s) sont capables de se déplacé jusqu'au joueurs
-
+* Le(s) monstre(s), qui se déplace aléatoirement sauf le Cerf qui (tente) de fuir.
   
 Prévu :  
+* L'IA de déplacement des monstres.
+* L'IA de combat des monstres.
 * Des biomes différents sur les maps ( les maps ont certes des biomes differents, mais pas assez homogènes)  
 * Des monstres diffèrents en fonction des biomes ( Cerf qui fuit le joueur dans les forêt, Poisson qui attaque le joueurs dans les lacs, des Boss)  
 * Courbes d'experience ( actuellement 100exp = 1 level, qu'importe le level du joueurs)
@@ -41,7 +46,7 @@ Prévu :
   
     
 Problèmes :  
-* Le spawn du monstre n'est pas encore géré, il apparait au hasard sur la map, parfois entre quatres cases le bloquant ( toutefois, nous n'avons pas encore créé la classe déterminant où apparaissent les monstres, ce n'est pas un problème, dans le sens où il s'agit surtout d'une fonctionnalité pas encore implémenté, mais les monstres sont present sur la map à titre de test)
+* Le monstre d'une map est parfois invisible avant de bouger pour la première fois.
 * Les biomes généré actuellement ne sont pas satisfaisant, trop aléatoires, pas assez homogènes  
 * Les couloirs apparaissent parfois avec vue sur le vides, le joueur ne peux certes pas s'y déplacé, mais la vue sur le vide n'est pas vraiment prévue. ( arrive a chaque fois que le couloirs doit faire un zigzag)
 
