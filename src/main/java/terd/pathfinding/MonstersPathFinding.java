@@ -12,10 +12,12 @@ public class MonstersPathFinding {
 
     private Player player;
     private Monster monster;
+    private terd.Map.Map map;
 
-    public MonstersPathFinding(Player player, Monster monster) {
+    public MonstersPathFinding(Player player, Monster monster, terd.Map.Map map) {
         this.player = player;
         this.monster = monster;
+        this.map = map;
     }
 
     /**
@@ -78,10 +80,16 @@ public class MonstersPathFinding {
         return positions;
     }
 
+
+    // https://www.stackabuse.com/graphs-in-java-a-star-algorithm/
     private Node createMesh(Node start, Node target) {
         HashMap<Pos, Node> nodes = new HashMap<>();
         for (int x = (start.pos.getX() - REACH); x < (start.pos.getX() + REACH); x++) {
             for (int y = (start.pos.getY() - REACH); y < (start.pos.getY() + REACH); y++) {
+                if (!map.isValide(y, x)) {
+                    continue;
+                }
+                
                 if (target.pos.getX() == x && target.pos.getY() == y) {
                     nodes.put(target.pos, target);
                 } else {
@@ -92,13 +100,13 @@ public class MonstersPathFinding {
             }
         }
 
-        link(start, nodes);
+        start = link(start, nodes);
 
         return start;
 
     }
 
-    public void link(Node middle, HashMap<Pos, Node> nodes) {
+    public Node link(Node middle, HashMap<Pos, Node> nodes) {
         Node n1 = nodes.get(new Pos(middle.pos.getX() + 1, middle.pos.getY()));
         if (n1 != null) {
             middle.addBranch(1, n1);
@@ -122,6 +130,8 @@ public class MonstersPathFinding {
             middle.addBranch(1, n4);
             link(n4, nodes);
         }
+
+        return middle;
     }
 
     private Node aStar(Node start, Node target) {
