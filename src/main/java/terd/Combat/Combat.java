@@ -38,9 +38,12 @@ public class Combat {
             System.out.println(message);
             boolean isInventaire = false;
             if (turn) {
-                do{affichageMenuPrincipal();
-                choix = scan.nextInt();
-                } while (choix != 0 && choix != 1 && choix != 2 && choix != 3);
+                do{
+                    choix=-1;
+                    affichageMenuPrincipal();
+                    String decision = scan.next();
+                    if(Character.isDigit(decision.charAt(0))){choix=Integer.parseInt(decision);decision="";}
+                } while (choix==-1);
                 if (choix == 0) {
                     message = ("Vous utilisez l'arme " + joueur.getMainWeapon().getNom() + ".\n");
                     message += ("Le monstre subit " + joueur.getMainWeapon().getDegat() + " points de dégat");
