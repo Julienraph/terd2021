@@ -9,10 +9,7 @@ Objectif : Créé une map contenant au plus une sortie, la sortie est un couloir
  */
 
 package terd.Map;
-import terd.Player.Monster; // La map connait les differentes entité presente sur elle, et utilise des méthodes pour leur indiqué le terrain actuellement sur leur pied ( WIP )
-import terd.Player.OrcWarrior;
-import terd.Player.Player;
-import terd.Player.Props;
+import terd.Player.*;
 import terd.utils.Seed;
 
 import java.util.ArrayList;
@@ -133,8 +130,8 @@ public class Map{
     }
 
     public void spawnProps(Props props) {
-        props.setCache(tableauMap[props.getX()][props.getY()]);
-        tableauMap[props.getX()][props.getY()] = props.getSkin();
+        props.setCache(tableauMap[props.getY()][props.getX()]);
+        tableauMap[props.getY()][props.getX()] = props.getSkin();
     }
     // fait apparaitre le player a sa spawnPos
     public Pos spawnPlayer(Props props) {
@@ -216,7 +213,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
                     this.posSortie=new Pos(decalage+1,sortieHautY); // cette affectation double n'est plus censé existé par la suite,
-                    this.posMonster=new Pos(decalage+1,sortieHautY);
+                    this.posMonster=new Pos(sortieHautY,decalage+1);
                     this.haut=new Pos(decalage+1,sortieHautY);      // a l'avenir posSortie remplacera completement haut/bas/gauche/droite
 
                 }
@@ -226,7 +223,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne][colonne+1] = '#';
                     this.posSortie=new Pos(height+decalage-1,sortieBasY);
-                    this.posMonster=new Pos(height+decalage-1,sortieBasY);
+                    this.posMonster=new Pos(sortieBasY,height+decalage-1);
                     this.bas=new Pos(height+decalage-1,sortieBasY);
 
                 }
@@ -236,7 +233,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieDroiteX,width + decalage-1);
-                    this.posMonster=new Pos(sortieDroiteX,width + decalage-1);
+                    this.posMonster=new Pos(width + decalage-1,sortieDroiteX);
                     this.droite=new Pos(sortieDroiteX,width + decalage-1);
 
                 }
@@ -246,7 +243,7 @@ public class Map{
                     tableauMap[ligne][colonne] = '.';
                     tableauMap[ligne+1][colonne] = '#';
                     this.posSortie=new Pos(sortieGaucheX,decalage+1);
-                    this.posMonster=new Pos(sortieGaucheX,decalage+1);
+                    this.posMonster=new Pos(decalage+1,sortieGaucheX);
                     this.gauche=new Pos(sortieGaucheX,decalage+1);
 
                 }

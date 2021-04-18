@@ -39,7 +39,7 @@ public class Etage {
         this.spawnLigne = generator.spawnLigne;
         this.generationPont();
     }
-
+    
     public void spawnPlayer(Player player, int ligne, int colonne) {
         tabMap[ligne][colonne].spawnPlayer(player);
         player.setPosX(this.getMap(ligne, colonne).spawnPlayer(player).getY());
@@ -56,7 +56,7 @@ public class Etage {
         return largeurEtage;
     }
 
-    ///Connecte les sorties avec la carte suivante
+    ///Connecte les sorties de chaque map avec la map suivante
     public void generationPont() {
         for (int i = 0; i < tabMap.length; i++) {
             for (int y = 0; y < tabMap[0].length; y++) {
@@ -111,6 +111,7 @@ public class Etage {
         System.out.println(sb.toString());
     }
 
+    //Gère le déplacement d'un Props
     public Boolean moveProps(Props props, int newPosX, int newPosY, char skin)
     {
         int ligneEtage = props.getPosEtageY();
@@ -152,6 +153,7 @@ public class Etage {
     }
 
 
+    //Affiche la carte de l'UI
     public void afficherMap(int x, int y, Player player) {
         StringBuilder sb = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();
@@ -231,6 +233,7 @@ public class Etage {
     }
 
 
+    //Affiche la carte dans son ensemble
     public void afficherCarte(int x, int y) {
         char[][] map;
         if(tabMap[x][y] == null) {
