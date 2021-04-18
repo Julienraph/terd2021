@@ -32,7 +32,9 @@ public abstract class AbstractItem implements Item {
         this.messageInventaire = messageInventaire;
     }
 
-    public int utiliser(){return degat;}
+    public int utiliser(){
+        setNbrUtilisation(1);
+        return degat;}
 
     public int getPrix() {
         return prix;

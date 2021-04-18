@@ -86,6 +86,14 @@ public  class Inventaire {
         return true;
     }
 
+    public List<Item> getCompetence(){
+        return competences;
+    }
+
+    public List<Item> getConsommables(){
+        return consommables;
+    }
+
     public Item getItemUse() {
         return itemUse;
     }
