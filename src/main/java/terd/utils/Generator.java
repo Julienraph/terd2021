@@ -37,11 +37,9 @@ public class Generator {
 
     public static void main(String[] args) {
         Generator generator = new Generator(new Seed(), 4, 10, 10,5);
-        generator.affichage();
     }
 
     public void affichage() {
-        //     System.out.println(length);
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < mapHeight; i++) {
             for(int j = 0; j < mapWidth; j++) {

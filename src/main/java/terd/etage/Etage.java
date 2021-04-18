@@ -68,7 +68,6 @@ public class Etage {
                         int hauteur = hauteurMap - 1;
                         int largeur = map.getHaut().getY();
                         Pos pos = new Pos(hauteur, largeur);
-                        System.out.println(pos);
                         tabMap[i - 1][y].creationCheminDepuisExte(pos);
                     }
                     if (map.getBas() != null) {
@@ -97,7 +96,6 @@ public class Etage {
 
 
     public void affichage() {
-        //     System.out.println(length);
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < hauteurEtage; i++) {
             for(int j = 0; j < largeurEtage; j++) {

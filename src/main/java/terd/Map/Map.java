@@ -17,6 +17,7 @@ import terd.utils.Seed;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Map{
     private char[][] tableauMap; // la map est un tableau de char[][], solution simple pour avoir une map 2d, le problème étant que déposé un "item" sur une case reviens a la supprimé
@@ -67,8 +68,7 @@ public class Map{
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
         //this.posSortie= new Pos(decalage+1,decalage+1);
-        monsterList.add(new OrcWarrior(new Pos(5,6), 'M'));
-        spawnProps(monsterList.get(0));
+        monsterList.add(new OrcWarrior(randomMonsterPos(), 'M'));
     }
     //ce constructeur permet de faire une copie complete d'un objet map, Java utilisant des adresses pour ses objets, faire Map map2 = map1 ne copie pas
     // il faut donc faire Map map2 = map1.copy() , et copy() utilise ce constructeur
@@ -92,8 +92,8 @@ public class Map{
     }
     // détermine si une Pos est a l'intérieur de la map ( a l'interieur des 4 murs )
     public boolean isInside(Pos pos) {
-        return (pos.getX() >= decalage && pos.getX() <= tailleReelY - (tailleReelY - decalage - width)
-                && pos.getY() >= decalage && pos.getY() <= tailleReelX - (tailleReelX - height - decalage));
+        return (pos.getX() >= decalage + 1 && pos.getX() <= tailleReelY - (tailleReelY - decalage - width)
+                && pos.getY() >= decalage + 1 && pos.getY() <= tailleReelX - (tailleReelX - height - decalage));
     }
     // détermine si une entité est déplaçable a la position donné en X Y et déplace l'entité si possible
     // X et Y plutot que Pos car cette fonction a été créé avant l'existence de la classe Pos, il est prévue de la mettre a jour
@@ -109,6 +109,14 @@ public class Map{
         }
         return false;
     }
+
+    public Pos randomMonsterPos() {
+        Random random = new Random();
+        int x = (decalage + 1)+random.nextInt((tailleReelY - (tailleReelY - decalage - width))-(decalage + 1));
+        int y = (decalage + 2)+random.nextInt((tailleReelX - (tailleReelX - decalage - height))-(decalage + 2));
+        return new Pos(x,y);
+    }
+
     public int moveMonsters(Pos posPlayer) {
         for(int i = 0; i < monsterList.size(); i++) {
             Monster monster = monsterList.get(i);
