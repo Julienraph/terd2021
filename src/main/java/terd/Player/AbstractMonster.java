@@ -12,7 +12,6 @@ public abstract class AbstractMonster extends AbstractProps implements Monster {
     }
 
     public String recompensePlayer(Player player) {
-        player.addXP(this.getXP());
         return String.format("%s tué, Vous avez gagné ! +%dxp", this.getName(), this.getXP());
     }
 

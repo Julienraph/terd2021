@@ -11,6 +11,7 @@ public enum MapColor {
     TRADER('C', Color.RED),
     HOUSE('M', Color.RED),
     SANGLIER('B', Color.RED),
+    EXIT('D', Color.YELLOW),
     HILL('X', Color.GREY),
     WALL('#', Color.GREY),
     EMPTY(' ', Color.BLACK),

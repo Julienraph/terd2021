@@ -65,7 +65,7 @@ public class Map{
         this.sortie=sortie;
         this.creationMap();
         this.spawnPos = new Pos(decalage+1,decalage+1);
-        choixMonstre();
+        choixMonstre(seedpos);
     }
     //ce constructeur permet de faire une copie complete d'un objet map, Java utilisant des adresses pour ses objets, faire Map map2 = map1 ne copie pas
     // il faut donc faire Map map2 = map1.copy() , et copy() utilise ce constructeur
@@ -107,9 +107,8 @@ public class Map{
         return false;
     }
 
-    public void choixMonstre() {
-        Random random = new Random();
-        int choix = random.nextInt(3);
+    public void choixMonstre(int seedPos) {
+        int choix = seedMap.getAnswer(seedPos)%3;
         if(choix == 0) {
             monsterList.add(new OrcWarrior(posMonster, 'M'));
         } else if(choix == 1) {
@@ -157,6 +156,11 @@ public class Map{
     public void spawnProps(Props props) {
         props.setCache('.');
         tableauMap[props.getY()][props.getX()] = props.getSkin();
+    }
+
+    public void spawnExit() {
+        tableauMap[posSortie.getX()][posSortie.getY()] = 'D';
+        monsterList.remove(0);
     }
     // fait apparaitre le player a sa spawnPos
     public Pos spawnPlayer(Props props) {
@@ -276,6 +280,11 @@ public class Map{
                 if(tableauMap[ligne][colonne] == '\u0000') {
                     tableauMap[ligne][colonne] = ' ';
                 }
+                if(posSortie == null) {
+                    int x = (decalage + height)/2;
+                    int y = (decalage + width)/2;
+                    this.posSortie=new Pos(x,y);
+                }
             }
         }
 
@@ -308,7 +317,7 @@ public class Map{
                 this.spawnPos = new Pos(curseurLigne, curseurColonne);
             }
         }
-          this.creationCheminInterne(this.spawnPos,this.getPosSortie());
+        this.creationCheminInterne(this.spawnPos,this.getPosSortie());
     }
     // fonction pour créé des couloirs verticaux
     private int alignementColonne(int curseurLigne, int curseurColonne, int direction) {
@@ -348,14 +357,7 @@ public class Map{
         curseurLigne = (curseurLigne == tailleReelX) ? (curseurLigne - 1) : curseurLigne;
         return curseurLigne;
     }
-    public Pos spawnPlayer(char skin) {             // deprecated
-        tableauMap[spawnPos.getX()][spawnPos.getY()] = skin;
-        return(spawnPos);
-    }
-    private void whatToPutAt(int ligne, int colonne) //// deprecated
-    {
-        tableauMap[ligne][colonne] = '.';
-    }
+
     // fait apparaitre une case, different de moveProps qui déplace une entité et remplace sa derniere case
     // l'interet est de forcer des valeurs du tableauMap
     public void popProps( int newPosX, int newPosY, char Props)
@@ -374,7 +376,7 @@ public class Map{
         {
             return false;
         }
-        if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
+        if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == 'D' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
             return true; //
         }
         else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == 'L' || tableauMap[basHaut][gaucheDroite] == '#' || tableauMap[basHaut][gaucheDroite] == 'T')

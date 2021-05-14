@@ -16,10 +16,10 @@ public class Player extends AbstractProps {
         super("Player",skin, pv);
         this.setLevelProps(1);
         this.setXP(0);
-        this.setMainWeapon(new Arme(0, "Epée", 10, 10, 50));
-        this.setMainCompetence(new Competence(0, "Eau", 10, 10, 50));
+        this.setMainWeapon(new Arme(0, "Epée", 10, 10, 30));
+        this.setMainCompetence(new Competence(0, "Eau", 10, 10, 20));
         this.getInventaire().ajoutItem(new Arme(0, "Hache", 10, 10, 10));
-        this.getInventaire().ajoutItem(new Competence(0, "Feu", 10, 10, 10));
+        this.getInventaire().ajoutItem(new Competence(0, "Feu", 10, 10, 5));
         this.getInventaire().ajoutItem(new Consommable(0, "Cerise", 1, 10, 20));
         this.getInventaire().ajoutItem(new Consommable(0, "Cerise", 1, 10, 20));
     }

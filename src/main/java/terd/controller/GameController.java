@@ -106,16 +106,17 @@ public class GameController {
         Combat combat = new Combat(player, monster, this);
         dureeMessage = 0;
         etat = 0;
-        if(player.getPV() == 0) {
+        if(player.getPV() <= 0) {
             System.out.println("GAME OVER");
             keepPlaying = false;
             etat = -1;
         }
-        if (monster.getPV() == 0) {
+        if (monster.getPV() <= 0) {
             etage.getMap(player.getPosEtageY(), player.getPosEtageX()).killMonster(monsterListPosition);
             etat = 0;
             tour = 0;
             dureeMessage = 4;
+            player.addXP(monster.getXP());
             message = monster.recompensePlayer(player);
         }
     }
@@ -243,6 +244,27 @@ public class GameController {
                 etage.afficherMap(player.getPosEtageY(), player.getPosEtageX(), player);
             }
         }
+
+        //Si le joueur est sur une porte, on créé un nouvel Etage
+        if(player.getCache() == 'D') {
+            if(tour < 3) {
+                Seed seed = new Seed();
+                this.etage = new Etage(etage.getHauteurEtage(), etage.getLargeurEtage(), etage.getHauteurMinMap(), etage.getLargeurMinMap(), etage.getBiome(), etage.getNiveau(), seed);
+                this.etage.spawnPlayer(player, etage.getSpawnLigne(), etage.getSpawnColonne());
+                this.tour = 0;
+                this.etat = 0;
+                this.refresh = true;
+                this.keepPlaying = true;
+                tour += 1;
+                System.out.println(tour);
+            } else {
+                afficherMap();
+                this.keepPlaying = false;
+                this.etat = -1;
+                System.out.println("VOUS AVEZ GAGNE, FIN DE LA PARTIE");
+            }
+        }
+
     }
 
 

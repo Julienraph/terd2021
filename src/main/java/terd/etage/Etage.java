@@ -38,6 +38,7 @@ public class Etage {
         this.spawnColonne = generator.spawnColonne;
         this.spawnLigne = generator.spawnLigne;
         this.generationPont();
+        this.spawnProps();
     }
     
     public void spawnPlayer(Player player, int ligne, int colonne) {
@@ -54,6 +55,21 @@ public class Etage {
 
     public int getLargeurEtage() {
         return largeurEtage;
+    }
+
+    public void spawnProps() {
+        for (int i = 0; i < tabMap.length; i++) {
+            for (int y = 0; y < tabMap[0].length; y++) {
+                Map map = tabMap[i][y];
+                if (map != null) {
+                    if (map.getMonsterList().get(0).getPos() != null) {
+                        map.spawnProps(map.getMonsterList().get(0));
+                    } else {
+                        map.spawnExit();
+                    }
+                }
+            }
+        }
     }
 
     ///Connecte les sorties de chaque map avec la map suivante
@@ -86,12 +102,6 @@ public class Etage {
                         int largeur = 0;
                         Pos pos = new Pos(hauteur, largeur);
                         tabMap[i][y + 1].creationCheminDepuisExte(pos);
-                    }
-                    if(map.getMonsterList().get(0).getPos() != null) {
-                        map.spawnProps(map.getMonsterList().get(0));
-                    } else {
-                        map.randomMonsterPos();
-                        map.spawnProps(map.getMonsterList().get(0));
                     }
                 }
             }
