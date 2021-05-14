@@ -138,7 +138,7 @@ public class Map{
                 }
             } else {
                 if (isInside(posPlayer)) {
-                    ((AbstractMonster) monster).randomMove(this);
+                    monster.act(posPlayer,this);//((AbstractMonster) monster).randomMove(this);
                 }
             }
             if (monster.isBeside(posPlayer)) {
@@ -155,7 +155,7 @@ public class Map{
     }
 
     public void spawnProps(Props props) {
-        props.setCache(tableauMap[props.getY()][props.getX()]);
+        props.setCache('.');
         tableauMap[props.getY()][props.getX()] = props.getSkin();
     }
     // fait apparaitre le player a sa spawnPos
