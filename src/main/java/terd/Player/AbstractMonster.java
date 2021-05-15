@@ -7,12 +7,13 @@ import java.util.Random;
 
 public abstract class AbstractMonster extends AbstractProps implements Monster {
     int casePrecedent;
+
     public AbstractMonster(String name, Pos pos, int posEtageY, int posEtageX, char skin, int pv, int xp) {
         super(name,pos,posEtageY,posEtageX,skin,pv, xp);
     }
 
     public String recompensePlayer(Player player) {
-        return String.format("%s tué, Vous avez gagné ! +%dxp", this.getName(), this.getXP());
+        return String.format("%s tué, Vous avez gagné ! +%dxp\n", this.getName(), this.getXP());
     }
 
     public void randomMove(Map map) {

@@ -78,7 +78,7 @@ public class Combat {
                 turn = true;
             }
         }
-        System.out.println("Combat terminé.");
+        gameController.setMessage("Combat terminé.\n");
     }
 
 
@@ -106,11 +106,9 @@ public class Combat {
 
     private boolean estEnCombat(){ //Verification de combat terminé.
         if (joueur.getPV() <= 0){
-            System.out.println("Vous avez perdu");
             enCombat = false;
         }
         else if(monstre.getPV() <= 0){
-            System.out.println("Monstre vaincu");
             enCombat = false;
         }
         return enCombat;

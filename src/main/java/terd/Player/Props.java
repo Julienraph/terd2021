@@ -19,6 +19,8 @@ public interface Props {
    char getSkin();
    void setSkin(char skin);
    int getPV();
+   int getCredit();
+   void setCredit(int credit);
    int getMaxPV();
    int getSpeed();
    int getPosEtageX();
@@ -37,7 +39,7 @@ public interface Props {
    String getName();
    void setXP(int xp);
    int getXP();
-   void addXP(int monsterXP);
+   String addXP(int monsterXP);
    void useWeapon(Props victime);
    double getDistance(Props props);
 

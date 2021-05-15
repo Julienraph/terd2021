@@ -12,9 +12,12 @@ public interface Item {
     void addNbrUtilisation(int minusNbr);
     int utiliser();
     Item useInventaire(Player player);
+    int getAmelioration();
     void messageInventaire();
     default String description() {
-        return(String.format("%s | dégat : %d",this.getNom(),this.getDegat()));
+        return(String.format("%s | dégat : %d | crédit : %d",this.getNom(),this.getDegat(), this.getPrix()));
     }
     String getMessageInventaire();
+    void setDegat(int degat);
+    boolean ameliorer(Player player);
 }

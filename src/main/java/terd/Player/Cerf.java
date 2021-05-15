@@ -10,7 +10,7 @@ import java.util.Random;
 public class Cerf extends AbstractMonster {
     Pos cache = new Pos(-1,-1);
     public Cerf(Pos pos, char skin) {
-        super("Cerf",pos, 0,0,skin, 100, 20);
+        super("Cerf",pos, 0,0,skin, 100, 40);
         this.setMainWeapon(new Arme(0,"Coup de Bois",10,0,5));
     }
 
@@ -20,7 +20,7 @@ public class Cerf extends AbstractMonster {
         int nb = 1 + random.nextInt(2);
         Consommable consommable = new Consommable(0,"Viande Cerf",nb,0,15);
         player.getInventaire().ajoutItem(consommable);
-        return String.format("%s tué, Vous avez gagné ! +%dxp", this.getName(), this.getXP());
+        return String.format("%s tué, Vous avez gagné ! +%dxp \nVous récupérez %d %ss\n", this.getName(),this.getXP(),nb,consommable.getNom());
     }
 
     private boolean bloquer(int x, int y, Pos posPlayer, Map map) {

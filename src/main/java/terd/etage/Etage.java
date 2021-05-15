@@ -182,6 +182,7 @@ public class Etage {
         int positionPV = positionLevel + 1;
         int positionArme = positionPV + 1;
         int positionCompetence = positionArme + 1;
+        int positionCredit = positionCompetence + 1;
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 if (MapColor.getMapColorForSymbol(map[i][j]) == null) {
@@ -232,10 +233,13 @@ public class Etage {
                 sb.append(String.format("PV : %d", player.getPV()));
             }
             if (i == positionArme) {
-                sb.append(String.format("Arme Principale : %s", player.getMainWeapon().getNom()));
+                sb.append(String.format("Arme Principale : %s - %d dégats", player.getMainWeapon().getNom(), player.getMainWeapon().getDegat()));
             }
             if (i == positionCompetence) {
-                sb.append(String.format("Competence Principale : %s", player.getMainCompetence().getNom()));
+                sb.append(String.format("Competence Principale : %s - %d dégats", player.getMainCompetence().getNom(), player.getMainCompetence().getDegat()));
+            }
+            if (i == positionCredit) {
+                sb.append(String.format("Crédit : %d", player.getCredit()));
             }
             if (i < map.length - 1) {
                 sb.append("\n");

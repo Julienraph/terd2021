@@ -11,7 +11,7 @@ public class Sanglier extends AbstractMonster {
     Pos cache = new Pos(-1, -1);
 
     public Sanglier(Pos pos, char skin) {
-        super("Sanglier", pos, 0, 0, skin, 80, 20);
+        super("Sanglier", pos, 0, 0, skin, 80, 40);
         this.setMainWeapon(new Arme(0, "Charge", 10, 0, 5));
     }
 
@@ -26,6 +26,6 @@ public class Sanglier extends AbstractMonster {
         int nb = 1 + random.nextInt(3);
         Consommable consommable = new Consommable(0, "Viande", nb, 0, 15);
         player.getInventaire().ajoutItem(consommable);
-        return String.format("%s tué, Vous avez gagné ! +%dxp \nVous avez récupéré %d %ss", this.getName(), this.getXP(),nb,consommable.getNom());
+        return String.format("%s tué, Vous avez gagné ! +%dxp \nVous récupérez %d %ss\n", this.getName(), this.getXP(),nb,consommable.getNom());
     }
 }

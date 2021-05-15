@@ -19,6 +19,7 @@ public abstract class AbstractProps implements Props {
     private Arme mainWeapon;
     private Competence mainCompetence;
     private Inventaire inventaire;
+    private int credit;
     private Pos pos = new Pos(0,0);
 
     public AbstractProps(String name, Pos pos, int posEtageY, int posEtageX, char skin, int pv,int xp) {
@@ -98,9 +99,15 @@ public abstract class AbstractProps implements Props {
         this.setPosY(newPosY);
     }
 
-    public void addXP(int monsterXP) {
+    public String addXP(int monsterXP) {
+        String message = "";
+        if((xp + monsterXP) >= 100) {
+            credit += (xp + monsterXP) / 100;
+            message = String.format("Vous avez level-up ! Vous gagnez +%d crédit\n", (xp + monsterXP) / 100);
+        }
         levelProps += (xp + monsterXP) / 100;
         xp = (xp + monsterXP) % 100;
+        return message;
     }
 
     public boolean isBeside(Pos posProps) {
@@ -187,6 +194,14 @@ public abstract class AbstractProps implements Props {
 
     public char getCache() {
         return cache;
+    }
+
+    public int getCredit() {
+        return credit;
+    }
+
+    public void setCredit(int credit) {
+        this.credit = credit;
     }
 
     public int getXP() {

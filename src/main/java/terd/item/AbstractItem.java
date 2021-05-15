@@ -1,5 +1,7 @@
 package terd.item;
 
+import terd.Player.Player;
+
 public abstract class AbstractItem implements Item {
     int prix;
     String nom;
@@ -7,6 +9,7 @@ public abstract class AbstractItem implements Item {
     int rarete;
     int degat;
     String messageInventaire;
+    int amelioration;
     // Type type;
 
     public AbstractItem(int prix, String nom, int nbrUtilisation, int rarete, int degat){
@@ -15,6 +18,7 @@ public abstract class AbstractItem implements Item {
         this.nbrUtilisation = nbrUtilisation;
         this.rarete = rarete;
         this.degat = degat;
+        amelioration = degat/2;
     }
 
     public void addNbrUtilisation(int n){
@@ -22,6 +26,17 @@ public abstract class AbstractItem implements Item {
             nbrUtilisation = 0;
         }
         nbrUtilisation += n;
+    }
+
+    public boolean ameliorer(Player player) {
+        if(player.getCredit() >= prix) {
+            player.setCredit(player.getCredit() - prix);
+            degat = degat + amelioration;
+            amelioration = degat/2;
+            prix += 1;
+            return true;
+        }
+        return false;
     }
 
     public String getMessageInventaire() {
@@ -40,6 +55,10 @@ public abstract class AbstractItem implements Item {
         return prix;
     }
 
+    public int getAmelioration() {
+        return amelioration;
+    }
+
     public String getNom() {
         return nom;
     }
@@ -56,4 +75,7 @@ public abstract class AbstractItem implements Item {
         return degat;
     }
 
+    public void setDegat(int degat) {
+        this.degat = degat;
+    }
 }

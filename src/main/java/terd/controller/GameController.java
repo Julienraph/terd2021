@@ -52,7 +52,9 @@ public class GameController {
     private void controllerMenu(Scanner scanner) {
         boolean inRetryMenu = true;
         do{
-            System.out.println("0. Reprendre la partie");
+            if(player.getPV() > 0) {
+                System.out.println("0. Reprendre la partie");
+            }
             System.out.println("1. Relancer la même Seed");
             System.out.println("2. Relancer une nouvelle Seed");
             System.out.println("3. Arrêter le jeu");
@@ -74,7 +76,7 @@ public class GameController {
             if(entry == 3) {
                 inRetryMenu = false;
             }
-            if(entry == 0) {
+            if(entry == 0 && player.getPV() > 0) {
                 keepPlaying = true;
                 etat = 0;
                 return;
@@ -107,6 +109,7 @@ public class GameController {
         dureeMessage = 0;
         etat = 0;
         if(player.getPV() <= 0) {
+            System.out.println("Vous avez perdu");
             System.out.println("GAME OVER");
             keepPlaying = false;
             etat = -1;
@@ -116,8 +119,7 @@ public class GameController {
             etat = 0;
             tour = 0;
             dureeMessage = 4;
-            player.addXP(monster.getXP());
-            message = monster.recompensePlayer(player);
+            message = monster.recompensePlayer(player) + player.addXP(monster.getXP());
         }
     }
 
@@ -256,6 +258,8 @@ public class GameController {
                 this.refresh = true;
                 this.keepPlaying = true;
                 tour += 1;
+                dureeMessage = 3;
+                message = "Vous êtes passé par une porte\nNouveau lieu découvert";
                 System.out.println(tour);
             } else {
                 afficherMap();
