@@ -4,7 +4,6 @@ import terd.Map.Map;
 import terd.Map.Pos;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Generator {
@@ -67,7 +66,7 @@ public class Generator {
             y = y % (mapHeight - 1);
         }
 
-        Location caseLocation = new Location(x, y);
+        Pos caseLocation = new Pos(x, y);
         int nextMapDir = getNextMapDirectionInt(seedPos, caseLocation);
         Map map = new Map(minHauteur, minLargeur, seed, nextMapDir,seedPos);
         maps[caseLocation.getY()][caseLocation.getX()] = map;
@@ -101,9 +100,9 @@ public class Generator {
 
     }
 
-    private int getNextMapDirectionInt(int seedPos, Location caseLocation) {
+    private int getNextMapDirectionInt(int seedPos, Pos caseLocation) {
         // Compute the position of next map.
-        Location nextCaseLocation = getNextMapLocation(seedPos + 1, caseLocation);
+        Pos nextCaseLocation = getNextMapLocation(seedPos + 1, caseLocation);
 
         if (nextCaseLocation == null) {
             return 0;
@@ -126,23 +125,23 @@ public class Generator {
     }
 
     //                       seed position to look at  previous location of the case
-    private Location getNextMapLocation(int atSeedPos, Location orginalLoc) {
-        Location caseLocation = new Location(orginalLoc.getX(), orginalLoc.getY()); // remove side effect, I don't want to modify originalLoc.
+    private Pos getNextMapLocation(int atSeedPos, Pos orginalLoc) {
+        Pos caseLocation = new Pos(orginalLoc.getX(), orginalLoc.getY()); // remove side effect, I don't want to modify originalLoc.
 
-        List<Location> available = new ArrayList<>();
+        List<Pos> available = new ArrayList<>();
 
         if (isPossibleLocation(caseLocation, Direction.UP)) {
-            available.add(new Location(caseLocation.getX(), caseLocation.getY() - 1));
+            available.add(new Pos(caseLocation.getX(), caseLocation.getY() - 1));
         }
         if (isPossibleLocation(caseLocation, Direction.DOWN)) {
-            available.add(new Location(caseLocation.getX(), caseLocation.getY() + 1));
+            available.add(new Pos(caseLocation.getX(), caseLocation.getY() + 1));
         }
 
         if (isPossibleLocation(caseLocation, Direction.LEFT)) {
-            available.add(new Location(caseLocation.getX() - 1, caseLocation.getY()));
+            available.add(new Pos(caseLocation.getX() - 1, caseLocation.getY()));
         }
         if (isPossibleLocation(caseLocation, Direction.RIGHT)) {
-            available.add(new Location(caseLocation.getX() + 1, caseLocation.getY()));
+            available.add(new Pos(caseLocation.getX() + 1, caseLocation.getY()));
         }
 
         if (available.size() == 0) {
@@ -183,8 +182,8 @@ public class Generator {
         }
     }
 
-    public boolean isPossibleLocation(Location location, Direction direction) {
-        Location nvLoc = new Location(location.getX(), location.getY());
+    public boolean isPossibleLocation(Pos location, Direction direction) {
+        Pos nvLoc = new Pos(location.getX(), location.getY());
 
         switch (direction) {
             case UP:
