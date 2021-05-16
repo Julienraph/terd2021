@@ -44,7 +44,7 @@ Ce qui est fait :
 * Gestion de l'experience : Le joueur peut level-up et gagne des crédits.
 * Implémentation de(s) monstre(s), qui se déplace aléatoirement sauf le Cerf qui (tente) de fuir.
 * Des objets au sol que le joueur peut ramasser (Consommable ou Crédit)
-* Un Menu Principal qui permet de reprendre la partie, de relancer la partie, d'en créer une nouvelle ou de quitter le jeu
+* Un Menu Principal qui permet de reprendre la partie, de relancer la partie, d'obtenir le nom de la seed, de donner une Seed, d'en créer une nouvelle ou de quitter le jeu
 * Une porte qui permet de passer d'un niveau à l'autre et une fin
   
 Prévu :  
@@ -60,6 +60,7 @@ Prévu :
 Problèmes :  
 * Les biomes généré actuellement ne sont pas satisfaisant, trop aléatoires, pas assez homogènes  
 * Les couloirs apparaissent parfois avec vue sur le vides, le joueur ne peux certes pas s'y déplacé, mais la vue sur le vide n'est pas vraiment prévue. ( arrive a chaque fois que le couloirs doit faire un zigzag)
+* Si le joueur donne une Seed, le jeu ne vérifie pas si la Seed est correct. Il vérifie seulement si elle est d'assez grande taille (supérieur à 500 caractères)
 
     
 
