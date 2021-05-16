@@ -16,11 +16,6 @@ public class Sanglier extends AbstractMonster {
     }
 
     @Override
-    public void act(Pos posPlayer, Map map) {
-
-    }
-
-    @Override
     public String recompensePlayer(Player player) {
         Random random = new Random();
         int nb = 1 + random.nextInt(3);

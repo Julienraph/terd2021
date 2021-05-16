@@ -29,10 +29,6 @@ public class Player extends AbstractProps {
         this.getInventaire().ajoutItem(new Consommable(0, "Abricot", 1, 10, 20));
     }
 
-    public void interaction(){
-        //TODO
-    }
-
     public Etage getEtageActuel() {
         return etageActuel;
     }

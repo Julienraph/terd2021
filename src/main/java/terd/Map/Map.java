@@ -168,14 +168,8 @@ public class Map{
             if(monster.isBeside(posPlayer)) {
                 return i;
             }
-            if(monster instanceof OrcWarrior || monster instanceof Sanglier) {
-                if(isInside(posPlayer)) {
-                    ((AbstractMonster) monster).randomMove(this);
-                }
-            } else {
-                if (isInside(posPlayer)) {
-                    monster.act(posPlayer,this);//((AbstractMonster) monster).randomMove(this);
-                }
+            if(isInside(posPlayer)) {
+                monster.act(posPlayer,this);
             }
             if (monster.isBeside(posPlayer)) {
                 return i;

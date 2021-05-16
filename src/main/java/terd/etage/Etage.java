@@ -57,6 +57,7 @@ public class Etage {
         return largeurEtage;
     }
 
+    //Spawn les monstres et les objets du niveau
     public void spawnProps() {
         int nbTresor = 0;
         for (int i = 0; i < tabMap.length; i++) {
@@ -138,7 +139,7 @@ public class Etage {
         int posActuelY = props.getY();
         boolean isVertical = (newPosY < 0 && ligneEtage > 0) || (newPosY >= hauteurMap && ligneEtage < hauteurEtage - 1);
         boolean isHorizontal = (newPosX < 0 && colonneEtage > 0) || (newPosX >= largeurMap && colonneEtage < largeurEtage - 1);
-        //Si le joueur essaye de sortir de la map
+        //Si le Props essaye de sortir de la map
         if (isHorizontal || isVertical) {
             int directionVertical = isVertical ? (int) Math.signum(newPosY) : 0; //Si le joueur sort de la map vers le haut, directionVertical = -1. Si vers le bas directionVertical = 1. Sinon 0.
             int directionHorizontal = isHorizontal ? (int) Math.signum(newPosX) : 0; //Si le joueur sort de la map vers la gauche, directionHorizontal = -1. Si vers la droite directionHorizontal = 1. Sinon 0.
@@ -158,7 +159,7 @@ public class Etage {
         if (newPosX < 0 || newPosY < 0 || newPosX >= largeurMap || newPosY >= hauteurMap) {
             return false;
         }
-        //Si le joueur se déplace à l'intérieur de la map
+        //Si le Props se déplace à l'intérieur de la map
         if (posActuelY < hauteurMap && posActuelX < largeurMap) {
             if (tabMap[ligneEtage][colonneEtage].isValide(newPosX, newPosY)) {
                 tabMap[ligneEtage][colonneEtage].resetCase(posActuelX, posActuelY,props);
@@ -171,7 +172,7 @@ public class Etage {
     }
 
 
-    //Affiche la carte de l'UI
+    //Affiche l'UI/Indication à droite de l'affichage
     public void afficherMap(int x, int y, Player player) {
         StringBuilder sb = new StringBuilder();
         char[][] map = tabMap[x][y].getTableauMap();

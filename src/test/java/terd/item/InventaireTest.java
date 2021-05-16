@@ -43,27 +43,40 @@ public class InventaireTest extends TestCase {
         inventaire.affichageItem(player,0);
         //On est dans l'état 0, on choisit la première arme qui est une Hache
         inventaire.affichageItem(player,0);
+        //On choisit de l'équiper
+        inventaire.affichageItem(player,0);
         assertEquals("Hache", player.getMainWeapon().getNom());
 
         //Vérifions que l'état s'est bien réinitialisé à -1
         assertEquals(-1, inventaire.getEtat());
 
         //Vérifions que l'épée s'est bien remis dans l'Inventaire
-        assertEquals("Epée", inventaire.getArmes().get(0).getNom());
+        assertEquals("Epée", inventaire.getArmes().get(inventaire.getArmes().size()-1).getNom());
 
         //Refaisons la même chose pour Compétence
         inventaire.affichageItem(player,1);
         inventaire.affichageItem(player,0);
+        inventaire.affichageItem(player,0);
         assertEquals("Feu", player.getMainCompetence().getNom());
         assertEquals(-1, inventaire.getEtat());
-        assertEquals("Eau", inventaire.getCompetences().get(0).getNom());
+        assertEquals("Eau", inventaire.getCompetences().get(inventaire.getArmes().size()-1).getNom());
 
         //Vérifions que lorsque on utilise un consommable, celui-ci diminue de 1.
-        assertEquals(2,  inventaire.getConsommables().get(0).getNbrUtilisation());
+        assertEquals(3,  inventaire.getConsommables().get(0).getNbrUtilisation());
         player.takeDamages(50);
         inventaire.affichageItem(player,2);
         inventaire.affichageItem(player,0);
-        assertEquals(1,  inventaire.getConsommables().get(0).getNbrUtilisation());
+        assertEquals(2,  inventaire.getConsommables().get(0).getNbrUtilisation());
+
+        //Vérifions l'amélioration des Armes/Compétences
+        int degat = inventaire.getArmes().get(0).getDegat();
+        String nom =  inventaire.getArmes().get(0).getNom();
+        inventaire.affichageItem(player,0);
+        inventaire.affichageItem(player,0);
+        inventaire.affichageItem(player,1);
+        assertTrue(degat < inventaire.getArmes().get(0).getDegat());
+        assertEquals(nom, inventaire.getArmes().get(0).getNom());
+
     }
 
     public void testQuitter() {

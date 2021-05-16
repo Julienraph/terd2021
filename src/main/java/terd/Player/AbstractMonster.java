@@ -16,7 +16,7 @@ public abstract class AbstractMonster extends AbstractProps implements Monster {
         return String.format("%s tué, Vous avez gagné ! +%dxp\n", this.getName(), this.getXP());
     }
 
-    public void randomMove(Map map) {
+    public void act(Pos posPlayer, Map map) {
         Random random = new Random();
         int direction = random.nextInt(4);
         boolean hasMove = false;

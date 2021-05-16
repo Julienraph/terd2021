@@ -21,11 +21,13 @@ public class GameController {
     String message;
     int dureeMessage;
     int freeze;
+    Seed partieSeed;
 
     public GameController(Etage etage, Player player) {
         this.etage = etage;
         this.player = player;
         this.etage.spawnPlayer(player,etage.getSpawnLigne(),etage.getSpawnColonne());
+        this.partieSeed = etage.getSeed();
     }
 
     public GameController() {
@@ -40,9 +42,11 @@ public class GameController {
                 controllerMap(scanner);
             }
             if(etat == 1) {
+                //Classe Combat qui se lance si le joueur se trouve à coté d'un Monstre
                 controllerCombat(scanner);
             }
             if(!keepPlaying) {
+                //Menu Principal si vous arrêtez le jeu, si vous mourrez ou si vous gagnez
                 controllerMenu(scanner);
             }
         } while (keepPlaying);
@@ -57,11 +61,13 @@ public class GameController {
             }
             System.out.println("1. Relancer la même Seed");
             System.out.println("2. Relancer une nouvelle Seed");
-            System.out.println("3. Arrêter le jeu");
+            System.out.println("3. Obtenir le nom de la Seed");
+            System.out.println("4. Donner le nom d'une Seed");
+            System.out.println("5. Arrêter le jeu");
             int entry = scanner.hasNextInt() ? scanner.nextInt() : -1;
             if(entry == 1 || entry == 2) {
                 this.player = new Player(player.getSkin(), player.getMaxPV());
-                Seed seed = etage.getSeed();
+                Seed seed = partieSeed;
                 if(entry == 2) {
                     seed = new Seed();
                 }
@@ -74,6 +80,27 @@ public class GameController {
                 inRetryMenu = false;
             }
             if(entry == 3) {
+                System.out.println("\nNom de la Seed :");
+                System.out.println(partieSeed.getSeed());
+                System.out.println("\n");
+            }
+            if(entry == 4) {
+                System.out.println("Entrez le nom de la Seed :");
+                String seedString = scanner.next();
+                if(seedString.length() >= 500) {
+                    Seed seed = new Seed(seedString);
+                    this.etage = new Etage(etage.getHauteurEtage(), etage.getLargeurEtage(), etage.getHauteurMinMap(), etage.getLargeurMinMap(), etage.getBiome(), etage.getNiveau(), seed);
+                    this.etage.spawnPlayer(player, etage.getSpawnLigne(), etage.getSpawnColonne());
+                    this.tour = 0;
+                    this.etat = 0;
+                    this.refresh = true;
+                    this.keepPlaying = true;
+                    inRetryMenu = false;
+                } else {
+                    System.out.println("Seed non-valide");
+                }
+            }
+            if(entry == 5) {
                 inRetryMenu = false;
             }
             if(entry == 0 && player.getPV() > 0) {
@@ -249,18 +276,16 @@ public class GameController {
 
         //Si le joueur est sur une porte, on créé un nouvel Etage
         if(player.getCache() == 'D') {
-            if(tour < 3) {
-                Seed seed = new Seed();
+            if(tour < 2) {
+                tour += 1;
+                Seed seed = new Seed(etage.getSeed(), tour);
                 this.etage = new Etage(etage.getHauteurEtage(), etage.getLargeurEtage(), etage.getHauteurMinMap(), etage.getLargeurMinMap(), etage.getBiome(), etage.getNiveau(), seed);
                 this.etage.spawnPlayer(player, etage.getSpawnLigne(), etage.getSpawnColonne());
-                this.tour = 0;
                 this.etat = 0;
                 this.refresh = true;
                 this.keepPlaying = true;
-                tour += 1;
                 dureeMessage = 3;
                 message = "Vous êtes passé par une porte\nNouveau lieu découvert";
-                System.out.println(tour);
             } else {
                 afficherMap();
                 this.keepPlaying = false;
