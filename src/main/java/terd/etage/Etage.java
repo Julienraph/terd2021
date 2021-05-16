@@ -58,14 +58,19 @@ public class Etage {
     }
 
     public void spawnProps() {
+        int nbTresor = 0;
         for (int i = 0; i < tabMap.length; i++) {
             for (int y = 0; y < tabMap[0].length; y++) {
                 Map map = tabMap[i][y];
                 if (map != null) {
                     if (map.getMonsterList().get(0).getPos() != null) {
                         map.spawnProps(map.getMonsterList().get(0));
+                        if(nbTresor < 3) {
+                            nbTresor += map.randomItem(i);
+                        }
                     } else {
                         map.spawnExit();
+                        map.randomItem(i);
                     }
                 }
             }

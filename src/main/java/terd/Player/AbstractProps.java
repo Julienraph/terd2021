@@ -103,7 +103,7 @@ public abstract class AbstractProps implements Props {
         String message = "";
         if((xp + monsterXP) >= 100) {
             credit += (xp + monsterXP) / 100;
-            message = String.format("Vous avez level-up ! Vous gagnez +%d crédit\n", (xp + monsterXP) / 100);
+            message = String.format("Vous avez level-up ! Vous gagnez +%d crédit(s)\n", (xp + monsterXP) / 100);
         }
         levelProps += (xp + monsterXP) / 100;
         xp = (xp + monsterXP) % 100;

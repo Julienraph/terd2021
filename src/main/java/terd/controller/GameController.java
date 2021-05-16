@@ -269,6 +269,11 @@ public class GameController {
             }
         }
 
+        if(player.getCache() == 'P' || player.getCache() == 'O') {
+            message =  etage.getMap(player.getPosEtageY(), player.getPosEtageX()).recupererTresor(player);
+            dureeMessage = 1;
+        }
+
     }
 
 

@@ -12,6 +12,8 @@ public enum MapColor {
     HOUSE('M', Color.RED),
     SANGLIER('B', Color.RED),
     EXIT('D', Color.YELLOW),
+    TRESOR('O', Color.YELLOW),
+    POTION('P', Color.YELLOW),
     HILL('X', Color.GREY),
     WALL('#', Color.GREY),
     EMPTY(' ', Color.BLACK),

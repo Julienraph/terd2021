@@ -18,9 +18,9 @@ public class Cerf extends AbstractMonster {
     public String recompensePlayer(Player player) {
         Random random = new Random();
         int nb = 1 + random.nextInt(2);
-        Consommable consommable = new Consommable(0,"Viande Cerf",nb,0,15);
+        Consommable consommable = new Consommable(0,"Viande",nb,0,15);
         player.getInventaire().ajoutItem(consommable);
-        return String.format("%s tué, Vous avez gagné ! +%dxp \nVous récupérez %d %ss\n", this.getName(),this.getXP(),nb,consommable.getNom());
+        return String.format("%s tué, Vous avez gagné ! +%dxp \nVous récupérez %d %s(s)\n", this.getName(),this.getXP(),nb,consommable.getNom());
     }
 
     private boolean bloquer(int x, int y, Pos posPlayer, Map map) {

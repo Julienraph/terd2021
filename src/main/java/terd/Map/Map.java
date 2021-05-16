@@ -10,6 +10,9 @@ Objectif : Créé une map contenant au plus une sortie, la sortie est un couloir
 
 package terd.Map;
 import terd.Player.*;
+import terd.item.Arme;
+import terd.item.Consommable;
+import terd.item.Item;
 import terd.utils.Seed;
 
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ public class Map{
     private Pos posSortie; // la position de sortie sur la map par défaut 0,0 puis set en fonction de la sortie  haut/bas/gauche/droite
     private Pos posMonster; //Position du monster situé à la sortie
 
+    Item tresorItem;
+    int tresorCredit;
     private char cache;
     private int biome;
     DecisionCase decisionCase; // cette classe permet de remplir la map a partir du seed et de 4 arguments
@@ -107,8 +112,40 @@ public class Map{
         return false;
     }
 
+    public int randomItem(int seedPos) {
+        int choix = seedMap.getAnswer(seedPos);
+        Pos pos = randomPos();
+        if(choix % 8 == 0 && (tableauMap[pos.getY()][pos.getX()] == '.' || tableauMap[pos.getY()][pos.getX()] == ',')) {
+            String[] nomTab = {"Cerise", "Abricot", "Viande", "Pomme", "Baie", "Fraise", "Potion"};
+            int[] pvTab = {20,10,30,5,5,20,50};
+            String nom = nomTab[seedMap.getAnswer(seedPos+1)%nomTab.length];
+            int pv = pvTab[seedMap.getAnswer(seedPos+1)%pvTab.length];
+            tresorItem = new Consommable(0, nom, (1 + (seedMap.getAnswer(seedPos+2)%2)), 10, pv);
+            tableauMap[pos.getY()][pos.getX()] = 'P';
+            return 1;
+        }
+        if(choix % 8 == 1 && (tableauMap[pos.getY()][pos.getX()] == '.' || tableauMap[pos.getY()][pos.getX()] == ',')){
+            tresorCredit = 1 + seedMap.getAnswer(seedPos+1)%2;
+            tableauMap[pos.getY()][pos.getX()] = 'O';
+            return 1;
+        }
+        return 0;
+    }
+
+    public String recupererTresor(Player player) {
+        if(tresorItem != null) {
+            player.getInventaire().ajoutItem(tresorItem);
+            player.setCache('.');
+            return String.format("Vous avez récupéré %d %s(s) ", tresorItem.getNbrUtilisation(), tresorItem.getNom());
+        } else {
+            player.setCredit(player.getCredit() + tresorCredit);
+            player.setCache('.');
+            return String.format("Vous avez récupéré %d crédit(s)", tresorCredit);
+        }
+    }
+
     public void choixMonstre(int seedPos) {
-        int choix = seedMap.getAnswer(seedPos)%3;
+        int choix = seedMap.getAnswer(seedPos+2)%3;
         if(choix == 0) {
             monsterList.add(new OrcWarrior(posMonster, 'M'));
         } else if(choix == 1) {
@@ -118,11 +155,11 @@ public class Map{
         }
     }
 
-    public void randomMonsterPos() {
+    public Pos randomPos() {
         Random random = new Random();
         int x = (decalage + 1)+random.nextInt((tailleReelY - (tailleReelY - decalage - width))-(decalage + 1));
         int y = (decalage + 2)+random.nextInt((tailleReelX - (tailleReelX - decalage - height))-(decalage + 2));
-        monsterList.get(0).setPos(new Pos(x,y));
+        return new Pos(x,y);
     }
 
     public int moveMonsters(Pos posPlayer) {
@@ -154,8 +191,13 @@ public class Map{
     }
 
     public void spawnProps(Props props) {
-        props.setCache('.');
-        tableauMap[props.getY()][props.getX()] = props.getSkin();
+        //Si le spawn du monstre n'est pas le même que le spawn du Player
+        if(!props.getPos().equals(spawnPos)) {
+            props.setCache('.');
+            tableauMap[props.getY()][props.getX()] = props.getSkin();
+        } else {
+            monsterList.remove(0);
+        }
     }
 
     public void spawnExit() {
@@ -376,7 +418,7 @@ public class Map{
         {
             return false;
         }
-        if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == 'D' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
+        if (tableauMap[basHaut][gaucheDroite] == '.' || tableauMap[basHaut][gaucheDroite] == 'O' || tableauMap[basHaut][gaucheDroite] == 'P' || tableauMap[basHaut][gaucheDroite] == 'D' || tableauMap[basHaut][gaucheDroite] == '-' || tableauMap[basHaut][gaucheDroite] == ',') {
             return true; //
         }
         else if (tableauMap[basHaut][gaucheDroite] == 'X' || tableauMap[basHaut][gaucheDroite] == 'L' || tableauMap[basHaut][gaucheDroite] == '#' || tableauMap[basHaut][gaucheDroite] == 'T')
@@ -572,6 +614,8 @@ public class Map{
        Seed seed=new Seed("81cad2488b706822a6472707bbf11f762b6d006f0fbe5e548446569998affd0a4a3037b10add7022821a20750edfa5c63cabcdcafe9ed3f973ba2ccd68927537aa5c3f077b95c4e29628ee2562b266b309958cf988453ec3183284b633abeec0b1fcede89e5334f1d999de4fdb086a64248561da47b59296d30ae291c4a5be8434f3a7c611a15af3b8ff4a563835faf175bace6ad77dc09754c94777c0e88317ffa6afec110a86e2ad4a7033907e2164c35020cfb68cf9e77a39a9dcedf6dff7f3812cd7d05dfdf12b25de2056bfe65b5485edd9b4d98e65b8c876593e7bd5aebd20a583a10ddc0961af3914b8d1e54eddd37216a8ad1aaf0d20");
         Map map = new Map(10,20,seed,1000,1);
         map.affichageMap();
+        Seed seed2 = new Seed();
+        System.out.println(seed2.getAnswer(0));
     }
 
     public int getDecalage() {
